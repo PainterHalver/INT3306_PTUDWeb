@@ -8,7 +8,7 @@ export class User {
   id: number;
 
   @Length(3, 255, { message: "Username cần phải có trên 3 ký tự" })
-  @Column()
+  @Column({ unique: true })
   username: string;
 
   @Length(3, 255, { message: "Password cần phải có trên 3 ký tự" })

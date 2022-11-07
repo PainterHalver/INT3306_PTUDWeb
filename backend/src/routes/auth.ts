@@ -1,0 +1,48 @@
+import { Request, Response, Router } from "express";
+import { isEmpty, validate } from "class-validator";
+import jwt from "jsonwebtoken";
+
+import { AppDataSource } from "../data-source";
+import { User } from "../entity/User";
+
+const login = async (req: Request, res: Response) => {
+  try {
+    const { username, password } = req.body;
+
+    // Kiểm tra inputs
+    let errors: any = {};
+
+    if (isEmpty(username)) errors.username = "Username không được để trống";
+    if (isEmpty(password)) errors.password = "Password không được để trống";
+    if (Object.keys(errors).length > 0) {
+      return res.status(400).json(errors);
+    }
+
+    // Check xem user có tồn tại không, nếu không thì trả về lỗi
+    const userRepository = AppDataSource.getRepository(User);
+    const user = await userRepository.findOneBy({ username });
+
+    if (!user) {
+      return res.status(404).json({ username: "Username không tồn tại" });
+    }
+
+    // Check xem password có đúng không, nếu không thì trả về lỗi
+    if (password !== user.password) {
+      return res.status(401).json({ password: "Password không đúng" });
+    }
+
+    // TODO: Nếu ổn hết thì trả về token và user
+    const token = jwt.sign({ username }, process.env.JWT_SECRET!);
+
+    return res.json({ user, token });
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({ error: "Lỗi hệ thống!" });
+  }
+};
+
+const router = Router();
+
+router.post("/login", login);
+
+export default router;

@@ -5,11 +5,31 @@ import { User } from "../../src/entity/User";
 export default class UserSeeder implements Seeder {
   public async run(dataSource: DataSource, factoryManager: SeederFactoryManager): Promise<any> {
     const repository = dataSource.getRepository(User);
+
+    // Xóa tất cả dữ liệu trong bảng
+    await repository.clear();
+
+    // Tạo dữ liệu mẫu
     await repository.insert([
       {
         username: "admin",
         password: "1111",
         account_type: "admin",
+      },
+      {
+        username: "sanxuat",
+        password: "1111",
+        account_type: "san_xuat",
+      },
+      {
+        username: "daily",
+        password: "1111",
+        account_type: "dai_ly",
+      },
+      {
+        username: "baohanh",
+        password: "1111",
+        account_type: "bao_hanh",
       },
     ]);
 
