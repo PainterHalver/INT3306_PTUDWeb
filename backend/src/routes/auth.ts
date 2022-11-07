@@ -1,6 +1,7 @@
 import { Request, Response, Router } from "express";
 import { isEmpty, validate } from "class-validator";
 import jwt from "jsonwebtoken";
+import crypto from "crypto";
 
 import { AppDataSource } from "../data-source";
 import { User } from "../entity/User";
@@ -27,8 +28,8 @@ const login = async (req: Request, res: Response) => {
       return res.status(404).json({ username: "Username không tồn tại" });
     }
 
-    // Check xem password có đúng không, nếu không thì trả về lỗi
-    if (password !== user.password) {
+    // Check xem md5 của password có đúng không, nếu không thì trả về lỗi
+    if (crypto.createHash("md5").update(password).digest("hex") !== user.password) {
       return res.status(401).json({ password: "Password không đúng" });
     }
 

@@ -14,7 +14,6 @@ export class User {
   @Column({ unique: true })
   username: string;
 
-  @Length(3, 255, { message: "Password cần phải có trên 3 ký tự" })
   @Exclude()
   @Column()
   password: string;
