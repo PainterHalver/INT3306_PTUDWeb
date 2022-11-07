@@ -37,5 +37,3 @@ jobs:
         run: npm run seed
       - name: Đảm bảo vẫn transpile typescript được
         run: tsc
-      - name: Đảm bảo vẫn chạy được
-        run: npm start
