@@ -5,7 +5,8 @@
   "scripts": {
     "start": "ts-node src/app.ts",
     "dev": "nodemon --exec ts-node ./src/app.ts",
-    "typeorm": "typeorm-ts-node-commonjs"
+    "typeorm": "typeorm-ts-node-commonjs",
+    "seed": "ts-node ./db/runSeeders.ts"
   },
   "dependencies": {
     "cookie-parser": "^1.4.4",

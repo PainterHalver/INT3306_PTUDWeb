@@ -1,8 +1,10 @@
 import "reflect-metadata";
-import { DataSource } from "typeorm";
+import { DataSource, DataSourceOptions } from "typeorm";
+import { SeederOptions } from "typeorm-extension";
+
 import { User } from "./entity/User";
 
-export const AppDataSource = new DataSource({
+const options: DataSourceOptions & SeederOptions = {
   type: "sqlite",
   database: "./db/production_move.db",
   synchronize: true,
@@ -10,4 +12,6 @@ export const AppDataSource = new DataSource({
   entities: [User],
   migrations: [],
   subscribers: [],
-});
+};
+
+export const AppDataSource = new DataSource(options);
