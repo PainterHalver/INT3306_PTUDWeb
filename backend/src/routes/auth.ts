@@ -4,6 +4,7 @@ import jwt from "jsonwebtoken";
 
 import { AppDataSource } from "../data-source";
 import { User } from "../entity/User";
+import { JWTUserPayload } from "../types";
 
 const login = async (req: Request, res: Response) => {
   try {
@@ -32,7 +33,8 @@ const login = async (req: Request, res: Response) => {
     }
 
     // TODO: Nếu ổn hết thì trả về token và user
-    const token = jwt.sign({ username }, process.env.JWT_SECRET!);
+    const payload: JWTUserPayload = { username, account_type: user.account_type };
+    const token = jwt.sign(payload, process.env.JWT_SECRET!);
 
     return res.json({ user, token });
   } catch (error) {
