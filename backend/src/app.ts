@@ -1,3 +1,5 @@
+import { AppDataSource } from "./data-source";
+import { User } from "./entity/User";
 import express from "express";
 import morgan from "morgan";
 import dotenv from "dotenv";
@@ -24,4 +26,10 @@ app.get("/api", (_, res) => res.send("Hello World!"));
 // Khởi tạo server
 app.listen(port, async () => {
   console.log(`Server running on port ${port}`);
+
+  AppDataSource.initialize()
+    .then(async () => {
+      console.log("Database connected");
+    })
+    .catch((error) => console.log(error));
 });
