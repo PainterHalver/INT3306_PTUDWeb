@@ -7,6 +7,9 @@ export class User {
   @PrimaryGeneratedColumn()
   id: number;
 
+  @Column()
+  name: string;
+
   @Length(3, 255, { message: "Username cần phải có trên 3 ký tự" })
   @Column({ unique: true })
   username: string;

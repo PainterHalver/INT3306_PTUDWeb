@@ -13,21 +13,25 @@ export default class UserSeeder implements Seeder {
     await repository.insert([
       {
         username: "admin",
+        name: "Admin BigCorp",
         password: "1111",
         account_type: "admin",
       },
       {
         username: "sanxuat",
+        name: "Cơ sở sản xuất chi nhánh Hà Nội",
         password: "1111",
         account_type: "san_xuat",
       },
       {
         username: "daily",
+        name: "Đại lý phân phối Nhất Nhất",
         password: "1111",
         account_type: "dai_ly",
       },
       {
         username: "baohanh",
+        name: "Trung tâm bảo hành BigCorp chi nhánh Hà Nội",
         password: "1111",
         account_type: "bao_hanh",
       },

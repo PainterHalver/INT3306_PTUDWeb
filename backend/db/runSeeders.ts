@@ -6,6 +6,7 @@ import { User } from "../src/entity/User";
   const options: DataSourceOptions = {
     type: "sqlite",
     database: "./db/production_move.db",
+    synchronize: true,
     entities: [User],
   };
 
