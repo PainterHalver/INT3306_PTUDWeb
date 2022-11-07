@@ -19,5 +19,5 @@ export class User {
   password: string;
 
   @Column({ nullable: false })
-  account_type: "admin" | "saan_xuat" | "dai_ly" | "bao_hanh";
+  account_type: "admin" | "san_xuat" | "dai_ly" | "bao_hanh";
 }
