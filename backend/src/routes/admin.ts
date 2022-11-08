@@ -36,7 +36,7 @@ const getUsers = async (req: Request, res: Response) => {
 /**
  * Admin tạo tài khoản cho cơ sở sản xuất, đại lý, bảo hành
  */
-const createAccount = async (req: Request, res: Response) => {
+const createUser = async (req: Request, res: Response) => {
   try {
     const { username, name, account_type, address, password } = req.body;
 
@@ -71,7 +71,82 @@ const createAccount = async (req: Request, res: Response) => {
     await userRepo.save(user);
 
     // Trả về user
-    return res.json(user);
+    return res.status(201).json(user);
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ error: "Lỗi hệ thống!" });
+  }
+};
+
+/**
+ * Admin chỉnh sửa tài khoản cho cơ sở sản xuất, đại lý, bảo hành
+ */
+const updateUser = async (req: Request, res: Response) => {
+  try {
+    const { username, name, account_type, address, password } = req.body;
+
+    // Validate dữ liệu, bắt buộc phải có các field trừ password
+    let errors: any = {};
+    if (!username) errors.username = "Username không được để trống";
+    if (!name) errors.name = "Tên không được để trống";
+    if (!account_type) errors.account_type = "Loại tài khoản không được để trống";
+    if (!address) errors.address = "Địa chỉ không được để trống";
+    if (Object.keys(errors).length > 0) {
+      return res.status(400).json(errors);
+    }
+
+    // Check xem username đã tồn tại chưa
+    const userRepo = AppDataSource.getRepository(User);
+    const usernameUser = await userRepo.findOneBy({ username });
+    if (!usernameUser) {
+      return res.status(400).json({ username: "Username không tồn tại" });
+    }
+
+    // Cập nhật tài khoản
+    usernameUser.name = name;
+    usernameUser.account_type = account_type;
+    usernameUser.address = address;
+    if (password) {
+      usernameUser.password = crypto.createHash("md5").update(password).digest("hex");
+    }
+    await userRepo.save(usernameUser);
+
+    // Trả về user
+    return res.json(usernameUser);
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ error: "Lỗi hệ thống!" });
+  }
+};
+
+/**
+ * Admin xóa tài khoản cơ sở sản xuất, đại lý, bảo hành
+ */
+const deleteUser = async (req: Request, res: Response) => {
+  try {
+    const { username } = req.body;
+
+    // Validate dữ liệu
+    let errors: any = {};
+    if (!username) errors.username = "Username không được để trống";
+    if (Object.keys(errors).length > 0) {
+      return res.status(400).json(errors);
+    }
+
+    // Check xem username đã tồn tại chưa
+    const userRepo = AppDataSource.getRepository(User);
+    const usernameUser = await userRepo.findOneBy({ username });
+    if (!usernameUser) {
+      return res.status(400).json({ username: "Username không tồn tại" });
+    }
+
+    // Xóa tài khoản
+    await userRepo.delete({
+      username,
+    });
+
+    // Trả về user
+    return res.status(204).json();
   } catch (error) {
     console.log(error);
     res.status(500).json({ error: "Lỗi hệ thống!" });
@@ -80,7 +155,9 @@ const createAccount = async (req: Request, res: Response) => {
 
 const router = Router();
 
+router.post("/createUser", protectRoute, restrictTo("admin"), createUser);
 router.get("/users", protectRoute, restrictTo("admin"), getUsers);
-router.post("/createAccount", protectRoute, restrictTo("admin"), createAccount);
+router.put("/updateUser", protectRoute, restrictTo("admin"), updateUser);
+router.delete("/deleteUser", protectRoute, restrictTo("admin"), deleteUser);
 
 export default router;
