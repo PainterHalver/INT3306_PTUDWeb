@@ -6,6 +6,34 @@ import { AppDataSource } from "../data-source";
 import { protectRoute, restrictTo } from "../middlewares/auth";
 
 /**
+ * Admin xem danh sách tài khoản
+ */
+const getUsers = async (req: Request, res: Response) => {
+  try {
+    const page = parseInt(req.query.page as string) || 1;
+    const limit = parseInt(req.query.limit as string) || 20;
+    const offset = (page - 1) * limit;
+
+    // Lấy danh sách user
+    const userRepo = AppDataSource.getRepository(User);
+    const [users, count] = await userRepo.findAndCount({
+      skip: offset,
+      take: limit,
+      order: {
+        id: "ASC",
+      },
+    });
+    const totalPages = Math.ceil(count / limit);
+
+    // Trả về danh sách user
+    return res.json({ page, totalPages, count, users });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ error: "Lỗi hệ thống!" });
+  }
+};
+
+/**
  * Admin tạo tài khoản cho cơ sở sản xuất, đại lý, bảo hành
  */
 const createAccount = async (req: Request, res: Response) => {
@@ -52,6 +80,7 @@ const createAccount = async (req: Request, res: Response) => {
 
 const router = Router();
 
+router.get("/users", protectRoute, restrictTo("admin"), getUsers);
 router.post("/createAccount", protectRoute, restrictTo("admin"), createAccount);
 
 export default router;
