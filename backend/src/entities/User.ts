@@ -2,6 +2,7 @@ import { Exclude } from "class-transformer";
 import { Length } from "class-validator";
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 
+import { AccountType } from "../types";
 import IHasAddressAndProducts from "./interfaces/IHasAdressAndProducts";
 import { Product } from "./Product";
 
@@ -22,7 +23,7 @@ export class User implements IHasAddressAndProducts {
   password: string;
 
   @Column({ nullable: false })
-  account_type: "admin" | "san_xuat" | "dai_ly" | "bao_hanh";
+  account_type: AccountType;
 
   @Column({ nullable: false })
   address: string;
