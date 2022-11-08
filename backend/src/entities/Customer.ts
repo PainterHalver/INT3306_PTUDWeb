@@ -19,6 +19,7 @@ export class Customer implements IHasAddressAndProducts {
   @Column({ nullable: false })
   address: string;
 
-  @OneToMany(() => Product, (product) => product.customer)
+  // Khi customer bị xóa thì set customer_id của các sản phẩm của customer đó thành null
+  @OneToMany(() => Product, (product) => product.customer, { onDelete: "SET NULL" })
   products: Product[];
 }

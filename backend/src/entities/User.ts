@@ -28,6 +28,7 @@ export class User implements IHasAddressAndProducts {
   @Column({ nullable: false })
   address: string;
 
-  @OneToMany(() => Product, (product) => product.user)
+  // Khi user bị xóa thì set user_id của các sản phẩm của user đó thành null
+  @OneToMany(() => Product, (product) => product.user, { onDelete: "SET NULL" })
   products: Product[];
 }

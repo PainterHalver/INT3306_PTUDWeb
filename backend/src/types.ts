@@ -23,9 +23,9 @@ export type ProductStatus =
   | "loi_can_bao_hanh"
   | "dang_sua_chua_bao_hanh"
   | "da_bao_hanh_xong"
-  | "da_tra_lai_cho_khach_hang"
+  | "da_tra_lai_bao_hanh_cho_khach_hang"
   | "loi_can_tra_ve_nha_may"
-  | "loi_da_dua_ve_noi_san_xuat"
+  | "loi_da_dua_ve_co_so_san_xuat"
   | "loi_can_trieu_hoi"
   | "het_thoi_gian_bao_hanh"
   | "tra_lai_co_so_san_xuat";

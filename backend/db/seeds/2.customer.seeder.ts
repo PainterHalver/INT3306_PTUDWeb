@@ -8,7 +8,7 @@ export default class CustomerSeeder implements Seeder {
     const repository = dataSource.getRepository(Customer);
 
     // Xóa tất cả dữ liệu trong bảng
-    await repository.clear();
+    // await repository.clear();
 
     // Tạo dữ liệu mẫu
     await repository.insert([
