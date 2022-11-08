@@ -1,13 +1,16 @@
 import { DataSource, DataSourceOptions } from "typeorm";
 import { runSeeders } from "typeorm-extension";
-import { User } from "../src/entity/User";
+
+import { Customer } from "../src/entities/Customer";
+import { Product } from "../src/entities/Product";
+import { User } from "../src/entities/User";
 
 (async () => {
   const options: DataSourceOptions = {
     type: "sqlite",
     database: "./db/production_move.db",
     synchronize: true,
-    entities: [User],
+    entities: [User, Customer, Product],
   };
 
   const dataSource = new DataSource(options);

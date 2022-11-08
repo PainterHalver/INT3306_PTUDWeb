@@ -4,7 +4,7 @@ import jwt from "jsonwebtoken";
 import crypto from "crypto";
 
 import { AppDataSource } from "../data-source";
-import { User } from "../entity/User";
+import { User } from "../entities/User";
 import { JWTUserPayload } from "../types";
 
 const login = async (req: Request, res: Response) => {

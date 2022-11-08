@@ -2,7 +2,7 @@ import { NextFunction, Request, Response } from "express";
 import jwt from "jsonwebtoken";
 
 import { AppDataSource } from "../data-source";
-import { User } from "../entity/User";
+import { User } from "../entities/User";
 import { JWTUserPayload } from "../types";
 
 /**
