@@ -1,5 +1,5 @@
 import { Request, Response, Router } from "express";
-import { isEmpty, validate } from "class-validator";
+import { isEmpty } from "class-validator";
 import jwt from "jsonwebtoken";
 import crypto from "crypto";
 

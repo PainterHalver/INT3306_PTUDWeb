@@ -7,6 +7,7 @@ dotenv.config();
 
 import { AppDataSource } from "./data-source";
 import trim from "./middlewares/trim";
+import adminRouter from "./routes/admin";
 import authRouter from "./routes/auth";
 
 const app = express();
@@ -21,7 +22,7 @@ app.use(trim);
 // API Routes
 app.get("/api", (_, res) => res.send("Hello World!"));
 app.use("/api/auth", authRouter);
-// app.use("/api/posts", postRouter);
+app.use("/api/admin", adminRouter);
 // app.use("/api/subs", subRouter);
 // app.use("/api/misc", miscRouter);
 // app.use("/api/users", userRouter);
