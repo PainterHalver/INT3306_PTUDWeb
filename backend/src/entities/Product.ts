@@ -13,7 +13,7 @@ export class Product {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @ManyToOne(() => ProductLine, (product_line) => product_line.products, { nullable: false })
+  @ManyToOne(() => ProductLine, (product_line) => product_line.products)
   @JoinColumn({ name: "product_line_id" })
   product_line: ProductLine;
 
@@ -28,7 +28,7 @@ export class Product {
   customer: Customer;
 
   // Mỗi sản phẩm bắt buộc phải có nơi sản xuất
-  @ManyToOne(() => User, (user) => user.products, { nullable: false })
+  @ManyToOne(() => User, (user) => user.products)
   @Validate(IsSanXuatUser, { message: "Người dùng không thuộc loại san_xuat" })
   @JoinColumn({ name: "sanxuat_id" })
   sanxuat: User;
