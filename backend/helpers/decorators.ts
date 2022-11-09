@@ -1,6 +1,4 @@
 import { ValidationArguments, ValidatorConstraint, ValidatorConstraintInterface } from "class-validator";
-import { User } from "../src/entities/User";
-
 @ValidatorConstraint({ name: "IsSanXuatUser", async: true })
 export class IsSanXuatUser implements ValidatorConstraintInterface {
   validate(value: any, args: ValidationArguments) {

@@ -1,10 +1,11 @@
 import { Expose } from "class-transformer";
 import { Validate, validateOrReject } from "class-validator";
-import { BeforeInsert, BeforeUpdate, Column, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
+import { BeforeInsert, BeforeUpdate, Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
 import { IsBaoHanhUser, IsDaiLyUser, IsSanXuatUser } from "../../helpers/decorators";
 
 import { ProductStatus } from "../../helpers/types";
 import { Customer } from "./Customer";
+import { ProductLine } from "./ProductLine";
 import { User } from "./User";
 
 @Entity({ name: "products" })
@@ -12,8 +13,9 @@ export class Product {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column({ nullable: false })
-  product_line: string;
+  @ManyToOne(() => ProductLine, (product_line) => product_line.products, { nullable: false })
+  @JoinColumn({ name: "product_line_id" })
+  product_line: ProductLine;
 
   @Column({ nullable: false })
   product_name: string;
@@ -22,21 +24,28 @@ export class Product {
   status: ProductStatus;
 
   @ManyToOne(() => Customer, (customer) => customer.products)
+  @JoinColumn({ name: "customer_id" })
   customer: Customer;
 
-  @ManyToOne(() => User, (user) => user.products)
+  // Mỗi sản phẩm bắt buộc phải có nơi sản xuất
+  @ManyToOne(() => User, (user) => user.products, { nullable: false })
   @Validate(IsSanXuatUser, { message: "Người dùng không thuộc loại san_xuat" })
+  @JoinColumn({ name: "sanxuat_id" })
   sanxuat: User;
 
   @ManyToOne(() => User, (user) => user.products)
   @Validate(IsDaiLyUser, { message: "Người dùng không thuộc loại dai_ly" })
+  @JoinColumn({ name: "daily_id" })
   daily: User;
 
   @ManyToOne(() => User, (user) => user.products)
   @Validate(IsBaoHanhUser, { message: "Người dùng không thuộc loại bao_hanh" })
+  @JoinColumn({ name: "baohanh_id" })
   baohanh: User;
 
-  // Trả về đối tượng hiện tại mà sản phẩm này đang ở
+  /**
+   * Trả về User hiện tại mà sản phẩm này đang ở
+   */
   @Expose()
   get possesser(): User | Customer {
     const customerStatuses: ProductStatus[] = [
@@ -59,11 +68,13 @@ export class Product {
     return this.baohanh;
   }
 
-  // Kiểm tra loại user đúng là tương thích với trạng thái của sản phẩm
-  // FIXME: Có vẻ Listener này không hoạt động
+  /**
+   * Kiểm tra loại user đúng là tương thích với trạng thái của sản phẩm
+   */
   @BeforeInsert()
   @BeforeUpdate()
   async validateStatusAndPossesser() {
+    // FIXME: Có vẻ Listener này không hoạt động
     await validateOrReject(this);
     try {
       process.stdout.write(`Validate sản phẩm id ${this.id}... `);

@@ -1,7 +1,8 @@
-import { Seeder, SeederFactoryManager } from "typeorm-extension";
 import { DataSource } from "typeorm";
+import { Seeder, SeederFactoryManager } from "typeorm-extension";
 
 import { Product } from "../../src/entities/Product";
+import { ProductLine } from "../../src/entities/ProductLine";
 import { User } from "../../src/entities/User";
 
 export default class ProductSeeder implements Seeder {
@@ -11,30 +12,34 @@ export default class ProductSeeder implements Seeder {
 
       const repository = dataSource.getRepository(Product);
       const userRepo = dataSource.getRepository(User);
+      const productLineRepo = dataSource.getRepository(ProductLine);
 
-      // Xóa tất cả dữ liệu trong bảng
-      // await repository.clear();
+      // Lấy các loại user và productLine mẫu
+      const sanxuatUser = (await userRepo.findOneBy({ account_type: "san_xuat" })) as User;
+      const dailyUser = (await userRepo.findOneBy({ account_type: "dai_ly" })) as User;
+      const baohanhUser = (await userRepo.findOneBy({ account_type: "bao_hanh" })) as User;
+      const roombaProductLine = (await productLineRepo.findOneBy({ name: "Roomba" })) as ProductLine;
 
       // Tạo dữ liệu mẫu
       await repository.insert([
         {
-          product_line: "Roomba",
+          product_line: roombaProductLine,
           product_name: "iRobot Roomba i7",
           status: "moi_san_xuat",
-          sanxuat: (await userRepo.findOneBy({ account_type: "san_xuat" })) as User,
+          sanxuat: sanxuatUser,
         },
         {
-          product_line: "Roomba",
+          product_line: roombaProductLine,
           product_name: "iRobot Roomba i7 Plus",
           status: "moi_san_xuat",
-          sanxuat: (await userRepo.findOneBy({ account_type: "san_xuat" })) as User,
+          sanxuat: sanxuatUser,
         },
         {
-          product_line: "Roomba",
+          product_line: roombaProductLine,
           product_name: "iRobot Roomba i7",
           status: "dua_ve_dai_ly",
-          sanxuat: (await userRepo.findOneBy({ account_type: "san_xuat" })) as User,
-          daily: (await userRepo.findOneBy({ account_type: "dai_ly" })) as User,
+          sanxuat: sanxuatUser,
+          daily: dailyUser,
         },
       ]);
 

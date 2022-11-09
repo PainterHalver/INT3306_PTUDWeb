@@ -3,6 +3,7 @@ import { runSeeders } from "typeorm-extension";
 
 import { Customer } from "../src/entities/Customer";
 import { Product } from "../src/entities/Product";
+import { ProductLine } from "../src/entities/ProductLine";
 import { User } from "../src/entities/User";
 
 (async () => {
@@ -11,7 +12,7 @@ import { User } from "../src/entities/User";
     database: "./db/production_move.db",
     synchronize: true,
     logging: false,
-    entities: [User, Customer, Product],
+    entities: [User, Customer, ProductLine, Product],
   };
 
   // Xóa tất cả dữ liệu trong database
