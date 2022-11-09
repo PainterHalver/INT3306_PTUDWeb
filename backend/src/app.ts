@@ -10,6 +10,7 @@ import trim from "./middlewares/trim";
 import adminRouter from "./routes/admin";
 import authRouter from "./routes/auth";
 import productsRouter from "./routes/products";
+import productLinesRouter from "./routes/product_lines";
 
 const app = express();
 const port = process.env.PORT || 5000;
@@ -25,7 +26,7 @@ app.get("/api", (_, res) => res.send("Hello World!"));
 app.use("/api/auth", authRouter);
 app.use("/api/admin", adminRouter);
 app.use("/api/products", productsRouter);
-// app.use("/api/misc", miscRouter);
+app.use("/api/product_lines", productLinesRouter);
 // app.use("/api/users", userRouter);
 
 // Khởi tạo server

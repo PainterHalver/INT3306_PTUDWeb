@@ -74,10 +74,10 @@ const createUser = async (req: Request, res: Response) => {
       account_type,
       address,
     });
-    await userRepo.save(user);
+    const savedUser = await userRepo.save(user);
 
     // Trả về user
-    return res.status(201).json(user);
+    return res.status(201).json(savedUser);
   } catch (error) {
     console.log(error);
     res.status(500).json({ error: "Lỗi hệ thống!" });
@@ -115,10 +115,10 @@ const updateUser = async (req: Request, res: Response) => {
     if (password) {
       usernameUser.password = crypto.createHash("md5").update(password).digest("hex");
     }
-    await userRepo.save(usernameUser);
+    const updatedUser = await userRepo.save(usernameUser);
 
     // Trả về user
-    return res.json(usernameUser);
+    return res.json(updatedUser);
   } catch (error) {
     console.log(error);
     res.status(500).json({ error: "Lỗi hệ thống!" });

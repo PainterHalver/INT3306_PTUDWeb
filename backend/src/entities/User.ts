@@ -1,4 +1,4 @@
-import { Exclude } from "class-transformer";
+import { Exclude, instanceToPlain } from "class-transformer";
 import { Length } from "class-validator";
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 
@@ -33,4 +33,9 @@ export class User implements IHasAddressAndProducts {
   @OneToMany(() => Product, (product) => product.daily, { onDelete: "SET NULL" })
   @OneToMany(() => Product, (product) => product.baohanh, { onDelete: "SET NULL" })
   products: Product[];
+
+  // Method này cần để giấu password khi trả về response
+  toJSON() {
+    return instanceToPlain(this);
+  }
 }

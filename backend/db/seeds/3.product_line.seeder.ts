@@ -14,6 +14,7 @@ export default class ProductLineSeeder implements Seeder {
       await repository.insert([
         {
           name: "Roomba",
+          description: "Robot hút bụi thông minh",
         },
       ]);
     } catch (error) {

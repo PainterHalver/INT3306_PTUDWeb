@@ -22,6 +22,7 @@ const getProducts = async (req: Request, res: Response) => {
     const productRepo = AppDataSource.getRepository(Product);
     const products = await productRepo
       .createQueryBuilder("product")
+      .leftJoinAndSelect("product.product_line", "product_line")
       .leftJoinAndSelect("product.daily", "daily")
       .leftJoinAndSelect("product.sanxuat", "sanxuat")
       .leftJoinAndSelect("product.baohanh", "baohanh")

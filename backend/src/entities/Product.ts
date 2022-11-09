@@ -13,7 +13,7 @@ export class Product {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @ManyToOne(() => ProductLine, (product_line) => product_line.products)
+  @ManyToOne(() => ProductLine, (product_line) => product_line.products, { onDelete: "CASCADE" })
   @JoinColumn({ name: "product_line_id" })
   product_line: ProductLine;
 
@@ -23,7 +23,7 @@ export class Product {
   @Column({ nullable: false })
   status: ProductStatus;
 
-  @ManyToOne(() => Customer, (customer) => customer.products)
+  @ManyToOne(() => Customer, (customer) => customer.products, { onDelete: "SET NULL" })
   @JoinColumn({ name: "customer_id" })
   customer: Customer;
 
