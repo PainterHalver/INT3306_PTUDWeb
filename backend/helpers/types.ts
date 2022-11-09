@@ -1,4 +1,4 @@
-import { User } from "./entities/User";
+import { User } from "../src/entities/User";
 
 /**
  * Dùng để lưu thông tin của user trong token

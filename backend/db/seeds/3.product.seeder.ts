@@ -18,19 +18,20 @@ export default class ProductSeeder implements Seeder {
         product_line: "Roomba",
         product_name: "iRobot Roomba i7",
         status: "moi_san_xuat",
-        user: (await userRepo.findOneBy({ account_type: "san_xuat" })) as User,
+        sanxuat: (await userRepo.findOneBy({ account_type: "san_xuat" })) as User,
       },
       {
         product_line: "Roomba",
         product_name: "iRobot Roomba i7 Plus",
         status: "moi_san_xuat",
-        user: (await userRepo.findOneBy({ account_type: "san_xuat" })) as User,
+        sanxuat: (await userRepo.findOneBy({ account_type: "san_xuat" })) as User,
       },
       {
         product_line: "Roomba",
         product_name: "iRobot Roomba i7",
         status: "dua_ve_dai_ly",
-        user: (await userRepo.findOneBy({ account_type: "dai_ly" })) as User,
+        sanxuat: (await userRepo.findOneBy({ account_type: "san_xuat" })) as User,
+        daily: (await userRepo.findOneBy({ account_type: "dai_ly" })) as User,
       },
     ]);
   }

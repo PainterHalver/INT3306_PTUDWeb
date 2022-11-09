@@ -2,7 +2,7 @@ import { Exclude } from "class-transformer";
 import { Length } from "class-validator";
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 
-import { AccountType } from "../types";
+import { AccountType } from "../../helpers/types";
 import IHasAddressAndProducts from "./interfaces/IHasAdressAndProducts";
 import { Product } from "./Product";
 
@@ -29,6 +29,8 @@ export class User implements IHasAddressAndProducts {
   address: string;
 
   // Khi user bị xóa thì set user_id của các sản phẩm của user đó thành null
-  @OneToMany(() => Product, (product) => product.user, { onDelete: "SET NULL" })
+  @OneToMany(() => Product, (product) => product.sanxuat, { onDelete: "SET NULL" })
+  @OneToMany(() => Product, (product) => product.daily, { onDelete: "SET NULL" })
+  @OneToMany(() => Product, (product) => product.baohanh, { onDelete: "SET NULL" })
   products: Product[];
 }

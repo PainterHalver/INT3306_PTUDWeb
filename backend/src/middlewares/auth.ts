@@ -3,7 +3,7 @@ import jwt from "jsonwebtoken";
 
 import { AppDataSource } from "../data-source";
 import { User } from "../entities/User";
-import { AccountType, JWTUserPayload } from "../types";
+import { AccountType, JWTUserPayload } from "../../helpers/types";
 
 /**
  * Bắt buộc user phải đăng nhập mới được truy cập các route này
