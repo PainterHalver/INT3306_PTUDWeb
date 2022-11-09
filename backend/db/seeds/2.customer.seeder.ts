@@ -5,6 +5,7 @@ import { Customer } from "../../src/entities/Customer";
 
 export default class CustomerSeeder implements Seeder {
   public async run(dataSource: DataSource, factoryManager: SeederFactoryManager): Promise<any> {
+    console.log("Chạy Seeder cho bảng Customer");
     const repository = dataSource.getRepository(Customer);
 
     // Xóa tất cả dữ liệu trong bảng

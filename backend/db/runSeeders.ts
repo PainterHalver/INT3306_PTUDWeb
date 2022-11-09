@@ -15,12 +15,14 @@ import { User } from "../src/entities/User";
   };
 
   // Xóa tất cả dữ liệu trong database
+  console.log("Xóa tất cả dữ liệu trong database");
   let dataSource = new DataSource(options);
   await dataSource.initialize();
   await dataSource.dropDatabase();
   await dataSource.destroy();
 
   // Khởi tạo lại database và chạy seeders
+  console.log("Khởi tạo lại database và chạy seeders");
   dataSource = new DataSource(options);
   await dataSource.initialize();
   await runSeeders(dataSource, {

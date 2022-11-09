@@ -66,7 +66,7 @@ export class Product {
   async validateStatusAndPossesser() {
     await validateOrReject(this);
     try {
-      console.log("Hello");
+      process.stdout.write(`Validate sản phẩm id ${this.id}... `);
       const { status, customer, sanxuat, baohanh, daily } = this;
       if (status === "moi_san_xuat" && (!sanxuat || sanxuat.account_type !== "san_xuat")) {
         throw new Error("Sản phẩm mới sản xuất phải ở kho của cơ sở sản xuất");
@@ -93,6 +93,7 @@ export class Product {
       } else if (status === "tra_lai_co_so_san_xuat" && (!sanxuat || sanxuat.account_type !== "san_xuat")) {
         throw new Error("Sản phẩm trả lại cơ sở sản xuất phải ở cơ sở sản xuất");
       }
+      console.log("OK");
     } catch (error) {
       console.log(error);
     }

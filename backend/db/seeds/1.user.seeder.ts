@@ -5,6 +5,7 @@ import { User } from "../../src/entities/User";
 
 export default class UserSeeder implements Seeder {
   public async run(dataSource: DataSource, factoryManager: SeederFactoryManager): Promise<any> {
+    console.log("Chạy Seeder cho bảng User");
     const repository = dataSource.getRepository(User);
 
     // Xóa tất cả dữ liệu trong bảng
