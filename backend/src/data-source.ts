@@ -10,7 +10,7 @@ const options: DataSourceOptions & SeederOptions = {
   type: "sqlite",
   database: "./db/production_move.db",
   synchronize: true,
-  logging: false,
+  logging: true,
   entities: [User, Customer, Product],
   migrations: [],
   subscribers: [],

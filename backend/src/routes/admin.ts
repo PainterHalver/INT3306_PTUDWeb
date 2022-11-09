@@ -4,12 +4,15 @@ import crypto from "crypto";
 import { User } from "../entities/User";
 import { AppDataSource } from "../data-source";
 import { protectRoute, restrictTo } from "../middlewares/auth";
+import { AccountType } from "../../helpers/types";
 
 /**
  * Admin xem danh sách tài khoản
  */
 const getUsers = async (req: Request, res: Response) => {
   try {
+    const { account_type } = req.query;
+
     const page = parseInt(req.query.page as string) || 1;
     const limit = parseInt(req.query.limit as string) || 20;
     const offset = (page - 1) * limit;
@@ -17,6 +20,9 @@ const getUsers = async (req: Request, res: Response) => {
     // Lấy danh sách user
     const userRepo = AppDataSource.getRepository(User);
     const [users, count] = await userRepo.findAndCount({
+      where: {
+        account_type: account_type as AccountType,
+      },
       skip: offset,
       take: limit,
       order: {
