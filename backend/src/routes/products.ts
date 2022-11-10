@@ -1,4 +1,5 @@
 import { Request, Response, Router } from "express";
+import { In } from "typeorm";
 import { errorHandler } from "../../helpers/errorHandler";
 
 import { AppDataSource } from "../data-source";
@@ -95,9 +96,70 @@ const createProducts = async (req: Request, res: Response) => {
   }
 };
 
+const exportToDaily = async (req: Request, res: Response) => {
+  try {
+    const user = res.locals.user as User;
+    const daily_id = req.body.daily_id || 0;
+    const product_ids = req.body.product_ids || [];
+
+    // Kiểm tra User có phải là cơ sở sản xuất hay không cho chắc
+    if (!user || user.account_type !== "san_xuat") {
+      return res.status(403).json({ error: "Bạn không có quyền thực hiện thao tác này!" });
+    }
+
+    // Validate input
+    let errors: any = {};
+    if (!daily_id) errors.daily_id = "Cần nhập mảng id sản phẩm!";
+    if (!product_ids.length) errors.product_ids = "Cần nhập id đại lý!";
+    if (Object.keys(errors).length > 0) return res.status(400).json({ errors });
+
+    // Lấy đại lý
+    const userRepo = AppDataSource.getRepository(User);
+    const daily = await userRepo.findOneBy({ id: daily_id });
+    if (!daily) return res.status(400).json({ error: "Đại lý không tồn tại!" });
+
+    // Lấy danh sách các sản phẩm
+    const productRepo = AppDataSource.getRepository(Product);
+    const products = await productRepo.find({
+      where: { id: In(product_ids) },
+      relations: ["sanxuat"],
+    });
+
+    // Kiểm tra các sản phẩm có đang ở trạng thái "mới sản xuất"
+    // và có đang thuộc kho của cơ sở sản xuất này không
+    const invalidProducts = products.filter((product) => {
+      return product.status !== "moi_san_xuat" || product.sanxuat.id !== user.id;
+    });
+    if (invalidProducts.length > 0) {
+      return res.status(400).json({
+        error: {
+          product_ids: `Không có sản phẩm nào được cập nhật! Có sản phẩm không thuộc loại mới sản xuất hoặc không thuộc kho của cơ sở sản xuất. IDs: ${invalidProducts.map(
+            (p) => p.id
+          )}`,
+        },
+      });
+    }
+
+    // Cập nhật trạng thái các sản phẩm
+    products.forEach((product) => {
+      product.status = "dua_ve_dai_ly";
+      product.daily = daily;
+    });
+
+    // Lưu các sản phẩm
+    await productRepo.save(products);
+
+    // Trả về danh sách id sản phẩm đã được cập nhật
+    return res.status(200).json({ ids: products.map((product) => product.id) });
+  } catch (error) {
+    errorHandler(error, req, res);
+  }
+};
+
 const router = Router();
 
 router.get("/", protectRoute, restrictTo("admin"), getProducts);
 router.post("/", protectRoute, restrictTo("san_xuat"), createProducts);
+router.post("/exportToDaily", protectRoute, restrictTo("san_xuat"), exportToDaily);
 
 export default router;

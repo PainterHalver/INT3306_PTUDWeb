@@ -34,7 +34,7 @@ const login = async (req: Request, res: Response) => {
       return res.status(401).json({ password: "Password không đúng" });
     }
 
-    // TODO: Nếu ổn hết thì trả về token và user
+    // Nếu ổn hết thì trả về token và user
     const payload: JWTUserPayload = { username, account_type: user.account_type };
     const token = jwt.sign(payload, process.env.JWT_SECRET!);
 

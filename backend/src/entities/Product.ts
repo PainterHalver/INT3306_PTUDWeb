@@ -26,17 +26,17 @@ export class Product {
   customer: Customer;
 
   @ManyToOne(() => User, (user) => user.products)
-  @Validate(IsSanXuatUser, { message: "Người dùng không thuộc loại san_xuat" })
+  @Validate(IsSanXuatUser, { message: "ID của người dùng không thuộc loại san_xuat" })
   @JoinColumn({ name: "sanxuat_id" })
   sanxuat: User;
 
   @ManyToOne(() => User, (user) => user.products)
-  @Validate(IsDaiLyUser, { message: "Người dùng không thuộc loại dai_ly" })
+  @Validate(IsDaiLyUser, { message: "ID của người dùng không thuộc loại dai_ly" })
   @JoinColumn({ name: "daily_id" })
   daily: User;
 
   @ManyToOne(() => User, (user) => user.products)
-  @Validate(IsBaoHanhUser, { message: "Người dùng không thuộc loại bao_hanh" })
+  @Validate(IsBaoHanhUser, { message: "ID của người dùng không thuộc loại bao_hanh" })
   @JoinColumn({ name: "baohanh_id" })
   baohanh: User;
 

@@ -1,6 +1,9 @@
 import { ValidationError } from "class-validator";
 import { Request, Response } from "express";
 
+/**
+ * Hàm xử lý lỗi không bắt được hoặc lặp lại nhiều lần trong controller.
+ */
 export const errorHandler = (error: unknown, req: Request, res: Response) => {
   console.log(error);
 
@@ -13,5 +16,6 @@ export const errorHandler = (error: unknown, req: Request, res: Response) => {
     return res.status(400).json({ error: errors });
   }
 
+  // Lỗi chưa xác định
   return res.status(500).json({ error: "Lỗi hệ thống!" });
 };
