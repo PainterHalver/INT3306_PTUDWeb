@@ -7,7 +7,7 @@ dotenv.config();
 
 import { AppDataSource } from "./data-source";
 import trim from "./middlewares/trim";
-import adminRouter from "./routes/admin";
+import userRouter from "./routes/users";
 import authRouter from "./routes/auth";
 import productsRouter from "./routes/products";
 import productLinesRouter from "./routes/product_lines";
@@ -24,7 +24,7 @@ app.use(trim);
 // API Routes
 app.get("/api", (_, res) => res.send("Hello World!"));
 app.use("/api/auth", authRouter);
-app.use("/api/admin", adminRouter);
+app.use("/api/users", userRouter);
 app.use("/api/products", productsRouter);
 app.use("/api/product_lines", productLinesRouter);
 // app.use("/api/users", userRouter);

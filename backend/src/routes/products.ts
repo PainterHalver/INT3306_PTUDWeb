@@ -1,4 +1,5 @@
 import { Request, Response, Router } from "express";
+import { errorHandler } from "../../helpers/errorHandler";
 
 import { AppDataSource } from "../data-source";
 import { Product } from "../entities/Product";
@@ -45,8 +46,7 @@ const getProducts = async (req: Request, res: Response) => {
     // Trả về danh sách sản phẩm
     return res.json({ page, count: products.length, products });
   } catch (error) {
-    console.log("GET_PRODUCTS", error);
-    res.status(500).json({ error: "Lỗi hệ thống!" });
+    errorHandler(error, req, res);
   }
 };
 
@@ -91,8 +91,7 @@ const createProducts = async (req: Request, res: Response) => {
     // Trả về danh sách id sản phẩm mới
     return res.status(201).json({ ids });
   } catch (error) {
-    console.log("CREATE_PRODUCTS", error);
-    res.status(500).json({ error: "Lỗi hệ thống!" });
+    errorHandler(error, req, res);
   }
 };
 

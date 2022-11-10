@@ -5,6 +5,7 @@ import { User } from "../entities/User";
 import { AppDataSource } from "../data-source";
 import { protectRoute, restrictTo } from "../middlewares/auth";
 import { AccountType } from "../../helpers/types";
+import { errorHandler } from "../../helpers/errorHandler";
 
 /**
  * Admin xem danh sách tài khoản
@@ -34,8 +35,7 @@ const getUsers = async (req: Request, res: Response) => {
     // Trả về danh sách user
     return res.json({ page, totalPages, count, users });
   } catch (error) {
-    console.log(error);
-    res.status(500).json({ error: "Lỗi hệ thống!" });
+    errorHandler(error, req, res);
   }
 };
 
@@ -79,8 +79,7 @@ const createUser = async (req: Request, res: Response) => {
     // Trả về user
     return res.status(201).json(savedUser);
   } catch (error) {
-    console.log(error);
-    res.status(500).json({ error: "Lỗi hệ thống!" });
+    errorHandler(error, req, res);
   }
 };
 
@@ -90,10 +89,12 @@ const createUser = async (req: Request, res: Response) => {
 const updateUser = async (req: Request, res: Response) => {
   try {
     const { username, name, account_type, address, password } = req.body;
+    const { id } = req.params;
 
     // Validate dữ liệu, bắt buộc phải có các field trừ password
     let errors: any = {};
-    if (!username) errors.username = "Username không được để trống";
+    if (!id || isNaN(parseInt(id))) errors.id = "ID không hợp lệ";
+    // if (!username) errors.username = "Username không được để trống";
     if (!name) errors.name = "Tên không được để trống";
     if (!account_type) errors.account_type = "Loại tài khoản không được để trống";
     if (!address) errors.address = "Địa chỉ không được để trống";
@@ -103,12 +104,13 @@ const updateUser = async (req: Request, res: Response) => {
 
     // Check xem username đã tồn tại chưa
     const userRepo = AppDataSource.getRepository(User);
-    const usernameUser = await userRepo.findOneBy({ username });
+    const usernameUser = await userRepo.findOneBy({ id: parseInt(id) });
     if (!usernameUser) {
-      return res.status(400).json({ username: "Username không tồn tại" });
+      return res.status(400).json({ username: `User với id ${id} không tồn tại` });
     }
 
     // Cập nhật tài khoản
+    // TODO: Quyết định xem có cho đổi username không vì username là trường unique
     usernameUser.name = name;
     usernameUser.account_type = account_type;
     usernameUser.address = address;
@@ -120,8 +122,7 @@ const updateUser = async (req: Request, res: Response) => {
     // Trả về user
     return res.json(updatedUser);
   } catch (error) {
-    console.log(error);
-    res.status(500).json({ error: "Lỗi hệ thống!" });
+    errorHandler(error, req, res);
   }
 };
 
@@ -130,40 +131,37 @@ const updateUser = async (req: Request, res: Response) => {
  */
 const deleteUser = async (req: Request, res: Response) => {
   try {
-    const { username } = req.body;
+    const { id } = req.params;
 
     // Validate dữ liệu
     let errors: any = {};
-    if (!username) errors.username = "Username không được để trống";
+    if (!id || isNaN(parseInt(id))) errors.id = "ID không hợp lệ";
     if (Object.keys(errors).length > 0) {
       return res.status(400).json(errors);
     }
 
     // Check xem username đã tồn tại chưa
     const userRepo = AppDataSource.getRepository(User);
-    const usernameUser = await userRepo.findOneBy({ username });
+    const usernameUser = await userRepo.findOneBy({ id: parseInt(id) });
     if (!usernameUser) {
       return res.status(400).json({ username: "Username không tồn tại" });
     }
 
     // Xóa tài khoản
-    await userRepo.delete({
-      username,
-    });
+    await userRepo.delete({ id: parseInt(id) });
 
-    // Trả về user
+    // Trả về status 204 No Content
     return res.status(204).json();
   } catch (error) {
-    console.log(error);
-    res.status(500).json({ error: "Lỗi hệ thống!" });
+    errorHandler(error, req, res);
   }
 };
 
 const router = Router();
 
-router.post("/createUser", protectRoute, restrictTo("admin"), createUser);
-router.get("/users", protectRoute, restrictTo("admin"), getUsers);
-router.put("/updateUser", protectRoute, restrictTo("admin"), updateUser);
-router.delete("/deleteUser", protectRoute, restrictTo("admin"), deleteUser);
+router.post("/", protectRoute, restrictTo("admin"), createUser);
+router.get("/", protectRoute, restrictTo("admin"), getUsers);
+router.put("/:id", protectRoute, restrictTo("admin"), updateUser);
+router.delete("/:id", protectRoute, restrictTo("admin"), deleteUser);
 
 export default router;

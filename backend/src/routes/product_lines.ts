@@ -3,6 +3,7 @@ import { Request, Response, Router } from "express";
 import { AppDataSource } from "../data-source";
 import { ProductLine } from "../entities/ProductLine";
 import { protectRoute, restrictTo } from "../middlewares/auth";
+import { errorHandler } from "../../helpers/errorHandler";
 
 /**
  * Lấy danh sách các dòng sản phẩm.
@@ -30,8 +31,7 @@ const getProductLines = async (req: Request, res: Response) => {
     // Trả về danh sách product_lines
     return res.json({ page, totalPages, count, product_lines });
   } catch (error) {
-    console.log(error);
-    res.status(500).json({ error: "Lỗi hệ thống!" });
+    errorHandler(error, req, res);
   }
 };
 
@@ -68,8 +68,7 @@ const createProductLine = async (req: Request, res: Response) => {
     // Trả về ProductLine mới
     return res.status(201).json(savedProductLine);
   } catch (error) {
-    console.log(error);
-    res.status(500).json({ error: "Lỗi hệ thống!" });
+    errorHandler(error, req, res);
   }
 };
 
@@ -107,8 +106,7 @@ const updateProductLine = async (req: Request, res: Response) => {
     // Trả về ProductLine mới
     return res.json({ ...updatedProductLine, product_count });
   } catch (error) {
-    console.log(error);
-    res.status(500).json({ error: "Lỗi hệ thống!" });
+    errorHandler(error, req, res);
   }
 };
 
@@ -138,8 +136,7 @@ const deleteProductLine = async (req: Request, res: Response) => {
 
     return res.status(204).json({ message: "Xóa thành công" });
   } catch (error) {
-    console.log(error);
-    res.status(500).json({ error: "Lỗi hệ thống!" });
+    errorHandler(error, req, res);
   }
 };
 

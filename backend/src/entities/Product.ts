@@ -1,7 +1,7 @@
 import { Expose } from "class-transformer";
 import { Validate, validateOrReject } from "class-validator";
 import { BeforeInsert, BeforeUpdate, Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
-import { IsBaoHanhUser, IsDaiLyUser, IsSanXuatUser } from "../../helpers/decorators";
+import { IsBaoHanhUser, IsDaiLyUser, IsProductStatus, IsSanXuatUser } from "../../helpers/decorators";
 
 import { ProductStatus } from "../../helpers/types";
 import { Customer } from "./Customer";
@@ -18,6 +18,7 @@ export class Product {
   product_line: ProductLine;
 
   @Column({ nullable: false })
+  @Validate(IsProductStatus, { message: "Không đúng loại trạng thái sản phẩm" })
   status: ProductStatus;
 
   @ManyToOne(() => Customer, (customer) => customer.products, { onDelete: "SET NULL" })

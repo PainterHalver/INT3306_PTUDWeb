@@ -6,6 +6,7 @@ import crypto from "crypto";
 import { AppDataSource } from "../data-source";
 import { User } from "../entities/User";
 import { JWTUserPayload } from "../../helpers/types";
+import { errorHandler } from "../../helpers/errorHandler";
 
 const login = async (req: Request, res: Response) => {
   try {
@@ -39,8 +40,7 @@ const login = async (req: Request, res: Response) => {
 
     return res.json({ user, token });
   } catch (error) {
-    console.log(error);
-    return res.status(500).json({ error: "Lỗi hệ thống!" });
+    errorHandler(error, req, res);
   }
 };
 
