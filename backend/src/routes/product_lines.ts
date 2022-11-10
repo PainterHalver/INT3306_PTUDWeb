@@ -23,6 +23,7 @@ const getProductLines = async (req: Request, res: Response) => {
       order: {
         id: "ASC",
       },
+      relations: ["products"],
     });
     const totalPages = Math.ceil(count / limit);
 
@@ -101,9 +102,10 @@ const updateProductLine = async (req: Request, res: Response) => {
     productLine.model = model;
     productLine.description = description;
     const updatedProductLine = await productLineRepo.save(productLine);
+    const product_count = await updatedProductLine.getProductCount();
 
     // Trả về ProductLine mới
-    return res.json(updatedProductLine);
+    return res.json({ ...updatedProductLine, product_count });
   } catch (error) {
     console.log(error);
     res.status(500).json({ error: "Lỗi hệ thống!" });

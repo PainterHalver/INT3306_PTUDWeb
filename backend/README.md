@@ -8,6 +8,6 @@
 
 3. `npm start`
 
-# Notes
+## Notes
 
 1. Cở sở sản xuất tạo một DÒNG SẢN PHẨM, sau đó tạo ra nhiều sản phẩm thuộc dòng sản phẩm bằng api.
