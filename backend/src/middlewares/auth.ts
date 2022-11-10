@@ -56,7 +56,7 @@ export const protectRoute = async (req: Request, res: Response, next: NextFuncti
 export const restrictTo = (...accountTypes: AccountType[]) => {
   return (req: Request, res: Response, next: NextFunction) => {
     if (!accountTypes.includes(res.locals.user.account_type)) {
-      return res.status(401).json({ error: "Bạn không có quyền truy cập!" });
+      return res.status(401).json({ error: `Chỉ ${accountTypes} mới được truy cập route này!` });
     }
 
     next();

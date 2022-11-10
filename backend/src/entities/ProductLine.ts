@@ -7,8 +7,11 @@ export class ProductLine {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column({ nullable: false, unique: true })
+  @Column({ nullable: false })
   name: string;
+
+  @Column({ nullable: false, unique: true })
+  model: string;
 
   @Column({ nullable: true })
   description: string;

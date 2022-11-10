@@ -18,25 +18,22 @@ export default class ProductSeeder implements Seeder {
       const sanxuatUser = (await userRepo.findOneBy({ account_type: "san_xuat" })) as User;
       const dailyUser = (await userRepo.findOneBy({ account_type: "dai_ly" })) as User;
       const baohanhUser = (await userRepo.findOneBy({ account_type: "bao_hanh" })) as User;
-      const roombaProductLine = (await productLineRepo.findOneBy({ name: "Roomba" })) as ProductLine;
+      const roombaProductLines = (await productLineRepo.findBy({ name: "Roomba" })) as ProductLine[];
 
       // Tạo dữ liệu mẫu
       await repository.insert([
         {
-          product_line: roombaProductLine,
-          product_name: "iRobot Roomba i7",
+          product_line: roombaProductLines[0],
           status: "moi_san_xuat",
           sanxuat: sanxuatUser,
         },
         {
-          product_line: roombaProductLine,
-          product_name: "iRobot Roomba i7 Plus",
+          product_line: roombaProductLines[0],
           status: "moi_san_xuat",
           sanxuat: sanxuatUser,
         },
         {
-          product_line: roombaProductLine,
-          product_name: "iRobot Roomba i7",
+          product_line: roombaProductLines[1],
           status: "dua_ve_dai_ly",
           sanxuat: sanxuatUser,
           daily: dailyUser,

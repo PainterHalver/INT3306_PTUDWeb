@@ -39,11 +39,12 @@ const getProductLines = async (req: Request, res: Response) => {
  */
 const createProductLine = async (req: Request, res: Response) => {
   try {
-    const { name, description } = req.body;
+    const { name, model, description } = req.body;
 
     // Validate dữ liệu
     let errors: any = {};
     if (!name) errors.name = "Tên dòng sản phẩm không được để trống";
+    if (!model) errors.model = "Tên sản phẩm (model) không được để trống";
     if (Object.keys(errors).length > 0) {
       return res.status(400).json(errors);
     }
@@ -58,6 +59,7 @@ const createProductLine = async (req: Request, res: Response) => {
     // Tạo ProductLine mới
     const newProductLine = productLineRepo.create({
       name,
+      model,
       description,
     });
     const savedProductLine = await productLineRepo.save(newProductLine);
@@ -75,13 +77,14 @@ const createProductLine = async (req: Request, res: Response) => {
  */
 const updateProductLine = async (req: Request, res: Response) => {
   try {
-    const { name, description } = req.body;
+    const { name, model, description } = req.body;
     const { id } = req.params;
 
     // Validate dữ liệu
     let errors: any = {};
     if (!name) errors.name = "Tên dòng sản phẩm không được để trống";
     if (!id || isNaN(parseInt(id))) errors.id = "ID không hợp lệ";
+    if (!model) errors.model = "Tên sản phẩm (model) không được để trống";
     if (Object.keys(errors).length > 0) {
       return res.status(400).json(errors);
     }
@@ -95,6 +98,7 @@ const updateProductLine = async (req: Request, res: Response) => {
 
     // Cập nhật ProductLine
     productLine.name = name;
+    productLine.model = model;
     productLine.description = description;
     const updatedProductLine = await productLineRepo.save(productLine);
 

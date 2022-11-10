@@ -14,6 +14,12 @@ export default class ProductLineSeeder implements Seeder {
       await repository.insert([
         {
           name: "Roomba",
+          model: "iRobot Roomba i7",
+          description: "Robot hút bụi thông minh",
+        },
+        {
+          name: "Roomba",
+          model: "iRobot Roomba i7 Plus",
           description: "Robot hút bụi thông minh",
         },
       ]);

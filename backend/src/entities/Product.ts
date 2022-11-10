@@ -18,16 +18,12 @@ export class Product {
   product_line: ProductLine;
 
   @Column({ nullable: false })
-  product_name: string;
-
-  @Column({ nullable: false })
   status: ProductStatus;
 
   @ManyToOne(() => Customer, (customer) => customer.products, { onDelete: "SET NULL" })
   @JoinColumn({ name: "customer_id" })
   customer: Customer;
 
-  // Mỗi sản phẩm bắt buộc phải có nơi sản xuất
   @ManyToOne(() => User, (user) => user.products)
   @Validate(IsSanXuatUser, { message: "Người dùng không thuộc loại san_xuat" })
   @JoinColumn({ name: "sanxuat_id" })
