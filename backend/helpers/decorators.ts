@@ -7,6 +7,9 @@ import {
 } from "class-validator";
 import { isAccountType, isProductStatus } from "./types";
 
+/**
+ * Validator kiểm tra property này là User thuộc loại san_xuat
+ */
 @ValidatorConstraint({ name: "IsSanXuatUser", async: true })
 export class IsSanXuatUser implements ValidatorConstraintInterface {
   validate(value: any, args: ValidationArguments) {
@@ -15,6 +18,9 @@ export class IsSanXuatUser implements ValidatorConstraintInterface {
   }
 }
 
+/**
+ * Validator kiểm tra property này là User thuộc loại dai_ly
+ */
 @ValidatorConstraint({ name: "IsDaiLyUser", async: true })
 export class IsDaiLyUser implements ValidatorConstraintInterface {
   validate(value: any, args: ValidationArguments) {
@@ -23,6 +29,9 @@ export class IsDaiLyUser implements ValidatorConstraintInterface {
   }
 }
 
+/**
+ * Validator kiểm tra property này là User thuộc loại bao_hanh
+ */
 @ValidatorConstraint({ name: "IsBaoHanhUser", async: true })
 export class IsBaoHanhUser implements ValidatorConstraintInterface {
   validate(value: any, args: ValidationArguments) {
@@ -31,6 +40,9 @@ export class IsBaoHanhUser implements ValidatorConstraintInterface {
   }
 }
 
+/**
+ * Validator kiểm tra property này là một loại tài khoản hợp lệ
+ */
 @ValidatorConstraint({ name: "IsAccountType", async: false })
 export class IsAccountType implements ValidatorConstraintInterface {
   validate(value: any, args: ValidationArguments) {
@@ -38,6 +50,9 @@ export class IsAccountType implements ValidatorConstraintInterface {
   }
 }
 
+/**
+ * Validator kiểm tra property này là một trạng thái sản phẩm hợp lệ
+ */
 @ValidatorConstraint({ name: "IsProductStatus", async: false })
 export class IsProductStatus implements ValidatorConstraintInterface {
   validate(value: any, args: ValidationArguments) {

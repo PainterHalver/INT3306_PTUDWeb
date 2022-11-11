@@ -21,9 +21,9 @@ export class Product {
   @Validate(IsProductStatus, { message: "Không đúng loại trạng thái sản phẩm" })
   status: ProductStatus;
 
+  @RequireProperty("sold_to_customer_date", { message: "Ngày bán cho khách hàng không được để trống" })
   @ManyToOne(() => Customer, (customer) => customer.products, { onDelete: "SET NULL" })
   @JoinColumn({ name: "customer_id" })
-  @RequireProperty("sold_to_customer_date", { message: "Ngày bán cho khách hàng không được để trống" })
   customer: Customer;
 
   @Column({ nullable: true })
