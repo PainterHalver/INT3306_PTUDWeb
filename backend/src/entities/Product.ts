@@ -1,8 +1,8 @@
 import { Expose } from "class-transformer";
-import { Validate, validateOrReject } from "class-validator";
+import { IsNotEmptyObject, Validate, validateOrReject } from "class-validator";
 import { BeforeInsert, BeforeUpdate, Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
-import { IsBaoHanhUser, IsDaiLyUser, IsProductStatus, IsSanXuatUser } from "../../helpers/decorators";
 
+import { IsBaoHanhUser, IsDaiLyUser, IsProductStatus, IsSanXuatUser, RequireProperty } from "../../helpers/decorators";
 import { ProductStatus } from "../../helpers/types";
 import { Customer } from "./Customer";
 import { ProductLine } from "./ProductLine";
@@ -23,7 +23,11 @@ export class Product {
 
   @ManyToOne(() => Customer, (customer) => customer.products, { onDelete: "SET NULL" })
   @JoinColumn({ name: "customer_id" })
+  @RequireProperty("sold_to_customer_date", { message: "Ngày bán cho khách hàng không được để trống" })
   customer: Customer;
+
+  @Column({ nullable: true })
+  sold_to_customer_date: Date;
 
   @ManyToOne(() => User, (user) => user.products)
   @Validate(IsSanXuatUser, { message: "ID của người dùng không thuộc loại san_xuat" })
@@ -33,7 +37,11 @@ export class Product {
   @ManyToOne(() => User, (user) => user.products)
   @Validate(IsDaiLyUser, { message: "ID của người dùng không thuộc loại dai_ly" })
   @JoinColumn({ name: "daily_id" })
+  @RequireProperty("exported_to_daily_date", { message: "Ngày xuất cho đại lý không được để trống" })
   daily: User;
+
+  @Column({ nullable: true })
+  exported_to_daily_date: Date;
 
   @ManyToOne(() => User, (user) => user.products)
   @Validate(IsBaoHanhUser, { message: "ID của người dùng không thuộc loại bao_hanh" })
@@ -71,7 +79,7 @@ export class Product {
   @BeforeInsert()
   @BeforeUpdate()
   async validateStatusAndPossesser() {
-    // FIXME: Có vẻ Listener này không hoạt động
+    // FIXME: Có vẻ Listener này không hoạt động khi seed
     await validateOrReject(this);
     try {
       process.stdout.write(`Validate sản phẩm id ${this.id}... `);

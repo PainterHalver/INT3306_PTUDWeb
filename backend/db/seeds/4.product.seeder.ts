@@ -37,6 +37,7 @@ export default class ProductSeeder implements Seeder {
           status: "dua_ve_dai_ly",
           sanxuat: sanxuatUser,
           daily: dailyUser,
+          exported_to_daily_date: new Date("2022-10-10"),
         },
       ]);
 

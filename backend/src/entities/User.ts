@@ -1,9 +1,9 @@
 import { Exclude, instanceToPlain } from "class-transformer";
-import { Length, Validate, validateOrReject, ValidationError } from "class-validator";
+import { Length, Validate, validateOrReject } from "class-validator";
 import { BeforeInsert, BeforeUpdate, Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 import { IsAccountType } from "../../helpers/decorators";
 
-import { AccountType, isAccountType } from "../../helpers/types";
+import { AccountType } from "../../helpers/types";
 import IHasAddressAndProducts from "./interfaces/IHasAdressAndProducts";
 import { Product } from "./Product";
 

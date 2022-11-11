@@ -1,5 +1,4 @@
 import { Exclude, Expose, instanceToPlain } from "class-transformer";
-import { count } from "console";
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 import { AppDataSource } from "../data-source";
 
@@ -18,6 +17,9 @@ export class ProductLine {
 
   @Column({ nullable: true })
   description: string;
+
+  @Column({ nullable: false })
+  warranty_months: number;
 
   @Exclude()
   @OneToMany(() => Product, (product) => product.product_line)
