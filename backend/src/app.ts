@@ -11,6 +11,7 @@ import userRouter from "./routes/users";
 import authRouter from "./routes/auth";
 import productsRouter from "./routes/products";
 import productLinesRouter from "./routes/product_lines";
+import statsRouter from "./routes/stats";
 
 const app = express();
 const port = process.env.PORT || 5000;
@@ -27,7 +28,7 @@ app.use("/api/auth", authRouter);
 app.use("/api/users", userRouter);
 app.use("/api/products", productsRouter);
 app.use("/api/product_lines", productLinesRouter);
-// app.use("/api/users", userRouter);
+app.use("/api/stats", statsRouter);
 
 // Khởi tạo server
 app.listen(port, async () => {
