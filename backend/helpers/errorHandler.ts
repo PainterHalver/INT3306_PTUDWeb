@@ -13,7 +13,7 @@ export const errorHandler = (error: unknown, req: Request, res: Response) => {
     (error as ValidationError[]).forEach((e) => {
       errors[e.property] = e.constraints ? Object.values(e.constraints)[0] : "";
     });
-    return res.status(400).json({ error: errors });
+    return res.status(400).json({ errors });
   }
 
   // Lỗi chưa xác định

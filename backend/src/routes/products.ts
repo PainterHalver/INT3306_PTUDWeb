@@ -77,7 +77,7 @@ const createProducts = async (req: Request, res: Response) => {
     // Lấy dòng sản phẩm
     const productLineRepo = AppDataSource.getRepository(ProductLine);
     const productLine = await productLineRepo.findOneBy({ id: product_line_id });
-    if (!productLine) return res.status(400).json({ error: "Dòng sản phẩm không tồn tại!" });
+    if (!productLine) return res.status(400).json({errors: { message: "Dòng sản phẩm không tồn tại!" }});
 
     // Thêm `amount` sản phẩm mới vào cơ sở sản xuất
     const productRepo = AppDataSource.getRepository(Product);

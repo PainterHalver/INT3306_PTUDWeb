@@ -18,7 +18,7 @@ const login = async (req: Request, res: Response) => {
     if (isEmpty(username)) errors.username = "Username không được để trống";
     if (isEmpty(password)) errors.password = "Password không được để trống";
     if (Object.keys(errors).length > 0) {
-      return res.status(400).json(errors);
+      return res.status(400).json({ errors });
     }
 
     // Check xem user có tồn tại không, nếu không thì trả về lỗi

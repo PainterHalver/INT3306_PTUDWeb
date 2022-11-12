@@ -1,4 +1,4 @@
-import { Expose } from "class-transformer";
+import { Expose, instanceToPlain } from "class-transformer";
 import { IsNotEmptyObject, Validate, validateOrReject } from "class-validator";
 import { BeforeInsert, BeforeUpdate, Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
 
@@ -123,5 +123,9 @@ export class Product {
     }
 
     console.log("OK");
+  }
+
+  toJSON() {
+    return instanceToPlain(this);
   }
 }

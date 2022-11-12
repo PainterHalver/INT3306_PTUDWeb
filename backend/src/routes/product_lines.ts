@@ -47,7 +47,7 @@ const createProductLine = async (req: Request, res: Response) => {
     if (!name) errors.name = "Tên dòng sản phẩm không được để trống";
     if (!model) errors.model = "Tên sản phẩm (model) không được để trống";
     if (Object.keys(errors).length > 0) {
-      return res.status(400).json(errors);
+      return res.status(400).json({ errors });
     }
 
     // Check xem name đã tồn tại chưa
@@ -86,14 +86,14 @@ const updateProductLine = async (req: Request, res: Response) => {
     if (!id || isNaN(parseInt(id))) errors.id = "ID không hợp lệ";
     if (!model) errors.model = "Tên sản phẩm (model) không được để trống";
     if (Object.keys(errors).length > 0) {
-      return res.status(400).json(errors);
+      return res.status(400).json({ errors });
     }
 
     // Check xem ProductLine có tồn tại không
     const productLineRepo = AppDataSource.getRepository(ProductLine);
     const productLine = await productLineRepo.findOneBy({ id: parseInt(id) });
     if (!productLine) {
-      return res.status(404).json({ error: "Không tìm thấy dòng sản phẩm" });
+      return res.status(404).json({ errors: { message: "Không tìm thấy dòng sản phẩm" } });
     }
 
     // Cập nhật ProductLine
@@ -121,14 +121,14 @@ const deleteProductLine = async (req: Request, res: Response) => {
     let errors: any = {};
     if (!id || isNaN(parseInt(id))) errors.id = "ID không hợp lệ";
     if (Object.keys(errors).length > 0) {
-      return res.status(400).json(errors);
+      return res.status(400).json({ errors });
     }
 
     // Check xem ProductLine có tồn tại không
     const productLineRepo = AppDataSource.getRepository(ProductLine);
     const productLine = await productLineRepo.findOneBy({ id: parseInt(id) });
     if (!productLine) {
-      return res.status(404).json({ error: "Không tìm thấy dòng sản phẩm" });
+      return res.status(404).json({ errors: { message: "Không tìm thấy dòng sản phẩm" } });
     }
 
     // Xóa ProductLine

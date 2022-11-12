@@ -53,14 +53,14 @@ const createUser = async (req: Request, res: Response) => {
     if (!account_type) errors.account_type = "Loại tài khoản không được để trống";
     if (!address) errors.address = "Địa chỉ không được để trống";
     if (Object.keys(errors).length > 0) {
-      return res.status(400).json(errors);
+      return res.status(400).json({ errors });
     }
 
     // Check xem username đã tồn tại chưa
     const userRepo = AppDataSource.getRepository(User);
     const usernameUser = await userRepo.findOneBy({ username });
     if (usernameUser) {
-      return res.status(400).json({ username: "Username đã tồn tại" });
+      return res.status(400).json({ errors: { username: "Username đã tồn tại" } });
     }
 
     // Tạo tài khoản
@@ -99,14 +99,14 @@ const updateUser = async (req: Request, res: Response) => {
     if (!account_type) errors.account_type = "Loại tài khoản không được để trống";
     if (!address) errors.address = "Địa chỉ không được để trống";
     if (Object.keys(errors).length > 0) {
-      return res.status(400).json(errors);
+      return res.status(400).json({ errors });
     }
 
     // Check xem username đã tồn tại chưa
     const userRepo = AppDataSource.getRepository(User);
     const usernameUser = await userRepo.findOneBy({ id: parseInt(id) });
     if (!usernameUser) {
-      return res.status(400).json({ username: `User với id ${id} không tồn tại` });
+      return res.status(400).json({ errors: { username: `User với id ${id} không tồn tại` } });
     }
 
     // Cập nhật tài khoản
@@ -137,14 +137,14 @@ const deleteUser = async (req: Request, res: Response) => {
     let errors: any = {};
     if (!id || isNaN(parseInt(id))) errors.id = "ID không hợp lệ";
     if (Object.keys(errors).length > 0) {
-      return res.status(400).json(errors);
+      return res.status(400).json({ errors });
     }
 
     // Check xem username đã tồn tại chưa
     const userRepo = AppDataSource.getRepository(User);
     const usernameUser = await userRepo.findOneBy({ id: parseInt(id) });
     if (!usernameUser) {
-      return res.status(400).json({ username: "Username không tồn tại" });
+      return res.status(400).json({ errors: { username: "Username không tồn tại" } });
     }
 
     // Xóa tài khoản

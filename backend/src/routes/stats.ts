@@ -28,7 +28,7 @@ const getStats = async (req: Request, res: Response) => {
 
     // Kiểm tra input
     if (!status || typeof status !== "string") {
-      return res.status(400).json({ message: "Chưa nhập status hoặc status không hợp lệ" });
+      return res.status(400).json({ errors: { message: "Chưa nhập status hoặc status không hợp lệ" } });
     }
 
     // Đảm bảo start_time và end_time là có thể parse thành number
@@ -91,9 +91,9 @@ const exportToDailyStats = async (req: Request, res: Response) => {
       isNaN(parseInt(start_time)) ||
       isNaN(parseInt(end_time))
     ) {
-      return res
-        .status(400)
-        .json({ message: "start_time và end_time phải là unix time stamp. Gọi hàm getTime() của class Date" });
+      return res.status(400).json({
+        errors: { message: "start_time và end_time phải là unix time stamp. Gọi hàm getTime() của class Date" },
+      });
     }
 
     // Parse start_time và end_time về dạng "YYYY-MM-DD" cho sqlite

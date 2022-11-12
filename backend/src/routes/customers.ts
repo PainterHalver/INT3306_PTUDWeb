@@ -1,3 +1,4 @@
+import { isPhoneNumber } from "class-validator";
 import { Request, Response, Router } from "express";
 import { Like } from "typeorm";
 
@@ -21,7 +22,7 @@ const getCustomers = async (req: Request, res: Response) => {
     if (typeof name !== "string") errors.name = "Không hợp lệ";
     if (typeof phone !== "string") errors.phone = "Không hợp lệ";
     if (Object.keys(errors).length > 0) {
-      return res.status(400).json(errors);
+      return res.status(400).json({ errors });
     }
 
     // Tìm kiếm khách hàng
@@ -51,14 +52,15 @@ const createCustomer = async (req: Request, res: Response) => {
     let errors: any = {};
     if (!name || typeof name !== "string") errors.name = "Tên khách hàng không được để trống";
     if (!phone || typeof phone !== "string") errors.phone = "Số điện thoại không được để trống";
+    if (isNaN(phone)) errors.phone = "Số điện thoại chứa ký tự không hợp lệ";
     if (Object.keys(errors).length > 0) {
-      return res.status(400).json(errors);
+      return res.status(400).json({ errors });
     }
 
     // Kiểm tra số điện thoại đã tồn tại chưa
     const phoneCustomer = await customerRepo.findOneBy({ phone });
     if (phoneCustomer) {
-      return res.status(400).json({ phone: "Số điện thoại đã tồn tại" });
+      return res.status(400).json({ errors: { phone: "Số điện thoại đã tồn tại" } });
     }
 
     // Tạo khách hàng mới

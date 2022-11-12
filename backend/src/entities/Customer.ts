@@ -1,5 +1,6 @@
-import { IsPhoneNumber } from "class-validator";
-import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
+import { instanceToPlain } from "class-transformer";
+import { IsPhoneNumber, validateOrReject } from "class-validator";
+import { BeforeInsert, BeforeUpdate, Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 
 import IHasAddressAndProducts from "./interfaces/IHasAdressAndProducts";
 import { Product } from "./Product";
@@ -22,4 +23,14 @@ export class Customer implements IHasAddressAndProducts {
   // Khi customer bị xóa thì set customer_id của các sản phẩm của customer đó thành null
   @OneToMany(() => Product, (product) => product.customer, { onDelete: "SET NULL" })
   products: Product[];
+
+  @BeforeInsert()
+  @BeforeUpdate()
+  async validate() {
+    await validateOrReject(this);
+  }
+
+  toJSON() {
+    return instanceToPlain(this);
+  }
 }
