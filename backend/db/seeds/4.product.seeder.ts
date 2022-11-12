@@ -54,16 +54,23 @@ export default class ProductSeeder implements Seeder {
         const startDate = new Date("2022-10-10");
         const now = new Date();
 
-        // Sản phẩm mới có ngày xuất ra đại lý 10/10/2022
-        // Ngày được bán cho khách hàng ngẫu nhiên từ 10/10/2022 đến hiện tại
+        // Ngày sản xuất ngẫu nhiên từ 10/10/2022 đến hiện tại
+        const exported_to_daily_date = new Date(
+          startDate.getTime() + Math.random() * (now.getTime() - startDate.getTime())
+        );
+        // Ngày bán ngẫu nhiên từ ngày sản xuất đến hiện tại
+        const sold_to_customer_date = new Date(
+          exported_to_daily_date.getTime() + Math.random() * (now.getTime() - exported_to_daily_date.getTime())
+        );
+
         const product = {
           product_line: productLine,
           status: "da_ban",
           sanxuat: sanxuatUser,
           daily: dailyUser,
           customer: customer,
-          exported_to_daily_date: startDate,
-          sold_to_customer_date: new Date(startDate.getTime() + Math.random() * (now.getTime() - startDate.getTime())),
+          exported_to_daily_date,
+          sold_to_customer_date,
         };
 
         soldProducts.push(product);
