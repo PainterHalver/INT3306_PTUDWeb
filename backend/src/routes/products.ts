@@ -17,6 +17,7 @@ const getProducts = async (req: Request, res: Response) => {
     const daily_id = req.query.daily_id || 0;
     const sanxuat_id = req.query.sanxuat_id || 0;
     const baohanh_id = req.query.baohanh_id || 0;
+    const customer_id = req.query.customer_id || 0;
     const product_line_id = req.query.product_line_id || 0;
 
     const page = parseInt(req.query.page as string) || 1;
@@ -31,12 +32,14 @@ const getProducts = async (req: Request, res: Response) => {
       .leftJoinAndSelect("product.daily", "daily")
       .leftJoinAndSelect("product.sanxuat", "sanxuat")
       .leftJoinAndSelect("product.baohanh", "baohanh")
+      .leftJoinAndSelect("product.customer", "customer")
       .where((qb) => {
         qb.where(`product.status LIKE :status`, { status: `%${status}%` });
         if (product_line_id) qb = qb.andWhere(`product_line.id = :product_line_id`, { product_line_id });
         if (daily_id) qb = qb.andWhere(`daily.id = :daily_id`, { daily_id });
         if (sanxuat_id) qb = qb.andWhere(`sanxuat.id = :sanxuat_id`, { sanxuat_id });
         if (baohanh_id) qb = qb.andWhere(`baohanh.id = :baohanh_id`, { baohanh_id });
+        if (customer_id) qb = qb.andWhere(`customer.id = :customer_id`, { customer_id });
       })
       .skip(offset)
       .take(limit)
@@ -158,7 +161,7 @@ const exportToDaily = async (req: Request, res: Response) => {
 
 const router = Router();
 
-router.get("/", protectRoute, restrictTo("admin"), getProducts);
+router.get("/", protectRoute, restrictTo("admin", "bao_hanh", "dai_ly", "san_xuat"), getProducts);
 router.post("/", protectRoute, restrictTo("san_xuat"), createProducts);
 router.post("/exportToDaily", protectRoute, restrictTo("san_xuat"), exportToDaily);
 
