@@ -12,6 +12,7 @@ import authRouter from "./routes/auth";
 import productsRouter from "./routes/products";
 import productLinesRouter from "./routes/product_lines";
 import statsRouter from "./routes/stats";
+import customerRouter from "./routes/customers";
 
 const app = express();
 const port = process.env.PORT || 5000;
@@ -29,6 +30,7 @@ app.use("/api/users", userRouter);
 app.use("/api/products", productsRouter);
 app.use("/api/product_lines", productLinesRouter);
 app.use("/api/stats", statsRouter);
+app.use("/api/customers", customerRouter);
 
 // Khởi tạo server
 app.listen(port, async () => {

@@ -21,23 +21,23 @@ export default class ProductSeeder implements Seeder {
       const sanxuatUser = (await userRepo.findOneBy({ account_type: "san_xuat" })) as User;
       const dailyUser = (await userRepo.findOneBy({ account_type: "dai_ly" })) as User;
       const baohanhUser = (await userRepo.findOneBy({ account_type: "bao_hanh" })) as User;
-      const roombaProductLines = (await productLineRepo.findBy({ name: "Roomba" })) as ProductLine[];
+      const productLines = (await productLineRepo.findBy({ name: "Roomba" })) as ProductLine[];
       const customers = await customerRepo.find();
 
       // Tạo dữ liệu mẫu
       await repository.insert([
         {
-          product_line: roombaProductLines[0],
+          product_line: productLines[0],
           status: "moi_san_xuat",
           sanxuat: sanxuatUser,
         },
         {
-          product_line: roombaProductLines[0],
+          product_line: productLines[0],
           status: "moi_san_xuat",
           sanxuat: sanxuatUser,
         },
         {
-          product_line: roombaProductLines[1],
+          product_line: productLines[1],
           status: "dua_ve_dai_ly",
           sanxuat: sanxuatUser,
           daily: dailyUser,
@@ -50,7 +50,7 @@ export default class ProductSeeder implements Seeder {
       let soldProducts: any[] = [];
       for (let i = 0; i < customers.length * 2; i++) {
         const customer = randomElement(customers);
-        const productLine = randomElement(roombaProductLines);
+        const productLine = randomElement(productLines);
         const startDate = new Date("2022-10-10");
         const now = new Date();
 

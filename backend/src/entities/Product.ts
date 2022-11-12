@@ -79,11 +79,10 @@ export class Product {
   @BeforeInsert()
   @BeforeUpdate()
   async validate() {
-    process.stdout.write(`Validate sản phẩm id ${this.id}... `);
-
     // 1. Chạy các decorator của class-validator
     await validateOrReject(this);
 
+    process.stdout.write(`Validate sản phẩm id ${this.id}... `);
     // TODO: Chuyển sang ValidationError
     // 2. Kiểm tra loại user đúng là tương thích với trạng thái của sản phẩm
     const { status, customer, sanxuat, baohanh, daily } = this;
