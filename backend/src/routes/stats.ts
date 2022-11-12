@@ -1,5 +1,4 @@
 import { Request, Response, Router } from "express";
-import { IsDaiLyUser } from "../../helpers/decorators";
 
 import { errorHandler } from "../../helpers/errorHandler";
 import { AppDataSource } from "../data-source";

@@ -83,7 +83,7 @@ export default class ProductSeeder implements Seeder {
       });
       await Promise.all(
         products.map(async (product) => {
-          await product.validateStatusAndPossesser();
+          await product.validate();
         })
       );
     } catch (error) {

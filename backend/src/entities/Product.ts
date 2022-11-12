@@ -2,7 +2,7 @@ import { Expose } from "class-transformer";
 import { IsNotEmptyObject, Validate, validateOrReject } from "class-validator";
 import { BeforeInsert, BeforeUpdate, Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
 
-import { IsBaoHanhUser, IsDaiLyUser, IsProductStatus, IsSanXuatUser, RequireProperty } from "../../helpers/decorators";
+import { IsBaoHanhUser, IsDaiLyUser, IsProductStatus, IsSanXuatUser, RequireProperty } from "../../helpers/validators";
 import { ProductStatus } from "../../helpers/types";
 import { Customer } from "./Customer";
 import { ProductLine } from "./ProductLine";
@@ -74,44 +74,55 @@ export class Product {
   }
 
   /**
-   * Kiểm tra loại user đúng là tương thích với trạng thái của sản phẩm
+   *
    */
   @BeforeInsert()
   @BeforeUpdate()
-  async validateStatusAndPossesser() {
-    // FIXME: Có vẻ Listener này không hoạt động khi seed
+  async validate() {
+    process.stdout.write(`Validate sản phẩm id ${this.id}... `);
+
+    // 1. Chạy các decorator của class-validator
     await validateOrReject(this);
-    try {
-      process.stdout.write(`Validate sản phẩm id ${this.id}... `);
-      const { status, customer, sanxuat, baohanh, daily } = this;
-      if (status === "moi_san_xuat" && (!sanxuat || sanxuat.account_type !== "san_xuat")) {
-        throw new Error("Sản phẩm mới sản xuất phải ở kho của cơ sở sản xuất");
-      } else if (status === "dua_ve_dai_ly" && (!daily || daily.account_type !== "dai_ly")) {
-        throw new Error("Sản phẩm đưa về đại lý phải ở kho của đại lý");
-      } else if (status === "da_ban" && !customer) {
-        throw new Error("Sản phẩm đã bán phải do người dùng sở hữu");
-      } else if (status === "loi_can_bao_hanh" && (!daily || daily.account_type !== "dai_ly")) {
-        throw new Error("Sản phẩm lỗi cần bảo hành ở đại lý đã nhận lại từ khách hàng");
-      } else if (status === "dang_sua_chua_bao_hanh" && (!baohanh || baohanh.account_type !== "bao_hanh")) {
-        throw new Error("Sản phẩm đang sửa chữa bảo hành phải ở cơ sở bảo hành");
-      } else if (status === "da_bao_hanh_xong" && (!daily || daily.account_type !== "dai_ly")) {
-        throw new Error("Sản phẩm đã bảo hành xong phải ở kho của đại lý");
-      } else if (status === "da_tra_lai_bao_hanh_cho_khach_hang" && !customer) {
-        throw new Error("Sản phẩm đã trả lại cho khách hàng phải trả lại cho người dùng");
-      } else if (status === "loi_can_tra_ve_nha_may" && (!baohanh || baohanh.account_type !== "bao_hanh")) {
-        throw new Error("Sản phẩm lỗi cần trả về nhà máy phải ở cơ sở bảo hành");
-      } else if (status === "loi_da_dua_ve_co_so_san_xuat" && (!sanxuat || sanxuat.account_type !== "san_xuat")) {
-        throw new Error("Sản phẩm lỗi đã đưa về nơi sản xuất phải ở cơ sở sản xuất");
-      } else if (status === "loi_can_trieu_hoi" && !customer) {
-        throw new Error("Sản phẩm lỗi cần triệu hồi phải đang ở chỗ của người dùng");
-      } else if (status === "het_thoi_gian_bao_hanh" && !customer) {
-        throw new Error("Sản phẩm hết thời gian bảo hành phải đang ở chỗ của người dùng");
-      } else if (status === "tra_lai_co_so_san_xuat" && (!sanxuat || sanxuat.account_type !== "san_xuat")) {
-        throw new Error("Sản phẩm trả lại cơ sở sản xuất phải ở cơ sở sản xuất");
-      }
-      console.log("OK");
-    } catch (error) {
-      console.log(error);
+
+    // TODO: Chuyển sang ValidationError
+    // 2. Kiểm tra loại user đúng là tương thích với trạng thái của sản phẩm
+    const { status, customer, sanxuat, baohanh, daily } = this;
+    if (status === "moi_san_xuat" && (!sanxuat || sanxuat.account_type !== "san_xuat")) {
+      throw new Error("Sản phẩm mới sản xuất phải ở kho của cơ sở sản xuất");
+    } else if (status === "dua_ve_dai_ly" && (!daily || daily.account_type !== "dai_ly")) {
+      throw new Error("Sản phẩm đưa về đại lý phải ở kho của đại lý");
+    } else if (status === "da_ban" && !customer) {
+      throw new Error("Sản phẩm đã bán phải do người dùng sở hữu");
+    } else if (status === "loi_can_bao_hanh" && (!daily || daily.account_type !== "dai_ly")) {
+      throw new Error("Sản phẩm lỗi cần bảo hành ở đại lý đã nhận lại từ khách hàng");
+    } else if (status === "dang_sua_chua_bao_hanh" && (!baohanh || baohanh.account_type !== "bao_hanh")) {
+      throw new Error("Sản phẩm đang sửa chữa bảo hành phải ở cơ sở bảo hành");
+    } else if (status === "da_bao_hanh_xong" && (!daily || daily.account_type !== "dai_ly")) {
+      throw new Error("Sản phẩm đã bảo hành xong phải ở kho của đại lý");
+    } else if (status === "da_tra_lai_bao_hanh_cho_khach_hang" && !customer) {
+      throw new Error("Sản phẩm đã trả lại cho khách hàng phải trả lại cho người dùng");
+    } else if (status === "loi_can_tra_ve_nha_may" && (!baohanh || baohanh.account_type !== "bao_hanh")) {
+      throw new Error("Sản phẩm lỗi cần trả về nhà máy phải ở cơ sở bảo hành");
+    } else if (status === "loi_da_dua_ve_co_so_san_xuat" && (!sanxuat || sanxuat.account_type !== "san_xuat")) {
+      throw new Error("Sản phẩm lỗi đã đưa về nơi sản xuất phải ở cơ sở sản xuất");
+    } else if (status === "loi_can_trieu_hoi" && !customer) {
+      throw new Error("Sản phẩm lỗi cần triệu hồi phải đang ở chỗ của người dùng");
+    } else if (status === "het_thoi_gian_bao_hanh" && !customer) {
+      throw new Error("Sản phẩm hết thời gian bảo hành phải đang ở chỗ của người dùng");
+    } else if (status === "tra_lai_co_so_san_xuat" && (!sanxuat || sanxuat.account_type !== "san_xuat")) {
+      throw new Error("Sản phẩm trả lại cơ sở sản xuất phải ở cơ sở sản xuất");
     }
+
+    // 3. Kiểm tra ngày bán phải sau ngày sản xuất
+    const { exported_to_daily_date, sold_to_customer_date } = this;
+    if (
+      exported_to_daily_date &&
+      sold_to_customer_date &&
+      exported_to_daily_date.getTime() > sold_to_customer_date.getTime()
+    ) {
+      throw new Error("Ngày bán phải sau ngày xuất kho đại lý");
+    }
+
+    console.log("OK");
   }
 }
