@@ -3,6 +3,7 @@ import { In } from "typeorm";
 import { errorHandler } from "../../helpers/errorHandler";
 
 import { AppDataSource } from "../data-source";
+import { Customer } from "../entities/Customer";
 import { Product } from "../entities/Product";
 import { ProductLine } from "../entities/ProductLine";
 import { User } from "../entities/User";
@@ -77,7 +78,7 @@ const createProducts = async (req: Request, res: Response) => {
     // Lấy dòng sản phẩm
     const productLineRepo = AppDataSource.getRepository(ProductLine);
     const productLine = await productLineRepo.findOneBy({ id: product_line_id });
-    if (!productLine) return res.status(400).json({errors: { message: "Dòng sản phẩm không tồn tại!" }});
+    if (!productLine) return res.status(400).json({ errors: { message: "Dòng sản phẩm không tồn tại!" } });
 
     // Thêm `amount` sản phẩm mới vào cơ sở sản xuất
     const productRepo = AppDataSource.getRepository(Product);
@@ -159,10 +160,75 @@ const exportToDaily = async (req: Request, res: Response) => {
   }
 };
 
+/**
+ * Đại lý bán sản phẩm cho khách hàng.
+ */
+const sellToCustomer = async (req: Request, res: Response) => {
+  try {
+    const user = res.locals.user as User;
+    const customer_id = req.body.customer_id || 0;
+    const product_ids = req.body.product_ids || [];
+
+    // Kiểm tra User có phải là đại lý hay không cho chắc
+    if (!user || user.account_type !== "dai_ly") {
+      return res.status(403).json({ errors: { message: "Bạn không có quyền thực hiện thao tác này!" } });
+    }
+
+    // Validate input
+    let errors: any = {};
+    if (!customer_id) errors.customer_id = "Cần nhập id khách hàng!";
+    if (!product_ids.length) errors.product_ids = "Cần nhập mảng id sản phẩm!";
+    if (Object.keys(errors).length > 0) return res.status(400).json({ errors });
+
+    // Lấy khách hàng
+    const customerRepo = AppDataSource.getRepository(Customer);
+    const customer = await customerRepo.findOneBy({ id: customer_id });
+    if (!customer) return res.status(400).json({ errors: { message: "Khách hàng không tồn tại!" } });
+
+    // Lấy danh sách các sản phẩm
+    const productRepo = AppDataSource.getRepository(Product);
+    const products = await productRepo.find({
+      where: { id: In(product_ids) },
+      relations: ["daily"],
+    });
+
+    // Kiểm tra các sản phẩm có đang ở trạng thái "đưa về đại lý"
+    // và có đang thuộc kho của đại lý này không
+    const invalidProducts = products.filter((product) => {
+      return product.status !== "dua_ve_dai_ly" || product.daily.id !== user.id;
+    });
+    if (invalidProducts.length > 0) {
+      return res.status(400).json({
+        errors: {
+          product_ids: `Không có sản phẩm nào được cập nhật! Có sản phẩm không thuộc loại đưa về đại lý hoặc không thuộc kho của đại lý. IDs: ${invalidProducts.map(
+            (p) => p.id
+          )}`,
+        },
+      });
+    }
+
+    // Cập nhật trạng thái các sản phẩm nếu đã hợp lệ
+    products.forEach((product) => {
+      product.status = "da_ban";
+      product.customer = customer;
+      product.sold_to_customer_date = new Date();
+    });
+
+    // Lưu các sản phẩm
+    const updatedProducts = await productRepo.save(products);
+
+    // Trả về danh sách sản phẩm đã được cập nhật
+    return res.status(200).json({ products: updatedProducts });
+  } catch (error) {
+    errorHandler(error, req, res);
+  }
+};
+
 const router = Router();
 
 router.get("/", protectRoute, restrictTo("admin", "bao_hanh", "dai_ly", "san_xuat"), getProducts);
 router.post("/", protectRoute, restrictTo("san_xuat"), createProducts);
 router.post("/exportToDaily", protectRoute, restrictTo("san_xuat"), exportToDaily);
+router.post("/sellToCustomer", protectRoute, restrictTo("dai_ly"), sellToCustomer);
 
 export default router;
