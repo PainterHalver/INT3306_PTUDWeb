@@ -1,15 +1,12 @@
-import { instanceToPlain } from "class-transformer";
 import { IsPhoneNumber, validateOrReject } from "class-validator";
-import { BeforeInsert, BeforeUpdate, Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
+import { BeforeInsert, BeforeUpdate, Column, Entity, OneToMany } from "typeorm";
 
+import BaseEntity from "./Entity";
 import IHasAddressAndProducts from "./interfaces/IHasAdressAndProducts";
 import { Product } from "./Product";
 
 @Entity({ name: "customers" })
-export class Customer implements IHasAddressAndProducts {
-  @PrimaryGeneratedColumn()
-  id: number;
-
+export class Customer extends BaseEntity implements IHasAddressAndProducts {
   @Column({ nullable: false })
   name: string;
 
@@ -28,9 +25,5 @@ export class Customer implements IHasAddressAndProducts {
   @BeforeUpdate()
   async validate() {
     await validateOrReject(this);
-  }
-
-  toJSON() {
-    return instanceToPlain(this);
   }
 }

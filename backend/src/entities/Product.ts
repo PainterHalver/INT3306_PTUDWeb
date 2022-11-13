@@ -1,18 +1,16 @@
-import { Expose, instanceToPlain } from "class-transformer";
-import { IsNotEmptyObject, Validate, validateOrReject } from "class-validator";
-import { BeforeInsert, BeforeUpdate, Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
+import { Expose } from "class-transformer";
+import { Validate, validateOrReject } from "class-validator";
+import { BeforeInsert, BeforeUpdate, Column, Entity, JoinColumn, ManyToOne } from "typeorm";
 
-import { IsBaoHanhUser, IsDaiLyUser, IsProductStatus, IsSanXuatUser, RequireProperty } from "../../helpers/validators";
 import { ProductStatus } from "../../helpers/types";
+import { IsBaoHanhUser, IsDaiLyUser, IsProductStatus, IsSanXuatUser, RequireProperty } from "../../helpers/validators";
 import { Customer } from "./Customer";
+import BaseEntity from "./Entity";
 import { ProductLine } from "./ProductLine";
 import { User } from "./User";
 
 @Entity({ name: "products" })
-export class Product {
-  @PrimaryGeneratedColumn()
-  id: number;
-
+export class Product extends BaseEntity {
   @ManyToOne(() => ProductLine, (product_line) => product_line.products, { onDelete: "CASCADE" })
   @JoinColumn({ name: "product_line_id" })
   product_line: ProductLine;
@@ -123,9 +121,5 @@ export class Product {
     }
 
     console.log("OK");
-  }
-
-  toJSON() {
-    return instanceToPlain(this);
   }
 }

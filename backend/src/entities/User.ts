@@ -1,17 +1,15 @@
-import { Exclude, instanceToPlain } from "class-transformer";
+import { Exclude } from "class-transformer";
 import { Length, Validate, validateOrReject } from "class-validator";
-import { BeforeInsert, BeforeUpdate, Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
-import { IsAccountType } from "../../helpers/validators";
+import { BeforeInsert, BeforeUpdate, Column, Entity, OneToMany } from "typeorm";
 
 import { AccountType } from "../../helpers/types";
+import { IsAccountType } from "../../helpers/validators";
+import BaseEntity from "./Entity";
 import IHasAddressAndProducts from "./interfaces/IHasAdressAndProducts";
 import { Product } from "./Product";
 
 @Entity({ name: "users" })
-export class User implements IHasAddressAndProducts {
-  @PrimaryGeneratedColumn()
-  id: number;
-
+export class User extends BaseEntity implements IHasAddressAndProducts {
   @Column({ nullable: false })
   name: string;
 
@@ -41,10 +39,5 @@ export class User implements IHasAddressAndProducts {
   @BeforeUpdate()
   async validate() {
     await validateOrReject(this);
-  }
-
-  // Method này cần để giấu password khi trả về response
-  toJSON() {
-    return instanceToPlain(this);
   }
 }

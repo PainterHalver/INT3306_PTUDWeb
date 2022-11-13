@@ -1,14 +1,12 @@
-import { Exclude, Expose, instanceToPlain } from "class-transformer";
-import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
-import { AppDataSource } from "../data-source";
+import { Exclude, Expose } from "class-transformer";
+import { Column, Entity, OneToMany } from "typeorm";
 
+import { AppDataSource } from "../data-source";
+import BaseEntity from "./Entity";
 import { Product } from "./Product";
 
 @Entity({ name: "product_lines" })
-export class ProductLine {
-  @PrimaryGeneratedColumn()
-  id: number;
-
+export class ProductLine extends BaseEntity {
   @Column({ nullable: false })
   name: string;
 
@@ -41,9 +39,5 @@ export class ProductLine {
       .where("product_line_id = :id", { id: this.id })
       .getCount();
     return count;
-  }
-
-  toJSON() {
-    return instanceToPlain(this);
   }
 }
