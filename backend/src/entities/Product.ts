@@ -43,8 +43,13 @@ export class Product extends BaseEntity {
 
   @ManyToOne(() => User, (user) => user.products)
   @Validate(IsBaoHanhUser, { message: "ID của người dùng không thuộc loại bao_hanh" })
+  @RequireProperty("baohanh_count", { message: "Số lần bảo hành không được để trống" })
   @JoinColumn({ name: "baohanh_id" })
   baohanh: User;
+
+  @Column({ nullable: true })
+  @RequireProperty("baohanh", { message: "Bảo hành không được để trống" })
+  baohanh_count: number;
 
   /**
    * Trả về User hiện tại mà sản phẩm này đang ở

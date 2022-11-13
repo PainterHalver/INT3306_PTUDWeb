@@ -24,7 +24,7 @@ export default class ProductSeeder implements Seeder {
       const productLines = (await productLineRepo.findBy({ name: "Roomba" })) as ProductLine[];
       const customers = await customerRepo.find();
 
-      // Tạo dữ liệu mẫu
+      // 1. Tạo dữ liệu mẫu
       await repository.insert([
         {
           product_line: productLines[0],
@@ -45,10 +45,10 @@ export default class ProductSeeder implements Seeder {
         },
       ]);
 
-      // Tạo các sản phẩm bán cho khách hàng
+      // 2. Tạo các sản phẩm bán cho khách hàng
       // TODO: Chỉnh type không để any
       let soldProducts: any[] = [];
-      for (let i = 0; i < customers.length * 2; i++) {
+      for (let i = 0; i < customers.length; i++) {
         const customer = randomElement(customers);
         const productLine = randomElement(productLines);
         const startDate = new Date("2022-10-10");
@@ -76,6 +76,39 @@ export default class ProductSeeder implements Seeder {
         soldProducts.push(product);
       }
       await repository.insert(soldProducts);
+
+      // 3. Tạo các sản phẩm lỗi cần bảo hành
+      let loicanbaohanhProducts: any[] = [];
+      for (let i = 0; i < Math.ceil(customers.length / 3); i++) {
+        const customer = randomElement(customers);
+        const productLine = randomElement(productLines);
+        const startDate = new Date("2022-10-10");
+        const now = new Date();
+
+        // Ngày sản xuất ngẫu nhiên từ 10/10/2022 đến hiện tại
+        const exported_to_daily_date = new Date(
+          startDate.getTime() + Math.random() * (now.getTime() - startDate.getTime())
+        );
+        // Ngày bán ngẫu nhiên từ ngày sản xuất đến hiện tại
+        const sold_to_customer_date = new Date(
+          exported_to_daily_date.getTime() + Math.random() * (now.getTime() - exported_to_daily_date.getTime())
+        );
+
+        const product = {
+          product_line: productLine,
+          status: "loi_can_bao_hanh",
+          sanxuat: sanxuatUser,
+          daily: dailyUser,
+          customer: customer,
+          baohanh: baohanhUser,
+          baohanh_count: Math.floor(Math.random() * 3) + 1, // 1-3 lần
+          exported_to_daily_date,
+          sold_to_customer_date,
+        };
+
+        loicanbaohanhProducts.push(product);
+      }
+      await repository.insert(loicanbaohanhProducts);
 
       console.log("Kiểm tra user validator");
       const products: Product[] = await repository.find({

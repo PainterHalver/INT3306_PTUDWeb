@@ -79,7 +79,7 @@ export function RequireProperty(property: string, validationOptions?: Validation
           if (value === null || value === undefined) {
             return true;
           }
-          return relatedValue !== null && relatedValue !== undefined;
+          return relatedValue !== null && relatedValue !== undefined && relatedValue !== 0;
         },
       },
     });
