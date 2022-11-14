@@ -48,7 +48,7 @@ const getStats = async (req: Request, res: Response) => {
     // const parsed_end_time = new Date(parseInt(end_time)).toISOString().split("T")[0];
 
     // https://typeorm.io/select-query-builder#adding-where-expression
-    const products = await productLineRepo
+    const product_lines = await productLineRepo
       .createQueryBuilder("product_line")
       .leftJoinAndSelect("product_line.products", "products")
       .where("products.status = :status", { status })
@@ -68,7 +68,7 @@ const getStats = async (req: Request, res: Response) => {
       // })
       .getMany();
 
-    return res.json(products);
+    return res.json(product_lines);
   } catch (error) {
     errorHandler(error, req, res);
   }

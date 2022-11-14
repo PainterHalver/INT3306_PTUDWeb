@@ -161,6 +161,8 @@ const router = Router();
 
 router.post("/", protectRoute, restrictTo("admin"), createUser);
 router.get("/", protectRoute, restrictTo("admin"), getUsers);
+
+// Các route có params
 router.put("/:id", protectRoute, restrictTo("admin"), updateUser);
 router.delete("/:id", protectRoute, restrictTo("admin"), deleteUser);
 

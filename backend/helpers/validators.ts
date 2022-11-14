@@ -76,7 +76,7 @@ export function RequireProperty(property: string, validationOptions?: Validation
         validate(value: any, args: ValidationArguments) {
           const [relatedPropertyName] = args.constraints;
           const relatedValue = (args.object as any)[relatedPropertyName];
-          if (value === null || value === undefined) {
+          if (value === null || value === undefined || value === 0) {
             return true;
           }
           return relatedValue !== null && relatedValue !== undefined && relatedValue !== 0;

@@ -9,6 +9,11 @@ import { ProductLine } from "../entities/ProductLine";
 import { User } from "../entities/User";
 import { protectRoute, restrictTo } from "../middlewares/auth";
 
+const userRepo = AppDataSource.getRepository(User);
+const productLineRepo = AppDataSource.getRepository(ProductLine);
+const productRepo = AppDataSource.getRepository(Product);
+const customerRepo = AppDataSource.getRepository(Customer);
+
 /**
  * Xem danh sách sản phẩm theo trạng thái và theo cơ sở sản xuất, đại lý phân phối và trung tâm bảo hành.
  */
@@ -26,7 +31,6 @@ const getProducts = async (req: Request, res: Response) => {
     const offset = (page - 1) * limit;
 
     // Lấy danh sách sản phẩm
-    const productRepo = AppDataSource.getRepository(Product);
     const products = await productRepo
       .createQueryBuilder("product")
       .leftJoinAndSelect("product.product_line", "product_line")
@@ -56,6 +60,30 @@ const getProducts = async (req: Request, res: Response) => {
 };
 
 /**
+ * Trả về thông tin chi tiết của sản phẩm dựa trên id.
+ */
+const getProduct = async (req: Request, res: Response) => {
+  try {
+    const id = parseInt(req.params.id);
+
+    if (isNaN(id)) return res.status(400).json({ errors: { id: "Id không hợp lệ" } });
+
+    // Lấy sản phẩm dựa trên id
+    const product = await productRepo.findOne({
+      where: { id },
+      relations: ["product_line", "daily", "sanxuat", "baohanh", "customer"],
+    });
+
+    if (!product) return res.status(404).json({ errors: { message: "Không tìm thấy sản phẩm" } });
+
+    // Trả về thông tin sản phẩm
+    return res.json(product);
+  } catch (error) {
+    errorHandler(error, req, res);
+  }
+};
+
+/**
  * Cơ sở sản xuất thêm sản phẩm mới.
  */
 const createProducts = async (req: Request, res: Response) => {
@@ -76,12 +104,10 @@ const createProducts = async (req: Request, res: Response) => {
     if (Object.keys(errors).length > 0) return res.status(400).json({ errors });
 
     // Lấy dòng sản phẩm
-    const productLineRepo = AppDataSource.getRepository(ProductLine);
     const productLine = await productLineRepo.findOneBy({ id: product_line_id });
     if (!productLine) return res.status(400).json({ errors: { message: "Dòng sản phẩm không tồn tại!" } });
 
     // Thêm `amount` sản phẩm mới vào cơ sở sản xuất
-    const productRepo = AppDataSource.getRepository(Product);
     let products = [];
     for (let i = 0; i < amount; i++) {
       const product = new Product();
@@ -118,12 +144,10 @@ const exportToDaily = async (req: Request, res: Response) => {
     if (Object.keys(errors).length > 0) return res.status(400).json({ errors });
 
     // Lấy đại lý
-    const userRepo = AppDataSource.getRepository(User);
     const daily = await userRepo.findOneBy({ id: daily_id });
     if (!daily) return res.status(400).json({ error: "Đại lý không tồn tại!" });
 
     // Lấy danh sách các sản phẩm
-    const productRepo = AppDataSource.getRepository(Product);
     const products = await productRepo.find({
       where: { id: In(product_ids) },
       relations: ["sanxuat"],
@@ -181,12 +205,10 @@ const sellToCustomer = async (req: Request, res: Response) => {
     if (Object.keys(errors).length > 0) return res.status(400).json({ errors });
 
     // Lấy khách hàng
-    const customerRepo = AppDataSource.getRepository(Customer);
     const customer = await customerRepo.findOneBy({ id: customer_id });
     if (!customer) return res.status(400).json({ errors: { message: "Khách hàng không tồn tại!" } });
 
     // Lấy danh sách các sản phẩm
-    const productRepo = AppDataSource.getRepository(Product);
     const products = await productRepo.find({
       where: { id: In(product_ids) },
       relations: ["daily"],
@@ -224,11 +246,61 @@ const sellToCustomer = async (req: Request, res: Response) => {
   }
 };
 
+/**
+ * Đại lý nhận lại sản phẩm "lỗi cần bảo hành" từ khách hàng.
+ */
+const receiveWarrantyProductFromCustomer = async (req: Request, res: Response) => {
+  try {
+    const product_id = req.body.product_id || 0;
+    const user = res.locals.user as User;
+
+    let errors: any = {};
+    if (!product_id) errors.product_id = "Cần nhập id sản phẩm!";
+    if (Object.keys(errors).length > 0) return res.status(400).json({ errors });
+
+    // Lấy sản phẩm
+    const product = await productRepo.findOne({
+      where: { id: product_id },
+      relations: ["customer", "daily"],
+    });
+    if (!product) return res.status(400).json({ errors: { message: "Sản phẩm không tồn tại!" } });
+
+    if (!(product.possesser instanceof Customer)) {
+      errors.message = "Sản phẩm đang không ở chỗ khách hàng!";
+    }
+    if (product.daily.id !== user.id) {
+      errors.message = "Sản phẩm do đại lý khác bán, bạn không có quyền thực thi!";
+    }
+    if (Object.keys(errors).length > 0) return res.status(400).json({ errors });
+
+    // Cập nhật trạng thái sản phẩm
+    product.status = "loi_can_bao_hanh";
+    product.baohanh_count += 1;
+
+    // Lưu sản phẩm
+    const updatedProduct = await productRepo.save(product);
+
+    // Trả về sản phẩm đã được cập nhật
+    return res.status(200).json(updatedProduct);
+  } catch (error) {
+    errorHandler(error, req, res);
+  }
+};
+
 const router = Router();
 
 router.get("/", protectRoute, restrictTo("admin", "bao_hanh", "dai_ly", "san_xuat"), getProducts);
 router.post("/", protectRoute, restrictTo("san_xuat"), createProducts);
 router.post("/exportToDaily", protectRoute, restrictTo("san_xuat"), exportToDaily);
 router.post("/sellToCustomer", protectRoute, restrictTo("dai_ly"), sellToCustomer);
+router.post(
+  "/receiveWarrantyProductFromCustomer",
+  protectRoute,
+  restrictTo("dai_ly"),
+  receiveWarrantyProductFromCustomer
+);
+
+// Các route có params
+router.get("/:id", protectRoute, restrictTo("admin", "bao_hanh", "dai_ly", "san_xuat"), getProduct);
 
 export default router;

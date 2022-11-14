@@ -38,7 +38,7 @@ const login = async (req: Request, res: Response) => {
     const payload: JWTUserPayload = { username, account_type: user.account_type };
     const token = jwt.sign(payload, process.env.JWT_SECRET!);
 
-    return res.json({ user, token });
+    return res.json({ ...user, token });
   } catch (error) {
     errorHandler(error, req, res);
   }

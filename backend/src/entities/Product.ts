@@ -47,8 +47,7 @@ export class Product extends BaseEntity {
   @JoinColumn({ name: "baohanh_id" })
   baohanh: User;
 
-  @Column({ nullable: true })
-  @RequireProperty("baohanh", { message: "Bảo hành không được để trống" })
+  @Column({ nullable: true, default: 0 })
   baohanh_count: number;
 
   /**

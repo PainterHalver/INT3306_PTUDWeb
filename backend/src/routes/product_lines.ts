@@ -144,6 +144,8 @@ const router = Router();
 
 router.get("/", protectRoute, restrictTo("admin"), getProductLines);
 router.post("/", protectRoute, restrictTo("admin"), createProductLine);
+
+// Các route có params
 router.put("/:id", protectRoute, restrictTo("admin"), updateProductLine);
 router.delete("/:id", protectRoute, restrictTo("admin"), deleteProductLine);
 
