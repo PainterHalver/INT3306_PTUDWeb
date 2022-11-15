@@ -12,7 +12,7 @@ export type JWTUserPayload = {
  * Các loại tài khoản
  * https://dev.to/hansott/how-to-check-if-string-is-member-of-union-type-1j4m
  */
-const accountTypes = ["admin", "san_xuat", "dai_ly", "bao_hanh"] as const;
+export const accountTypes = ["admin", "san_xuat", "dai_ly", "bao_hanh"] as const;
 export type AccountType = typeof accountTypes[number];
 
 export function isAccountType(value: any): value is AccountType {
@@ -22,7 +22,7 @@ export function isAccountType(value: any): value is AccountType {
 /**
  * Các trạng thái của sản phẩm
  */
-const productStatuses = [
+export const productStatuses = [
   "moi_san_xuat",
   "dua_ve_dai_ly",
   "da_ban",
