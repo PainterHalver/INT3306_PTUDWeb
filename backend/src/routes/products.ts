@@ -311,20 +311,22 @@ const receiveProducts = async (req: Request, res: Response) => {
 
     // Kiểm tra và cập nhật các trạng thái sản phẩm tương ứng với user và trạng thái hiện tại
     if (user.account_type === "dai_ly") {
+      //-----------------------------------------------------------------------------------
       // Sản phẩm trạng thái `đã bán` và đại lý chuyển về trạng thái 'lỗi cần bảo hành'
       if (current_status === "da_ban") {
+        // 1. Lấy id user bảo hành và validate
         const baohanh_id = +req.body.baohanh_id || 0;
         if (!baohanh_id) {
           return res.status(400).json({ errors: { baohanh_id: "Cần nhập id trung tâm bảo hành!" } });
         }
-
+        // 2. Lấy user bảo hành và validate
         const baohanh = await userRepo.findOneBy({ id: baohanh_id });
         if (!baohanh || baohanh.account_type !== "bao_hanh") {
           return res.status(400).json({
             errors: { baohanh_id: "Không tìm thấy trung tâm bảo hành hoặc id không phải của trung tâm bảo hành!" },
           });
         }
-
+        // 3. Cập nhật trạng thái và trả về sản phẩm
         products.forEach((product) => {
           product.status = "loi_can_bao_hanh";
           product.baohanh = baohanh;
@@ -332,12 +334,23 @@ const receiveProducts = async (req: Request, res: Response) => {
         });
         const updatedProducts = await productRepo.save(products);
         return res.status(200).json(updatedProducts);
+      } else if (current_status === "dang_sua_chua_bao_hanh") {
+        // -----------------------------------------------------------------------------------
+        // Sản phẩm đã bảo hành xong và đã trở về đại lý
+        products.forEach((product) => {
+          product.status = "da_bao_hanh_xong";
+        });
+        const updatedProducts = await productRepo.save(products);
+        return res.status(200).json(updatedProducts);
       } else {
+        // -----------------------------------------------------------------------------------
+        // Không trong các trạng thái xử lý của đại lý
         return res
           .status(400)
           .json({ errors: { message: "Người dùng loại đại lý không thể cập nhật sản phẩm ở trạng thái này!" } });
       }
     } else if (user.account_type === "bao_hanh") {
+      // -----------------------------------------------------------------------------------
       // Sản phẩm trạng thái `lỗi cần bảo hành` và đã chuyển về trung tâm bảo hành
       if (current_status === "loi_can_bao_hanh") {
         products.forEach((product) => {
