@@ -321,22 +321,29 @@ const receiveWarrantyProductsFromDaily = async (req: Request, res: Response) => 
     // Lấy các sản phẩm
     const products = await productRepo.find({
       where: { id: In(product_ids) },
-      relations: ["customer", "daily"],
+      relations: ["customer", "daily", "baohanh"],
     });
 
     // Check mọi sản phẩm tìm thấy phải đang có trạng thái "lỗi cần bảo hành"
     const invalidProducts = products.filter((product) => {
       return product.status !== "loi_can_bao_hanh";
     });
+    // Check user là trung tâm bảo hành được phân công bảo hành sản phẩm
+    const invalidBaohanhProducts = products.filter((product) => {
+      return product.baohanh && product.baohanh.id !== user.id;
+    });
+
     if (invalidProducts.length > 0) {
-      return res.status(400).json({
-        errors: {
-          message: `Không có sản phẩm nào được cập nhật! Các sản phẩm phải đang ở trạng thái 'lỗi cần bảo hành'! ID: ${invalidProducts.map(
-            (product) => product.id
-          )}`,
-        },
-      });
+      errors.product_ids = `Không có sản phẩm nào được cập nhật! Các sản phẩm phải đang ở trạng thái 'lỗi cần bảo hành'! ID: ${invalidProducts.map(
+        (product) => product.id
+      )}`;
     }
+    if (invalidBaohanhProducts.length > 0) {
+      errors.product_ids = `Không có sản phẩm nào được cập nhật! Có sản phẩm được phân công bảo hành ở cơ sở khác! ID: ${invalidBaohanhProducts.map(
+        (product) => product.id
+      )}`;
+    }
+    if (Object.keys(errors).length > 0) return res.status(400).json({ errors });
 
     // Cập nhật trạng thái các sản phẩm
     products.forEach((product) => {

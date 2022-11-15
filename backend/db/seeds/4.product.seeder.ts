@@ -1,6 +1,7 @@
 import { instanceToPlain } from "class-transformer";
 import { DataSource } from "typeorm";
 import { Seeder, SeederFactoryManager } from "typeorm-extension";
+import { ProductStatus } from "../../helpers/types";
 
 import { randomElement } from "../../helpers/utils";
 import { Customer } from "../../src/entities/Customer";
@@ -77,9 +78,9 @@ export default class ProductSeeder implements Seeder {
       }
       await repository.insert(soldProducts);
 
-      // 3. Tạo các sản phẩm lỗi cần bảo hành
+      // 3. Tạo các sản phẩm `lỗi cần bảo hành` và `đang sửa chữa bảo hành`
       let loicanbaohanhProducts: any[] = [];
-      for (let i = 0; i < Math.ceil(customers.length / 3); i++) {
+      for (let i = 0; i < Math.ceil(customers.length / 3) * 2; i++) {
         const customer = randomElement(customers);
         const productLine = randomElement(productLines);
         const startDate = new Date("2022-10-10");
@@ -96,7 +97,7 @@ export default class ProductSeeder implements Seeder {
 
         const product = {
           product_line: productLine,
-          status: "loi_can_bao_hanh",
+          status: randomElement<ProductStatus>(["loi_can_bao_hanh", "dang_sua_chua_bao_hanh"]),
           sanxuat: sanxuatUser,
           daily: dailyUser,
           customer: customer,
