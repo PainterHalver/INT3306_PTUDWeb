@@ -344,25 +344,16 @@ const updateProductsStatus = async (req: Request, res: Response) => {
       // Sản phẩm đã bảo hành xong và đã trở về đại lý
       else if (status === "da_bao_hanh_xong") {
         [invalidProducts, requiredStatuses] = allHasStatus(products, "dang_sua_chua_bao_hanh");
-        products.forEach((product) => {
-          product.status = status;
-        });
       }
       //-----------------------------------------------------------------------------------
       // Gửi cho khách hàng nếu `đã bảo hành xong`
       else if (status === "da_tra_lai_bao_hanh_cho_khach_hang") {
         [invalidProducts, requiredStatuses] = allHasStatus(products, "da_bao_hanh_xong");
-        products.forEach((product) => {
-          product.status = status;
-        });
       }
       //-----------------------------------------------------------------------------------
       // Sản phẩm đang ở chỗ khách hàng và đại lý cập nhật trạng thái `lỗi cần triệu hồi`
       else if (status === "loi_can_trieu_hoi") {
         [invalidProducts, requiredStatuses] = allHasStatus(products, "da_ban", "da_tra_lai_bao_hanh_cho_khach_hang");
-        products.forEach((product) => {
-          product.status = status;
-        });
       }
       // -----------------------------------------------------------------------------------
       // Không trong các trạng thái xử lý của đại lý
@@ -378,17 +369,11 @@ const updateProductsStatus = async (req: Request, res: Response) => {
       // Trung tâm bảo hành nhận sản phẩm `lỗi cần bảo hành` từ đại lý
       if (status === "dang_sua_chua_bao_hanh") {
         [invalidProducts, requiredStatuses] = allHasStatus(products, "loi_can_bao_hanh");
-        products.forEach((product) => {
-          product.status = status;
-        });
       }
       // -----------------------------------------------------------------------------------
       // Sản phẩm đang bảo hành thì gặp lỗi và cần trả về nhà máy
       else if (status === "loi_can_tra_ve_nha_may") {
         [invalidProducts, requiredStatuses] = allHasStatus(products, "dang_sua_chua_bao_hanh");
-        products.forEach((product) => {
-          product.status = status;
-        });
       } else {
         return res.status(400).json({
           errors: { message: `Người dùng loại ${user.account_type} không thể cập nhật sản phẩm ở trạng thái này!` },
@@ -399,9 +384,6 @@ const updateProductsStatus = async (req: Request, res: Response) => {
       // Nhà máy nhận sản phẩm bảo hành lỗi từ trung tâm bảo hành
       if (status === "loi_da_dua_ve_co_so_san_xuat") {
         [invalidProducts, requiredStatuses] = allHasStatus(products, "loi_can_tra_ve_nha_may");
-        products.forEach((product) => {
-          product.status = status;
-        });
       } else {
         return res.status(400).json({
           errors: { message: `Người dùng loại ${user.account_type} không thể cập nhật sản phẩm ở trạng thái này!` },
@@ -419,6 +401,11 @@ const updateProductsStatus = async (req: Request, res: Response) => {
         },
       });
     }
+
+    // Cập nhật trạng thái
+    products.forEach((product) => {
+      product.status = status;
+    });
 
     // Cập nhật sản phẩm
     const updatedProducts = await productRepo.save(products);
