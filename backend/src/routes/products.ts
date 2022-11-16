@@ -248,7 +248,99 @@ const sellToCustomer = async (req: Request, res: Response) => {
 };
 
 /**
+ * User gửi sản phẩm hiện tại đi và đổi trạng thái sản phẩm
+ */
+const sendProducts = async (req: Request, res: Response) => {
+  try {
+    const user = res.locals.user as User;
+    const product_ids = req.body.product_ids || [];
+    const current_status = req.body.current_status as ProductStatus;
+
+    // Validate inputs
+    let errors: any = {};
+    if (product_ids.length === 0) errors.product_ids = "Cần nhập mảng id sản phẩm!";
+    if (!current_status) errors.current_status = "Cần nhập trạng thái hiện tại!";
+    if (!isProductStatus(current_status))
+      errors.current_status = `Trạng thái sản phẩm không hợp lệ! Các trạng thái hợp lệ là [${productStatuses.join(
+        ", "
+      )}]`;
+
+    // Check product_ids là mảng các số nguyên
+    const invalidProductIds = product_ids.filter((id: any) => {
+      return typeof id !== "number";
+    });
+    if (invalidProductIds.length > 0) {
+      errors.product_ids = `Các id sản phẩm phải là số! ID: [${invalidProductIds}]`;
+    }
+    if (Object.keys(errors).length > 0) return res.status(400).json({ errors });
+
+    // Lấy các sản phẩm
+    const products = await productRepo.find({
+      where: { id: In(product_ids) },
+      relations: ["customer", "daily", "baohanh", "sanxuat"],
+    });
+
+    // Check các sản phẩm có đúng trạng thái hiện tại
+    const invalidProducts = products.filter((product) => {
+      return product.status !== current_status;
+    });
+    if (invalidProducts.length > 0) {
+      return res.status(400).json({
+        errors: {
+          product_ids: `Không có sản phẩm nào được cập nhật! Các sản phẩm phải đang ở trạng thái '${current_status}'! ID: [${invalidProducts.map(
+            (product) => product.id
+          )}]`,
+        },
+      });
+    }
+
+    // Kiểm tra sản phẩm thuộc quyền quản lý của user hiện tại không
+    const userPropertyName = user.account_type.replace("_", "") as "daily" | "baohanh" | "sanxuat";
+    const invalidUserProducts = products.filter((product) => {
+      return !product[userPropertyName] || product[userPropertyName].id !== user.id;
+    });
+    if (invalidUserProducts.length > 0) {
+      return res.status(400).json({
+        errors: {
+          product_ids: `Không có sản phẩm nào được cập nhật! Có sản phẩm không thuộc quyền quản lý của User hiện tại! ID: [${invalidUserProducts.map(
+            (product) => product.id
+          )}]`,
+        },
+      });
+    }
+
+    // Kiểm tra và cập nhật các trạng thái sản phẩm tương ứng với user và trạng thái hiện tại
+    if (user.account_type === "dai_ly") {
+      //-----------------------------------------------------------------------------------
+      // Gửi cho khách hàng nếu `đã bảo hành xong`
+      if (current_status === "da_bao_hanh_xong") {
+        products.forEach((product) => {
+          product.status = "da_tra_lai_bao_hanh_cho_khach_hang";
+        });
+        const updatedProducts = await productRepo.save(products);
+        return res.status(200).json({ products: updatedProducts });
+      } else {
+        // -----------------------------------------------------------------------------------
+        // Không trong các trạng thái xử lý của đại lý
+        return res
+          .status(400)
+          .json({ errors: { message: "Người dùng loại đại lý không thể cập nhật sản phẩm ở trạng thái này!" } });
+      }
+    } else if (user.account_type === "bao_hanh") {
+    }
+
+    return res.status(400).json({
+      message:
+        "Không có sản phẩm nào được cập nhật! Nếu chạm được tới đây tức là cài đặt API vẫn chưa đúng HOẶC user hiện tại không phù hợp để thực hiện hành động!",
+    });
+  } catch (error) {
+    errorHandler(error, req, res);
+  }
+};
+
+/**
  * Nhận sản phẩm về nơi của user hiện tại.
+ * TODO: Quá trình validate vẫn giống với sendProducts -> Refactor. Tạm thời tách ra để dễ phân biệt
  */
 const receiveProducts = async (req: Request, res: Response) => {
   try {
@@ -380,6 +472,7 @@ router.get("/", protectRoute, restrictTo("admin", "bao_hanh", "dai_ly", "san_xua
 router.post("/", protectRoute, restrictTo("san_xuat"), createProducts);
 router.post("/exportToDaily", protectRoute, restrictTo("san_xuat"), exportToDaily);
 router.post("/sellToCustomer", protectRoute, restrictTo("dai_ly"), sellToCustomer);
+router.post("/sendProducts", protectRoute, restrictTo("dai_ly", "bao_hanh", "san_xuat"), sendProducts);
 router.post("/receiveProducts", protectRoute, restrictTo("bao_hanh", "dai_ly", "san_xuat"), receiveProducts);
 
 // Các route có params
