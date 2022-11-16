@@ -81,7 +81,14 @@ export default class ProductSeeder implements Seeder {
       // 3. Tạo các sản phẩm `lỗi cần bảo hành`, `đang sửa chữa bảo hành`, `đã bảo hành xong`,
       // `đã trả lại bảo hành cho khách hàng`
       let loicanbaohanhProducts: any[] = [];
-      for (let i = 0; i < Math.ceil(customers.length / 3) * 4; i++) {
+      const statuses: ProductStatus[] = [
+        "loi_can_bao_hanh",
+        "dang_sua_chua_bao_hanh",
+        "da_bao_hanh_xong",
+        "da_tra_lai_bao_hanh_cho_khach_hang",
+        "loi_can_tra_ve_nha_may",
+      ];
+      for (let i = 0; i < Math.ceil(customers.length / 3) * statuses.length; i++) {
         const customer = randomElement(customers);
         const productLine = randomElement(productLines);
         const startDate = new Date("2022-10-10");
@@ -98,12 +105,7 @@ export default class ProductSeeder implements Seeder {
 
         const product = {
           product_line: productLine,
-          status: randomElement<ProductStatus>([
-            "loi_can_bao_hanh",
-            "dang_sua_chua_bao_hanh",
-            "da_bao_hanh_xong",
-            "da_tra_lai_bao_hanh_cho_khach_hang",
-          ]),
+          status: statuses[Math.floor(i / Math.ceil(customers.length / 3))],
           sanxuat: sanxuatUser,
           daily: dailyUser,
           customer: customer,

@@ -1,8 +1,8 @@
 import { Request, Response, Router } from "express";
 import { In } from "typeorm";
+
 import { errorHandler } from "../../helpers/errorHandler";
 import { isProductStatus, ProductStatus, productStatuses } from "../../helpers/types";
-
 import { AppDataSource } from "../data-source";
 import { Customer } from "../entities/Customer";
 import { Product } from "../entities/Product";
@@ -362,9 +362,17 @@ const updateProductsStatus = async (req: Request, res: Response) => {
     // TRUNG TÂM BẢO HÀNH
     else if (user.account_type === "bao_hanh") {
       // -----------------------------------------------------------------------------------
-      // Sản phẩm trạng thái `lỗi cần bảo hành` và đã chuyển về trung tâm bảo hành
+      // Trung tâm bảo hành nhận sản phẩm `lỗi cần bảo hành` từ đại lý
       if (status === "dang_sua_chua_bao_hanh") {
         [invalidProducts, requiredStatus] = allHasStatus(products, "loi_can_bao_hanh");
+        products.forEach((product) => {
+          product.status = status;
+        });
+      }
+      // -----------------------------------------------------------------------------------
+      // Sản phẩm đang bảo hành thì gặp lỗi và cần trả về nhà máy
+      else if (status === "loi_can_tra_ve_nha_may") {
+        [invalidProducts, requiredStatus] = allHasStatus(products, "dang_sua_chua_bao_hanh");
         products.forEach((product) => {
           product.status = status;
         });
