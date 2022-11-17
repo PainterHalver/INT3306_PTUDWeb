@@ -75,9 +75,6 @@ export class Product extends BaseEntity {
     return this.baohanh;
   }
 
-  /**
-   *
-   */
   @BeforeInsert()
   @BeforeUpdate()
   async validate() {

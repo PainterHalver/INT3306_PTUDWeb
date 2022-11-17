@@ -6,6 +6,7 @@ import morgan from "morgan";
 dotenv.config();
 
 import { AppDataSource } from "./data-source";
+import { updateBaohanhStatusJob } from "../helpers/cronJobs";
 import trim from "./middlewares/trim";
 import userRouter from "./routes/users";
 import authRouter from "./routes/auth";
@@ -31,6 +32,9 @@ app.use("/api/products", productsRouter);
 app.use("/api/product_lines", productLinesRouter);
 app.use("/api/stats", statsRouter);
 app.use("/api/customers", customerRouter);
+
+// Chạy cron job
+updateBaohanhStatusJob.start();
 
 // Khởi tạo server
 app.listen(port, async () => {
