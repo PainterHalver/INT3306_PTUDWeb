@@ -2,6 +2,7 @@ import { Request, Response, Router } from "express";
 import { Brackets } from "typeorm";
 
 import { errorHandler } from "../../helpers/errorHandler";
+import { ProductStatus } from "../../helpers/types";
 import { AppDataSource } from "../data-source";
 import { Product } from "../entities/Product";
 import { ProductLine } from "../entities/ProductLine";
@@ -11,6 +12,7 @@ import { protectRoute, restrictTo } from "../middlewares/auth";
 // Repositories
 const productLineRepo = AppDataSource.getRepository(ProductLine);
 const productRepo = AppDataSource.getRepository(Product);
+const userRepo = AppDataSource.getRepository(User);
 
 /**
  * Thống kê số liệu sản phẩm theo từng loại (trạng thái).
@@ -68,7 +70,7 @@ const getStats = async (req: Request, res: Response) => {
       // })
       .getMany();
 
-    const total = product_lines.reduce((acc, cur) => acc + cur.products.length, 0);
+    const total = product_lines.reduce((acc, cur) => acc + cur.product_count, 0);
 
     return res.json({ total, result: product_lines });
   } catch (error) {
@@ -186,9 +188,76 @@ const soldToCustomerStats = async (req: Request, res: Response) => {
       })
       .getMany();
 
-    const total = product_lines.reduce((acc, cur) => acc + cur.products.length, 0);
+    const total = product_lines.reduce((acc, cur) => acc + cur.product_count, 0);
 
     return res.json({ total, result: product_lines });
+  } catch (error) {
+    errorHandler(error, req, res);
+  }
+};
+
+/**
+ * Cơ sở sản xuất thống kê sản phẩm bị lỗi theo dòng sản phẩm, cơ sở sản xuất, đại lý phân phối.
+ * Sản phẩm bị lỗi là sản phẩm có `baohanh_count` > 0 (Trường hợp ở trạng thái `lỗi cần triệu hồi` do chưa chuyển về `lỗi cần bảo hành`, sản phẩm vẫn đang ở chỗ khách hàng nên không tính)
+ */
+const getErrorStats = async (req: Request, res: Response) => {
+  try {
+    const sanxuat_id: number = req.body.sanxuat_id || 0;
+    const daily_id: number = req.body.daily_id || 0;
+    const product_line_ids: number[] = req.body.product_line_ids || [];
+
+    // Validate inputs
+    let errors: any = {};
+    if (!Array.isArray(product_line_ids) || product_line_ids.some((id) => isNaN(+id))) {
+      errors.product_line_ids = "Phải là một mảng các id";
+    }
+    if (sanxuat_id && isNaN(sanxuat_id)) errors.sanxuat_id = "Phải là một số";
+    if (daily_id && isNaN(daily_id)) errors.daily_id = "Phải là một số";
+    if (Object.keys(errors).length) return res.status(400).json({ errors });
+
+    // Kiểm tra xem có tồn tại cơ sở sản xuất hay đại lý phân phối không
+    if (sanxuat_id) {
+      const sanxuat = await userRepo.findOneBy({ id: sanxuat_id, account_type: "san_xuat" });
+      if (!sanxuat)
+        return res.status(400).json({ errors: { sanxuat_id: `Không tồn tại cơ sở sản xuất với id ${sanxuat_id}` } });
+    }
+    if (daily_id) {
+      const daily = await userRepo.findOneBy({ id: daily_id, account_type: "dai_ly" });
+      if (!daily)
+        return res.status(400).json({ errors: { daily_id: `Không tồn tại đại lý phân phối với id ${daily_id}` } });
+    }
+
+    // Lấy danh sách sản phẩm bị lỗi
+    const product_lines = await productLineRepo
+      .createQueryBuilder("product_line")
+      .leftJoinAndSelect("product_line.products", "products")
+      .where("product_line.id IN (:...product_line_ids)", { product_line_ids })
+      .andWhere("products.baohanh_count > 0")
+      .andWhere(
+        new Brackets((qb) => {
+          if (sanxuat_id) qb.andWhere("products.sanxuat_id = :sanxuat_id", { sanxuat_id });
+          if (daily_id) qb.andWhere("products.daily_id = :daily_id", { daily_id });
+          return "9001 = 9001";
+        })
+      )
+      .getMany();
+
+    console.log(product_lines);
+    const new_product_lines = await Promise.all(
+      product_lines.map(async (product_line) => {
+        const total_product_count = await product_line.getProductCount();
+        let { products, ...rest } = product_line;
+        return {
+          ...rest,
+          total_product_count,
+          product_count: product_line.product_count,
+          ratio: product_line.product_count / total_product_count,
+        };
+      })
+    );
+
+    const total = product_lines.reduce((acc, cur) => acc + cur.product_count, 0);
+    return res.json({ total, result: new_product_lines });
   } catch (error) {
     errorHandler(error, req, res);
   }
@@ -199,5 +268,6 @@ const router = Router();
 router.get("/", protectRoute, restrictTo("admin", "san_xuat", "dai_ly", "bao_hanh"), getStats);
 router.get("/exportToDailyStats", protectRoute, restrictTo("san_xuat"), exportToDailyStats);
 router.get("/soldToCustomerStats", protectRoute, restrictTo("dai_ly"), soldToCustomerStats);
+router.post("/errorStats", protectRoute, restrictTo("san_xuat"), getErrorStats);
 
 export default router;
