@@ -68,7 +68,9 @@ const getStats = async (req: Request, res: Response) => {
       // })
       .getMany();
 
-    return res.json(product_lines);
+    const total = product_lines.reduce((acc, cur) => acc + cur.products.length, 0);
+
+    return res.json({ total, result: product_lines });
   } catch (error) {
     errorHandler(error, req, res);
   }
@@ -133,7 +135,60 @@ const exportToDailyStats = async (req: Request, res: Response) => {
     }
 
     // Trả về kết quả
-    return res.status(200).json({ total_exported: count, result });
+    return res.status(200).json({ total: count, result });
+  } catch (error) {
+    errorHandler(error, req, res);
+  }
+};
+
+/**
+ * Đại lý thống kê số lượng sản phẩm bán ra trong một khoảng thời gian.
+ */
+const soldToCustomerStats = async (req: Request, res: Response) => {
+  try {
+    const start_time = req.query.start_time || -Infinity;
+    const end_time = req.query.end_time || Infinity;
+    const user = res.locals.user as User;
+
+    // Nếu muốn chỉ lấy của User hiện tại
+    const of_current_user = req.query.of_current_user ?? null;
+
+    // Đảm bảo start_time và end_time là có thể parse thành number
+    if (
+      typeof start_time !== "string" ||
+      typeof end_time !== "string" ||
+      isNaN(parseInt(start_time)) ||
+      isNaN(parseInt(end_time))
+    ) {
+      return res
+        .status(400)
+        .json({ message: "start_time và end_time phải là unix time stamp. Gọi hàm getTime() của class Date" });
+    }
+
+    // Parse start_time và end_time về dạng "YYYY-MM-DD" cho sqlite
+    const parsed_start_time = new Date(parseInt(start_time)).toISOString().split("T")[0];
+    const parsed_end_time = new Date(parseInt(end_time)).toISOString().split("T")[0];
+
+    const product_lines = await productLineRepo
+      .createQueryBuilder("product_line")
+      .leftJoinAndSelect("product_line.products", "products")
+      .andWhere(
+        new Brackets((qb) => {
+          if (of_current_user) {
+            qb.orWhere("products.daily_id = :id", { id: user.id });
+          }
+          return "9001 = 9001";
+        })
+      )
+      .andWhere("products.sold_to_customer_date BETWEEN :parsed_start_time AND :parsed_end_time", {
+        parsed_start_time,
+        parsed_end_time,
+      })
+      .getMany();
+
+    const total = product_lines.reduce((acc, cur) => acc + cur.products.length, 0);
+
+    return res.json({ total, result: product_lines });
   } catch (error) {
     errorHandler(error, req, res);
   }
@@ -143,5 +198,6 @@ const router = Router();
 
 router.get("/", protectRoute, restrictTo("admin", "san_xuat", "dai_ly", "bao_hanh"), getStats);
 router.get("/exportToDailyStats", protectRoute, restrictTo("san_xuat"), exportToDailyStats);
+router.get("/soldToCustomerStats", protectRoute, restrictTo("dai_ly"), soldToCustomerStats);
 
 export default router;
