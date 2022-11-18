@@ -127,64 +127,6 @@ const createProducts = async (req: Request, res: Response) => {
   }
 };
 
-const exportToDaily = async (req: Request, res: Response) => {
-  try {
-    const user = res.locals.user as User;
-    const daily_id = req.body.daily_id || 0;
-    const product_ids = req.body.product_ids || [];
-
-    // Kiểm tra User có phải là cơ sở sản xuất hay không cho chắc
-    if (!user || user.account_type !== "san_xuat") {
-      return res.status(403).json({ error: "Bạn không có quyền thực hiện thao tác này!" });
-    }
-
-    // Validate input
-    let errors: any = {};
-    if (!daily_id) errors.daily_id = "Cần nhập mảng id sản phẩm!";
-    if (!product_ids.length) errors.product_ids = "Cần nhập id đại lý!";
-    if (Object.keys(errors).length > 0) return res.status(400).json({ errors });
-
-    // Lấy đại lý
-    const daily = await userRepo.findOneBy({ id: daily_id });
-    if (!daily) return res.status(400).json({ error: "Đại lý không tồn tại!" });
-
-    // Lấy danh sách các sản phẩm
-    const products = await productRepo.find({
-      where: { id: In(product_ids) },
-      relations: ["sanxuat"],
-    });
-
-    // Kiểm tra các sản phẩm có đang ở trạng thái "mới sản xuất"
-    // và có đang thuộc kho của cơ sở sản xuất này không
-    const invalidProducts = products.filter((product) => {
-      return product.status !== "moi_san_xuat" || product.sanxuat.id !== user.id;
-    });
-    if (invalidProducts.length > 0) {
-      return res.status(400).json({
-        error: {
-          product_ids: `Không có sản phẩm nào được cập nhật! Có sản phẩm không thuộc loại mới sản xuất hoặc không thuộc kho của cơ sở sản xuất. ID: [${invalidProducts.map(
-            (p) => p.id
-          )}]`,
-        },
-      });
-    }
-
-    // Cập nhật trạng thái các sản phẩm
-    products.forEach((product) => {
-      product.status = "dua_ve_dai_ly";
-      product.daily = daily;
-    });
-
-    // Lưu các sản phẩm
-    await productRepo.save(products);
-
-    // Trả về danh sách id sản phẩm đã được cập nhật
-    return res.status(200).json({ ids: products.map((product) => product.id) });
-  } catch (error) {
-    errorHandler(error, req, res);
-  }
-};
-
 /**
  * Kiểm tra tất cả các sản phẩm trong mảng có thuộc đúng trạng thái hay không
  * @param products mảng chứa các sản phẩm
@@ -198,9 +140,10 @@ const allHasStatus = (products: Product[], ...statuses: ProductStatus[]): [Produ
 };
 
 /**
- * Cập nhật trạng thái sản phẩm
+ * Gửi sản phẩm đi tới khách hàng hoặc người dùng khác.
+ * TODO: Refactor 2 hàm send và receive
  */
-const updateProductsStatus = async (req: Request, res: Response) => {
+const sendProducts = async (req: Request, res: Response) => {
   try {
     const user = res.locals.user as User;
     const product_ids = req.body.product_ids || [];
@@ -272,38 +215,25 @@ const updateProductsStatus = async (req: Request, res: Response) => {
         });
       }
       //-----------------------------------------------------------------------------------
-      // Sản phẩm trạng thái `đã bán` và đại lý chuyển về trạng thái 'lỗi cần bảo hành'
-      else if (status === "loi_can_bao_hanh") {
+      // Đại lý gửi sản phẩm đi bảo hành
+      else if (status === "dang_sua_chua_bao_hanh_ON_THE_WAY") {
         // 0. Các sản phẩm đúng trạng thái
-        [invalidProducts, requiredStatuses] = allHasStatus(
-          products,
-          "da_ban",
-          "loi_can_trieu_hoi",
-          "da_tra_lai_bao_hanh_cho_khach_hang"
-        );
+        [invalidProducts, requiredStatuses] = allHasStatus(products, "loi_can_bao_hanh");
         // 1. Lấy id user bảo hành và validate
-        const baohanh_id = +req.body.baohanh_id || 0;
+        const baohanh_id = req.body.baohanh_id;
         if (!baohanh_id || isNaN(baohanh_id)) {
-          return res.status(400).json({ errors: { baohanh_id: "Cần nhập id trung tâm bảo hành!" } });
+          return res.status(400).json({ errors: { baohanh_id: "Cần nhập id cơ sở bảo hành!" } });
         }
-        // 2. Lấy user bảo hành và validate
-        const baohanh = await userRepo.findOneBy({ id: baohanh_id });
-        if (!baohanh || baohanh.account_type !== "bao_hanh") {
-          return res.status(400).json({
-            errors: { baohanh_id: "Không tìm thấy trung tâm bảo hành hoặc id không phải của trung tâm bảo hành!" },
-          });
+        // 2. Lấy user bảo hành
+        const baohanh = await userRepo.findOneBy({ id: baohanh_id, account_type: "bao_hanh" });
+        if (!baohanh) {
+          return res.status(400).json({ errors: { baohanh_id: "Không tìm thấy cơ sở bảo hành!" } });
         }
-        // 3. Cập nhật trạng thái và trả về sản phẩm
+        // 3. Cập nhật trạng thái sản phẩm
         products.forEach((product) => {
           product.status = status;
           product.baohanh = baohanh;
-          product.baohanh_count += 1;
         });
-      }
-      // -----------------------------------------------------------------------------------
-      // Sản phẩm đã bảo hành xong và đã trở về đại lý
-      else if (status === "da_bao_hanh_xong") {
-        [invalidProducts, requiredStatuses] = allHasStatus(products, "dang_sua_chua_bao_hanh");
       }
       //-----------------------------------------------------------------------------------
       // Gửi cho khách hàng nếu `đã bảo hành xong`
@@ -311,13 +241,15 @@ const updateProductsStatus = async (req: Request, res: Response) => {
         [invalidProducts, requiredStatuses] = allHasStatus(products, "da_bao_hanh_xong");
       }
       //-----------------------------------------------------------------------------------
+      // Đại lý gửi sản phẩm không bảo hành được về nhà máy
+      else if (status === "loi_da_dua_ve_co_so_san_xuat_ON_THE_WAY") {
+        [invalidProducts, requiredStatuses] = allHasStatus(products, "loi_can_tra_ve_nha_may");
+      }
+      //-----------------------------------------------------------------------------------
       // Sản phẩm đang ở chỗ khách hàng và đại lý cập nhật trạng thái `lỗi cần triệu hồi`
       else if (status === "loi_can_trieu_hoi") {
         [invalidProducts, requiredStatuses] = allHasStatus(products, "da_ban", "da_tra_lai_bao_hanh_cho_khach_hang");
-      }
-      // -----------------------------------------------------------------------------------
-      // Không trong các trạng thái xử lý của đại lý
-      else {
+      } else {
         return res.status(400).json({
           errors: { message: `Người dùng loại ${user.account_type} không thể cập nhật sản phẩm ở trạng thái này!` },
         });
@@ -325,10 +257,10 @@ const updateProductsStatus = async (req: Request, res: Response) => {
     }
     // TRUNG TÂM BẢO HÀNH
     else if (user.account_type === "bao_hanh") {
-      // -----------------------------------------------------------------------------------
-      // Trung tâm bảo hành nhận sản phẩm `lỗi cần bảo hành` từ đại lý
-      if (status === "dang_sua_chua_bao_hanh") {
-        [invalidProducts, requiredStatuses] = allHasStatus(products, "loi_can_bao_hanh");
+      //-----------------------------------------------------------------------------------
+      // Trung tâm bảo hành gửi sản phẩm đã bảo hành xong cho đại lý
+      if (status === "da_bao_hanh_xong_ON_THE_WAY") {
+        [invalidProducts, requiredStatuses] = allHasStatus(products, "dang_sua_chua_bao_hanh");
       }
       // -----------------------------------------------------------------------------------
       // Sản phẩm đang bảo hành thì gặp lỗi và cần trả về nhà máy
@@ -341,14 +273,26 @@ const updateProductsStatus = async (req: Request, res: Response) => {
       }
     } else if (user.account_type === "san_xuat") {
       // -----------------------------------------------------------------------------------
-      // Nhà máy nhận sản phẩm bảo hành lỗi từ trung tâm bảo hành
-      if (status === "loi_da_dua_ve_co_so_san_xuat") {
-        [invalidProducts, requiredStatuses] = allHasStatus(products, "loi_can_tra_ve_nha_may");
-      }
-      // -----------------------------------------------------------------------------------
-      // Nhận lại sản phẩm lâu không bán được từ đại lý
-      else if (status === "tra_lai_co_so_san_xuat") {
-        [invalidProducts, requiredStatuses] = allHasStatus(products, "dua_ve_dai_ly");
+      // Gửi sản phẩm từ nhà sản xuất tới đại lý phân phối được chọn
+      if (status === "dua_ve_dai_ly_ON_THE_WAY") {
+        // 0. Các sản phẩm đúng trạng thái
+        [invalidProducts, requiredStatuses] = allHasStatus(products, "moi_san_xuat");
+        // 1. Lấy id của đại lý và kiểm tra
+        const daily_id = req.body.daily_id;
+        if (!daily_id || isNaN(daily_id)) {
+          return res.status(400).json({ errors: { daily_id: "Cần nhập id đại lý!" } });
+        }
+        // 2. Lấy đại lý
+        const daily = await userRepo.findOneBy({ id: daily_id, account_type: "dai_ly" });
+        if (!daily) {
+          return res.status(400).json({ errors: { daily_id: "Không tìm thấy đại lý!" } });
+        }
+        // 3. Cập nhật trạng thái và đại lý
+        products.forEach((product) => {
+          product.status = status;
+          product.daily = daily;
+          product.exported_to_daily_date = new Date();
+        });
       } else {
         return res.status(400).json({
           errors: { message: `Người dùng loại ${user.account_type} không thể cập nhật sản phẩm ở trạng thái này!` },
@@ -362,7 +306,7 @@ const updateProductsStatus = async (req: Request, res: Response) => {
           product_ids: `Không có sản phẩm nào được cập nhật! Các sản phẩm phải đang ở trạng thái '${requiredStatuses!}'! ID: [${invalidProducts.map(
             (product) => product.id
           )}]`,
-          products: invalidProducts,
+          invalid_products: invalidProducts,
         },
       });
     }
@@ -380,14 +324,148 @@ const updateProductsStatus = async (req: Request, res: Response) => {
   }
 };
 
-const receiveProducts = async (req: Request, res: Response) => {};
+/**
+ * Xác nhận đã nhận các sản phẩm
+ */
+const receiveProducts = async (req: Request, res: Response) => {
+  try {
+    const user = res.locals.user as User;
+    const product_ids = req.body.product_ids || [];
+    const status = req.body.status as ProductStatus;
+
+    // Validate inputs
+    let errors: any = {};
+    if (product_ids.length === 0) errors.product_ids = "Cần nhập mảng id sản phẩm!";
+    if (!status) errors.status = "Cần nhập trạng thái muốn chuyển đổi!";
+    if (!isProductStatus(status))
+      errors.status = `Trạng thái sản phẩm không hợp lệ! Các trạng thái hợp lệ là [${productStatuses.join(", ")}]`;
+
+    // Check product_ids là mảng các số nguyên
+    const invalidProductIds = product_ids.filter((id: any) => {
+      return typeof id !== "number";
+    });
+    if (invalidProductIds.length > 0) {
+      errors.product_ids = `Các id sản phẩm phải là số! ID: [${invalidProductIds}]`;
+    }
+    if (Object.keys(errors).length > 0) return res.status(400).json({ errors });
+
+    // Lấy các sản phẩm
+    const products = await productRepo.find({
+      where: { id: In(product_ids) },
+      relations: ["customer", "daily", "baohanh", "sanxuat"],
+    });
+
+    // Kiểm tra sản phẩm thuộc quyền quản lý của user hiện tại không
+    const userPropertyName = user.account_type.replace("_", "") as "daily" | "baohanh" | "sanxuat";
+    const invalidUserProducts = products.filter((product) => {
+      return !product[userPropertyName] || product[userPropertyName].id !== user.id;
+    });
+    if (invalidUserProducts.length > 0) {
+      return res.status(400).json({
+        errors: {
+          product_ids: `Không có sản phẩm nào được cập nhật! Có sản phẩm không thuộc quyền quản lý của User hiện tại! ID: [${invalidUserProducts.map(
+            (product) => product.id
+          )}]`,
+        },
+      });
+    }
+
+    // Biến trả về của hàm check trạng thái các sản phẩm
+    let invalidProducts: Product[] = [];
+    let requiredStatuses: ProductStatus[];
+
+    // ĐẠI LÝ PHÂN PHỐI
+    if (user.account_type === "dai_ly") {
+      if (status === "dua_ve_dai_ly") {
+        [invalidProducts, requiredStatuses] = allHasStatus(products, "dua_ve_dai_ly_ON_THE_WAY");
+      }
+      //-----------------------------------------------------------------------------------
+      // Đại lý nhận sản phẩm lỗi từ khách hàng
+      else if (status === "loi_can_bao_hanh") {
+        // 0. Các sản phẩm đúng trạng thái
+        [invalidProducts, requiredStatuses] = allHasStatus(
+          products,
+          "da_ban",
+          "loi_can_trieu_hoi",
+          "da_tra_lai_bao_hanh_cho_khach_hang"
+        );
+        // 3. Cập nhật trạng thái và trả về sản phẩm
+        products.forEach((product) => {
+          product.status = status;
+          product.baohanh_count += 1;
+        });
+      }
+      // -----------------------------------------------------------------------------------
+      // Sản phẩm đã bảo hành xong và đã trở về đại lý
+      else if (status === "da_bao_hanh_xong") {
+        [invalidProducts, requiredStatuses] = allHasStatus(products, "da_bao_hanh_xong_ON_THE_WAY");
+      }
+      // -----------------------------------------------------------------------------------
+      // Không trong các trạng thái xử lý của đại lý
+      else {
+        return res.status(400).json({
+          errors: { message: `Người dùng loại ${user.account_type} không thể nhận sản phẩm ở trạng thái này!` },
+        });
+      }
+    }
+    // TRUNG TÂM BẢO HÀNH
+    else if (user.account_type === "bao_hanh") {
+      // -----------------------------------------------------------------------------------
+      // Trung tâm bảo hành nhận sản phẩm bảo hành từ đại lý
+      if (status === "dang_sua_chua_bao_hanh") {
+        [invalidProducts, requiredStatuses] = allHasStatus(products, "dang_sua_chua_bao_hanh_ON_THE_WAY");
+      } else {
+        return res.status(400).json({
+          errors: { message: `Người dùng loại ${user.account_type} không thể nhận sản phẩm ở trạng thái này!` },
+        });
+      }
+    } else if (user.account_type === "san_xuat") {
+      // -----------------------------------------------------------------------------------
+      // Nhà máy nhận sản phẩm bảo hành lỗi từ trung tâm bảo hành
+      if (status === "loi_da_dua_ve_co_so_san_xuat") {
+        [invalidProducts, requiredStatuses] = allHasStatus(products, "loi_da_dua_ve_co_so_san_xuat_ON_THE_WAY");
+      }
+      // -----------------------------------------------------------------------------------
+      // Nhận lại sản phẩm lâu không bán được từ đại lý
+      else if (status === "tra_lai_co_so_san_xuat") {
+        [invalidProducts, requiredStatuses] = allHasStatus(products, "dua_ve_dai_ly");
+      } else {
+        return res.status(400).json({
+          errors: { message: `Người dùng loại ${user.account_type} không thể nhận sản phẩm ở trạng thái này!` },
+        });
+      }
+    }
+
+    if (invalidProducts.length > 0) {
+      return res.status(400).json({
+        errors: {
+          product_ids: `Không có sản phẩm nào được cập nhật! Các sản phẩm phải đang ở trạng thái '${requiredStatuses!}'! ID: [${invalidProducts.map(
+            (product) => product.id
+          )}]`,
+          invalid_products: invalidProducts,
+        },
+      });
+    }
+
+    // Cập nhật trạng thái
+    products.forEach((product) => {
+      product.status = status;
+    });
+
+    // Cập nhật sản phẩm
+    const updatedProducts = await productRepo.save(products);
+    return res.status(200).json(updatedProducts);
+  } catch (error) {
+    errorHandler(error, req, res);
+  }
+};
 
 const router = Router();
 
 router.get("/", protectRoute, restrictTo("admin", "bao_hanh", "dai_ly", "san_xuat"), getProducts);
 router.post("/", protectRoute, restrictTo("san_xuat"), createProducts);
-router.post("/exportToDaily", protectRoute, restrictTo("san_xuat"), exportToDaily);
-router.post("/updateProductsStatus", protectRoute, restrictTo("bao_hanh", "dai_ly", "san_xuat"), updateProductsStatus);
+router.post("/send", protectRoute, restrictTo("bao_hanh", "dai_ly", "san_xuat"), sendProducts);
+router.post("/receive", protectRoute, restrictTo("bao_hanh", "dai_ly", "san_xuat"), receiveProducts);
 
 // Các route có params
 router.get("/:id", protectRoute, restrictTo("admin", "bao_hanh", "dai_ly", "san_xuat"), getProduct);
