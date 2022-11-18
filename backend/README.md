@@ -14,3 +14,4 @@
 2. Nếu api call có lỗi thì trả về 1 object có property `errors` chứa thông tin các trường bị lỗi hoặc chứa `message` nếu là lỗi chung.
 3. Hiện tại nơi nhận sản phẩm sẽ là nơi cập nhật trạng thái sản phẩm. Trạng thái sản phẩm khi đang trên đường sẽ được cài đặt sau.
 4. Khi sản phẩm phát hiện lỗi thì cơ sở sản xuất nhận về, và đại lý có trách nhiệm bàn gửi sản phẩm mới thay thế cho khách hàng.
+5. Cronjob mỗi ngày check sản phẩm hết hạn bảo hành và cập nhật trạng thái.

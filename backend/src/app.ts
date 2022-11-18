@@ -29,7 +29,7 @@ app.get("/api", (_, res) => res.send("Hello World!"));
 app.use("/api/auth", authRouter);
 app.use("/api/users", userRouter);
 app.use("/api/products", productsRouter);
-app.use("/api/product_lines", productLinesRouter);
+app.use("/api/productlines", productLinesRouter);
 app.use("/api/stats", statsRouter);
 app.use("/api/customers", customerRouter);
 
