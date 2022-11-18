@@ -3,7 +3,7 @@ import { Request, Response, Router } from "express";
 import { AppDataSource } from "../data-source";
 import { ProductLine } from "../entities/ProductLine";
 import { protectRoute, restrictTo } from "../middlewares/auth";
-import { errorHandler } from "../../helpers/errorHandler";
+import { errorHandler } from "../helpers/errorHandler";
 
 /**
  * Lấy danh sách các dòng sản phẩm.

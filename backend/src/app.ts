@@ -6,7 +6,7 @@ import morgan from "morgan";
 dotenv.config();
 
 import { AppDataSource } from "./data-source";
-import { updateBaohanhStatusJob } from "../helpers/cronJobs";
+import { updateBaohanhStatusJob } from "./helpers/cronJobs";
 import trim from "./middlewares/trim";
 import userRouter from "./routes/users";
 import authRouter from "./routes/auth";

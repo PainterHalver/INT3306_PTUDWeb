@@ -1,9 +1,8 @@
-import { instanceToPlain } from "class-transformer";
 import { DataSource } from "typeorm";
 import { Seeder, SeederFactoryManager } from "typeorm-extension";
-import { ProductStatus } from "../../helpers/types";
+import { ProductStatus } from "../../src/helpers/types";
 
-import { randomElement } from "../../helpers/utils";
+import { randomElement } from "../../src/helpers/utils";
 import { Customer } from "../../src/entities/Customer";
 import { Product } from "../../src/entities/Product";
 import { ProductLine } from "../../src/entities/ProductLine";

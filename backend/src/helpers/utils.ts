@@ -1,4 +1,4 @@
-import { Product } from "../src/entities/Product";
+import { Product } from "../entities/Product";
 
 /**
  * Trả về một phần tử ngẫu nhiên trong mảng

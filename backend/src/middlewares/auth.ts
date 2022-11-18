@@ -3,7 +3,7 @@ import jwt from "jsonwebtoken";
 
 import { AppDataSource } from "../data-source";
 import { User } from "../entities/User";
-import { AccountType, JWTUserPayload } from "../../helpers/types";
+import { AccountType, JWTUserPayload } from "../helpers/types";
 
 /**
  * Bắt buộc user phải đăng nhập mới được truy cập các route này
@@ -21,7 +21,7 @@ export const protectRoute = async (req: Request, res: Response, next: NextFuncti
 
     // Nếu không có token thì trả về lỗi
     if (!token) {
-      return res.status(401).json({ error: "Bạn chưa đăng nhập hoặc không có quyền truy cập!" });
+      return res.status(401).json({ errors: { message: "Bạn chưa đăng nhập hoặc không có quyền truy cập!" } });
     }
 
     // 2. Check xem token có hợp lệ không
@@ -32,12 +32,12 @@ export const protectRoute = async (req: Request, res: Response, next: NextFuncti
     const user = await userRepository.findOneBy({ username: decodedPayload.username });
 
     if (!user) {
-      return res.status(404).json({ error: "User không tồn tại!" });
+      return res.status(404).json({ errors: { message: "User không tồn tại!" } });
     }
 
     // 4. Check xem user có đúng account_type không
     if (user.account_type !== decodedPayload.account_type) {
-      return res.status(401).json({ error: "Bạn không có quyền truy cập!" });
+      return res.status(401).json({ errors: { message: "Bạn không có quyền truy cập!" } });
     }
 
     // 5. Nếu ổn hết thì gán user vào res.locals.user và next()
@@ -56,7 +56,9 @@ export const protectRoute = async (req: Request, res: Response, next: NextFuncti
 export const restrictTo = (...accountTypes: AccountType[]) => {
   return (req: Request, res: Response, next: NextFunction) => {
     if (!accountTypes.includes(res.locals.user.account_type)) {
-      return res.status(401).json({ error: `Chỉ user loại ${accountTypes} mới được truy cập route này!` });
+      return res
+        .status(401)
+        .json({ errors: { message: `Chỉ user loại ${accountTypes} mới được truy cập route này!` } });
     }
 
     next();

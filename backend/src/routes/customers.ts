@@ -2,7 +2,7 @@ import { isPhoneNumber } from "class-validator";
 import { Request, Response, Router } from "express";
 import { Like } from "typeorm";
 
-import { errorHandler } from "../../helpers/errorHandler";
+import { errorHandler } from "../helpers/errorHandler";
 import { AppDataSource } from "../data-source";
 import { Customer } from "../entities/Customer";
 import { protectRoute, restrictTo } from "../middlewares/auth";

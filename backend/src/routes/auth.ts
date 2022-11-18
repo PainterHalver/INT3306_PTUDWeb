@@ -5,8 +5,8 @@ import crypto from "crypto";
 
 import { AppDataSource } from "../data-source";
 import { User } from "../entities/User";
-import { JWTUserPayload } from "../../helpers/types";
-import { errorHandler } from "../../helpers/errorHandler";
+import { JWTUserPayload } from "../helpers/types";
+import { errorHandler } from "../helpers/errorHandler";
 
 const login = async (req: Request, res: Response) => {
   try {

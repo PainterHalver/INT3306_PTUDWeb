@@ -1,7 +1,7 @@
 import { Request, Response, Router } from "express";
 import { Brackets } from "typeorm";
 
-import { errorHandler } from "../../helpers/errorHandler";
+import { errorHandler } from "../helpers/errorHandler";
 import { AppDataSource } from "../data-source";
 import { Product } from "../entities/Product";
 import { ProductLine } from "../entities/ProductLine";

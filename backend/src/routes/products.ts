@@ -1,8 +1,8 @@
 import { Request, Response, Router } from "express";
 import { In } from "typeorm";
 
-import { errorHandler } from "../../helpers/errorHandler";
-import { isProductStatus, ProductStatus, productStatuses } from "../../helpers/types";
+import { errorHandler } from "../helpers/errorHandler";
+import { isProductStatus, ProductStatus, productStatuses } from "../helpers/types";
 import { AppDataSource } from "../data-source";
 import { Customer } from "../entities/Customer";
 import { Product } from "../entities/Product";
@@ -384,6 +384,11 @@ const updateProductsStatus = async (req: Request, res: Response) => {
       // Nhà máy nhận sản phẩm bảo hành lỗi từ trung tâm bảo hành
       if (status === "loi_da_dua_ve_co_so_san_xuat") {
         [invalidProducts, requiredStatuses] = allHasStatus(products, "loi_can_tra_ve_nha_may");
+      }
+      // -----------------------------------------------------------------------------------
+      // Nhận lại sản phẩm lâu không bán được từ đại lý
+      else if (status === "tra_lai_co_so_san_xuat") {
+        [invalidProducts, requiredStatuses] = allHasStatus(products, "dua_ve_dai_ly");
       } else {
         return res.status(400).json({
           errors: { message: `Người dùng loại ${user.account_type} không thể cập nhật sản phẩm ở trạng thái này!` },

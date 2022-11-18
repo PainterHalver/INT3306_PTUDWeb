@@ -4,7 +4,7 @@ import { DataSource } from "typeorm";
 import { Customer } from "../../src/entities/Customer";
 import names from "../mock_datas/vietnamese_names";
 import addresses from "../mock_datas/addresses";
-import { randomElement } from "../../helpers/utils";
+import { randomElement } from "../../src/helpers/utils";
 
 export default class CustomerSeeder implements Seeder {
   public async run(dataSource: DataSource, factoryManager: SeederFactoryManager): Promise<any> {

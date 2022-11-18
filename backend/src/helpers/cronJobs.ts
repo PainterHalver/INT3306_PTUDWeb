@@ -1,8 +1,8 @@
 import { CronJob } from "cron";
 import { In } from "typeorm";
 
-import { AppDataSource } from "../src/data-source";
-import { Product } from "../src/entities/Product";
+import { AppDataSource } from "../data-source";
+import { Product } from "../entities/Product";
 import { warrantyStillValid } from "./utils";
 
 /**

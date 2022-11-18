@@ -2,8 +2,8 @@ import { Exclude } from "class-transformer";
 import { Length, Validate, validateOrReject } from "class-validator";
 import { BeforeInsert, BeforeUpdate, Column, Entity, OneToMany } from "typeorm";
 
-import { AccountType } from "../../helpers/types";
-import { IsAccountType } from "../../helpers/validators";
+import { AccountType } from "../helpers/types";
+import { IsAccountType } from "../helpers/validators";
 import BaseEntity from "./Entity";
 import IHasAddressAndProducts from "./interfaces/IHasAdressAndProducts";
 import { Product } from "./Product";

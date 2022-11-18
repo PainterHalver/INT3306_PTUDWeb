@@ -2,8 +2,8 @@ import { Expose } from "class-transformer";
 import { Validate, validateOrReject } from "class-validator";
 import { BeforeInsert, BeforeUpdate, Column, Entity, JoinColumn, ManyToOne } from "typeorm";
 
-import { ProductStatus } from "../../helpers/types";
-import { IsBaoHanhUser, IsDaiLyUser, IsProductStatus, IsSanXuatUser, RequireProperty } from "../../helpers/validators";
+import { ProductStatus } from "../helpers/types";
+import { IsBaoHanhUser, IsDaiLyUser, IsProductStatus, IsSanXuatUser, RequireProperty } from "../helpers/validators";
 import { Customer } from "./Customer";
 import BaseEntity from "./Entity";
 import { ProductLine } from "./ProductLine";
