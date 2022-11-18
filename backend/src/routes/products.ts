@@ -21,11 +21,11 @@ const customerRepo = AppDataSource.getRepository(Customer);
 const getProducts = async (req: Request, res: Response) => {
   try {
     const status = req.query.status || "";
-    const daily_id = req.query.daily_id || 0;
-    const sanxuat_id = req.query.sanxuat_id || 0;
-    const baohanh_id = req.query.baohanh_id || 0;
-    const customer_id = req.query.customer_id || 0;
-    const product_line_id = req.query.product_line_id || 0;
+    const dailyId = req.query.dailyId || 0;
+    const sanxuatId = req.query.sanxuatId || 0;
+    const baohanhId = req.query.baohanhId || 0;
+    const customerId = req.query.customerId || 0;
+    const productlineId = req.query.productlineId || 0;
 
     const page = parseInt(req.query.page as string) || 1;
     const limit = parseInt(req.query.limit as string) || 20;
@@ -41,11 +41,11 @@ const getProducts = async (req: Request, res: Response) => {
       .leftJoinAndSelect("product.customer", "customer")
       .where((qb) => {
         qb.where(`product.status LIKE :status`, { status: `%${status}%` });
-        if (product_line_id) qb = qb.andWhere(`product_line.id = :product_line_id`, { product_line_id });
-        if (daily_id) qb = qb.andWhere(`daily.id = :daily_id`, { daily_id });
-        if (sanxuat_id) qb = qb.andWhere(`sanxuat.id = :sanxuat_id`, { sanxuat_id });
-        if (baohanh_id) qb = qb.andWhere(`baohanh.id = :baohanh_id`, { baohanh_id });
-        if (customer_id) qb = qb.andWhere(`customer.id = :customer_id`, { customer_id });
+        if (productlineId) qb = qb.andWhere(`product_line.id = :productlineId`, { productlineId });
+        if (dailyId) qb = qb.andWhere(`daily.id = :dailyId`, { dailyId });
+        if (sanxuatId) qb = qb.andWhere(`sanxuat.id = :sanxuatId`, { sanxuatId });
+        if (baohanhId) qb = qb.andWhere(`baohanh.id = :baohanhId`, { baohanhId });
+        if (customerId) qb = qb.andWhere(`customer.id = :customerId`, { customerId });
       })
       .skip(offset)
       .take(limit)

@@ -2,7 +2,6 @@ import { Request, Response, Router } from "express";
 import { Brackets } from "typeorm";
 
 import { errorHandler } from "../../helpers/errorHandler";
-import { ProductStatus } from "../../helpers/types";
 import { AppDataSource } from "../data-source";
 import { Product } from "../entities/Product";
 import { ProductLine } from "../entities/ProductLine";
@@ -20,8 +19,8 @@ const userRepo = AppDataSource.getRepository(User);
  */
 const getStats = async (req: Request, res: Response) => {
   try {
-    // const start_time = req.query.start_time || -Infinity;
-    // const end_time = req.query.end_time || Infinity;
+    // const from = req.query.from || -Infinity;
+    // const to = req.query.to || Infinity;
     const status = req.query.status || "";
     const user = res.locals.user as User;
 
@@ -33,21 +32,21 @@ const getStats = async (req: Request, res: Response) => {
       return res.status(400).json({ errors: { message: "Chưa nhập status hoặc status không hợp lệ" } });
     }
 
-    // Đảm bảo start_time và end_time là có thể parse thành number
+    // Đảm bảo from và to có thể parse thành number
     // if (
-    //   typeof start_time !== "string" ||
-    //   typeof end_time !== "string" ||
-    //   isNaN(parseInt(start_time)) ||
-    //   isNaN(parseInt(end_time))
+    //   typeof from !== "string" ||
+    //   typeof to !== "string" ||
+    //   isNaN(parseInt(from)) ||
+    //   isNaN(parseInt(to))
     // ) {
     //   return res
     //     .status(400)
-    //     .json({ message: "start_time và end_time phải là unix time stamp. Gọi hàm getTime() của class Date" });
+    //     .json({ message: "from và to phải là unix time stamp. Gọi hàm getTime() của class Date" });
     // }
 
-    // Parse start_time và end_time về dạng "YYYY-MM-DD" cho sqlite
-    // const parsed_start_time = new Date(parseInt(start_time)).toISOString().split("T")[0];
-    // const parsed_end_time = new Date(parseInt(end_time)).toISOString().split("T")[0];
+    // Parse from và to về dạng "YYYY-MM-DD" cho sqlite
+    // const parsed_from = new Date(parseInt(from)).toISOString().split("T")[0];
+    // const parsed_to = new Date(parseInt(to)).toISOString().split("T")[0];
 
     // https://typeorm.io/select-query-builder#adding-where-expression
     const product_lines = await productLineRepo
@@ -64,9 +63,9 @@ const getStats = async (req: Request, res: Response) => {
           return "9001 = 9001";
         })
       )
-      // .andWhere("products.exported_to_daily_date BETWEEN :parsed_start_time AND :parsed_end_time", {
-      //   parsed_start_time,
-      //   parsed_end_time,
+      // .andWhere("products.exported_to_daily_date BETWEEN :parsed_from AND :parsed_to", {
+      //   parsed_from,
+      //   parsed_to,
       // })
       .getMany();
 
@@ -84,25 +83,20 @@ const getStats = async (req: Request, res: Response) => {
  */
 const exportToDailyStats = async (req: Request, res: Response) => {
   try {
-    const start_time = req.query.start_time || -Infinity;
-    const end_time = req.query.end_time || Infinity;
+    const from = req.query.from || -Infinity;
+    const to = req.query.to || Infinity;
     const user = res.locals.user as User;
 
-    // Đảm bảo start_time và end_time là có thể parse thành number
-    if (
-      typeof start_time !== "string" ||
-      typeof end_time !== "string" ||
-      isNaN(parseInt(start_time)) ||
-      isNaN(parseInt(end_time))
-    ) {
+    // Đảm bảo from và to là có thể parse thành number
+    if (typeof from !== "string" || typeof to !== "string" || isNaN(parseInt(from)) || isNaN(parseInt(to))) {
       return res.status(400).json({
-        errors: { message: "start_time và end_time phải là unix time stamp. Gọi hàm getTime() của class Date" },
+        errors: { message: "from và to phải là unix time stamp. Gọi hàm getTime() của class Date" },
       });
     }
 
-    // Parse start_time và end_time về dạng "YYYY-MM-DD" cho sqlite
-    const parsed_start_time = new Date(parseInt(start_time)).toISOString().split("T")[0];
-    const parsed_end_time = new Date(parseInt(end_time)).toISOString().split("T")[0];
+    // Parse from và to về dạng "YYYY-MM-DD" cho sqlite
+    const parsed_from = new Date(parseInt(from)).toISOString().split("T")[0];
+    const parsed_to = new Date(parseInt(to)).toISOString().split("T")[0];
 
     // TODO: Query chưa tối ưu
     const [products, count] = await productRepo
@@ -110,9 +104,9 @@ const exportToDailyStats = async (req: Request, res: Response) => {
       .leftJoinAndSelect("product.daily", "daily")
       .leftJoinAndSelect("product.product_line", "product_line")
       .leftJoinAndSelect("product.sanxuat", "sanxuat")
-      .where("product.exported_to_daily_date BETWEEN :parsed_start_time AND :parsed_end_time", {
-        parsed_start_time,
-        parsed_end_time,
+      .where("product.exported_to_daily_date BETWEEN :parsed_from AND :parsed_to", {
+        parsed_from,
+        parsed_to,
       })
       .andWhere("product.sanxuat_id = :sanxuat_id", { sanxuat_id: user.id })
       .getManyAndCount();
@@ -148,28 +142,21 @@ const exportToDailyStats = async (req: Request, res: Response) => {
  */
 const soldToCustomerStats = async (req: Request, res: Response) => {
   try {
-    const start_time = req.query.start_time || -Infinity;
-    const end_time = req.query.end_time || Infinity;
+    const from = req.query.from || -Infinity;
+    const to = req.query.to || Infinity;
     const user = res.locals.user as User;
 
     // Nếu muốn chỉ lấy của User hiện tại
     const of_current_user = req.query.of_current_user ?? null;
 
-    // Đảm bảo start_time và end_time là có thể parse thành number
-    if (
-      typeof start_time !== "string" ||
-      typeof end_time !== "string" ||
-      isNaN(parseInt(start_time)) ||
-      isNaN(parseInt(end_time))
-    ) {
-      return res
-        .status(400)
-        .json({ message: "start_time và end_time phải là unix time stamp. Gọi hàm getTime() của class Date" });
+    // Đảm bảo from và to là có thể parse thành number
+    if (typeof from !== "string" || typeof to !== "string" || isNaN(parseInt(from)) || isNaN(parseInt(to))) {
+      return res.status(400).json({ message: "from và to phải là unix time stamp. Gọi hàm getTime() của class Date" });
     }
 
-    // Parse start_time và end_time về dạng "YYYY-MM-DD" cho sqlite
-    const parsed_start_time = new Date(parseInt(start_time)).toISOString().split("T")[0];
-    const parsed_end_time = new Date(parseInt(end_time)).toISOString().split("T")[0];
+    // Parse from và to về dạng "YYYY-MM-DD" cho sqlite
+    const parsed_from = new Date(parseInt(from)).toISOString().split("T")[0];
+    const parsed_to = new Date(parseInt(to)).toISOString().split("T")[0];
 
     const product_lines = await productLineRepo
       .createQueryBuilder("product_line")
@@ -182,9 +169,9 @@ const soldToCustomerStats = async (req: Request, res: Response) => {
           return "9001 = 9001";
         })
       )
-      .andWhere("products.sold_to_customer_date BETWEEN :parsed_start_time AND :parsed_end_time", {
-        parsed_start_time,
-        parsed_end_time,
+      .andWhere("products.sold_to_customer_date BETWEEN :parsed_from AND :parsed_to", {
+        parsed_from,
+        parsed_to,
       })
       .getMany();
 
