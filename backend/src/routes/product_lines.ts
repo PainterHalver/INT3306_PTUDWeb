@@ -36,6 +36,37 @@ const getProductLines = async (req: Request, res: Response) => {
 };
 
 /**
+ * Lấy một dòng sản phẩm theo ID.
+ */
+const getProductLine = async (req: Request, res: Response) => {
+  try {
+    const { id } = req.params;
+
+    // Validate dữ liệu
+    let errors: any = {};
+    if (!id || isNaN(parseInt(id))) errors.id = "ID không hợp lệ";
+    if (Object.keys(errors).length > 0) {
+      return res.status(400).json({ errors });
+    }
+
+    // Lấy ProductLine
+    const productLineRepo = AppDataSource.getRepository(ProductLine);
+    const productLine = await productLineRepo.findOne({
+      where: { id: parseInt(id) },
+      relations: ["products"],
+    });
+    if (!productLine) {
+      return res.status(404).json({ errors: { message: "Không tìm thấy dòng sản phẩm" } });
+    }
+
+    // Trả về ProductLine
+    return res.json(productLine);
+  } catch (error) {
+    errorHandler(error, req, res);
+  }
+};
+
+/**
  * Tạo một dòng sản phẩm mới.
  */
 const createProductLine = async (req: Request, res: Response) => {
@@ -146,6 +177,7 @@ router.get("/", protectRoute, restrictTo("admin"), getProductLines);
 router.post("/", protectRoute, restrictTo("admin"), createProductLine);
 
 // Các route có params
+router.get("/:id", protectRoute, restrictTo("admin"), getProductLine);
 router.put("/:id", protectRoute, restrictTo("admin"), updateProductLine);
 router.delete("/:id", protectRoute, restrictTo("admin"), deleteProductLine);
 
