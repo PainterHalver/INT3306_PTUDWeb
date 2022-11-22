@@ -1,0 +1,31 @@
+@import url("https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;1,100;1,300&display=swap");
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer components {
+  .input {
+    @apply border rounded border-card-border px-[12px] py-[6px];
+  }
+
+  .input:focus {
+    @apply border-blue-500 outline-none;
+  }
+
+  .button {
+    @apply px-[12px] py-[6px] rounded text-[14px];
+  }
+
+  .button.green {
+    @apply text-[#fff] border bg-[#5cb85c] border-[#4cae4c];
+  }
+
+  .button.green:hover {
+    @apply bg-[#47a447] border-[#398439];
+  }
+}
+
+body {
+  font-family: "Roboto", sans-serif;
+}
