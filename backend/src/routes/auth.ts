@@ -7,6 +7,7 @@ import { AppDataSource } from "../data-source";
 import { User } from "../entities/User";
 import { JWTUserPayload } from "../helpers/types";
 import { errorHandler } from "../helpers/errorHandler";
+import { protectRoute } from "../middlewares/auth";
 
 const login = async (req: Request, res: Response) => {
   try {
@@ -44,8 +45,14 @@ const login = async (req: Request, res: Response) => {
   }
 };
 
+const getCurrentUser = (req: Request, res: Response) => {
+  const user = res.locals.user as User;
+  return res.json(user);
+};
+
 const router = Router();
 
 router.post("/login", login);
+router.get("/me", protectRoute, getCurrentUser);
 
 export default router;
