@@ -104,13 +104,19 @@ const updateUser = async (req: Request, res: Response) => {
 
     // Check xem username đã tồn tại chưa
     const userRepo = AppDataSource.getRepository(User);
+    const user = await userRepo.findOneBy({ username });
+    if (user && user.id !== parseInt(id)) {
+      return res.status(400).json({ errors: { username: "Username đã tồn tại" } });
+    }
+
+    // Check xem id có tồn tại không
     const usernameUser = await userRepo.findOneBy({ id: parseInt(id) });
     if (!usernameUser) {
       return res.status(400).json({ errors: { username: `User với id ${id} không tồn tại` } });
     }
 
     // Cập nhật tài khoản
-    // TODO: Quyết định xem có cho đổi username không vì username là trường unique
+    usernameUser.username = username;
     usernameUser.name = name;
     usernameUser.account_type = account_type;
     usernameUser.address = address;
