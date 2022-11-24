@@ -10,6 +10,7 @@ module.exports = {
       colors: {
         "blue-primary": "rgb(1,123,196)",
         "green-primary": "#007f49",
+        "green-secondary": "#41a612",
         "card": "#F7F7F7",
         'card-border': "#dddddd",
       },
