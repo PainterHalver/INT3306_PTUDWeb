@@ -7,6 +7,7 @@ import { User } from "../helpers/types";
 interface State {
   authenticated: boolean;
   user: User | undefined;
+  loading: boolean;
 }
 
 interface Action {
@@ -17,6 +18,7 @@ interface Action {
 const StateContext = createContext<State>({
   authenticated: false,
   user: undefined,
+  loading: true,
 });
 
 const DispatchContext = createContext<((type: string, payload?: any) => void) | null>(null);
@@ -28,9 +30,10 @@ const reducer = (state: State, { type, payload }: Action) => {
         ...state,
         authenticated: true,
         user: payload,
+        loading: false,
       };
     case "LOGOUT":
-      return { ...state, authenticated: false, user: null };
+      return { ...state, authenticated: false, user: null, loading: false };
     default:
       throw new Error(`Unknown action type: ${type}`);
   }
@@ -41,6 +44,7 @@ const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [state, defaultDispatch] = useReducer(reducer, {
     user: null,
     authenticated: false,
+    loading: true,
   });
 
   // just to make it easier to call dispatch
@@ -56,6 +60,7 @@ const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         console.log("CONTEXT USER: ", res.data);
         dispatch("LOGIN", res.data);
       } catch (err) {
+        dispatch("LOGOUT");
         console.log(err);
       }
     }

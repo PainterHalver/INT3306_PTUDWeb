@@ -1,6 +1,6 @@
 "use client";
-import { redirect } from "next/navigation";
-import React, { FormEvent, useRef, useState } from "react";
+import { useRouter } from "next/navigation";
+import React, { FormEvent, useEffect, useRef, useState } from "react";
 
 import axios from "../helpers/axios";
 import { User } from "../helpers/types";
@@ -12,11 +12,14 @@ export default function LoginForm() {
   const formRef = useRef<HTMLFormElement>(null);
 
   const dispatch = useAuthDispatch();
-  const { authenticated } = useAuthContext();
+  const { authenticated, loading: loginLoading } = useAuthContext();
+  const router = useRouter();
 
-  if (authenticated) {
-    redirect("/main");
-  }
+  useEffect(() => {
+    if (!loginLoading && authenticated) {
+      router.push("/main");
+    }
+  }, [loginLoading]);
 
   const login = async (e: FormEvent) => {
     try {
@@ -37,7 +40,7 @@ export default function LoginForm() {
       dispatch("LOGIN", res.data);
 
       // Chuyển hướng đến trang chủ
-      window.location.href = "/main";
+      router.push("/main");
     } catch (error) {
       if (axios.isAxiosError(error)) {
         setError(true);

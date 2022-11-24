@@ -1,22 +1,28 @@
 "use client";
 
-import { redirect } from "next/navigation";
-import React from "react";
-import { useAuthContext } from "../auth-provider";
+import { useRouter } from "next/navigation";
+import React, { useEffect } from "react";
+import { useAuthContext, useAuthDispatch } from "../auth-provider";
 
 export default function Main() {
-  const { authenticated } = useAuthContext();
+  const { authenticated, loading } = useAuthContext();
+  const dispatch = useAuthDispatch();
+  const router = useRouter();
 
-  if (!authenticated) {
-    redirect("/");
-  }
+  useEffect(() => {
+    console.log({ authenticated, loading });
+    if (!loading && !authenticated) {
+      router.push("/");
+    }
+  }, [loading]);
 
   const logout = () => {
     console.log("first");
     localStorage.removeItem("token");
+    dispatch("LOGOUT");
 
     // Chuyển hướng đến trang đăng nhập
-    window.location.href = "/";
+    router.push("/");
   };
 
   return (
