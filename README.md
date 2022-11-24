@@ -41,52 +41,6 @@
 
 ## Các chức năng đã cài đặt
 
-<style>
-    bgr {
-        background-color: red;
-    }
-    bgg {
-        background-color: green;
-    }
-    bgy {
-        background-color: #feffc0;
-    }
-    bgo {
-        background-color: #ffdbbd;
-    }
-</style>
-
-**Ban điều hành BigCorp**
-
-- <bgy>Quản lý danh mục dòng sản phẩm.</bgy>
-- <bgy>Cấp tài khoản và quản lý danh mục các cơ sở sản xuất, đại lý phân phối và trung tâm bảo hành.</bgy>
-- <bgy>Theo dõi và xem thống kê sản phẩm trên toàn quốc, theo trạng thái và theo cơ sở sản xuất, đại lý phân phối và trung tâm bảo hành.</bgy>
-
-**Cơ sở sản xuất**
-
-- <bgy>Nhập các lô sản phẩm mới vừa sản xuất vào kho.</bgy>
-- <bgy>Xuất sản phẩm cho đại lý.</bgy>
-- <bgy>Nhận các sản phẩm lỗi về từ các trung tâm bảo hành.</bgy>
-- <bgy>Thống kê và báo cáo số liệu sản phẩm theo từng loại (trạng thái), theo tháng, quý, năm.</bgy>
-- <bgy>Thống kê và phân tích số lượng sản phẩm bán ra hàng tháng, quý, năm.</bgy>
-- <bgy>Thống kê tỉ lệ sản phẩm bị lỗi theo dòng sản phẩm, cơ sở sản xuất, đại lý phân phối.</bgy>
-
-**Đại lý phân phối**
-
-- <bgy>Nhập sản phẩm mới về từ cơ sở sản xuất. Sản phẩm nhập về được lưu tại kho (riêng, nội bộ) của đại lý.</bgy>
-- <bgy>Bán sản phẩm cho khách hàng.</bgy>
-- <bgy>Nhận lại sản phẩm cần bảo hành</bgy> và <bgy>chuyển đến trung tâm bảo hành.</bgy>
-- <bgy>Nhận lại sản phẩm từ trung tâm bảo hành để trả cho khách hàng.</bgy>
-- <bgy>Thống kê và báo cáo số liệu sản phẩm theo từng loại (trạng thái liên), theo tháng, quý, năm.</bgy>
-- <bgy>Thống kê và phân tích số lượng sản phẩm bán ra hàng tháng, quý, năm.</bgy>
-
-**Trung tâm bảo hành**
-
-- <bgy>Nhận các sản phẩm bảo hành hoặc triệu hồi từ đại lý.</bgy>
-- <bgy>Trả sản phẩm đã sửa chữa xong cho đại lý.</bgy>
-- <bgy>Chuyển sản phẩm bảo hành lỗi không thể sửa chữa về cơ sở sản xuất.</bgy>
-- <bgy>Thống kê và báo cáo số liệu sản phẩm theo từng loại (trạng thái), theo tháng, quý, năm.</bgy>
-
 ## Tiêu chí chấm điểm
 
 1. Các chức năng đã cài đặt: [Xem ở trên](#các-chức-năng-đã-cài-đặt)
