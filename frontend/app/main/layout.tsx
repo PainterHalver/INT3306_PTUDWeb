@@ -2,7 +2,7 @@
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 import { AccountType } from "../../helpers/types";
-import { useAuthContext, useAuthDispatch } from "../auth-provider";
+import { useAuthContext, useAppDispatch } from "../context-provider";
 import NavLink from "./NavLink";
 
 type NavLinks = {
@@ -66,7 +66,7 @@ const navlinks: NavLinks = [
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   const { authenticated, loading, user } = useAuthContext();
-  const dispatch = useAuthDispatch();
+  const dispatch = useAppDispatch();
   const router = useRouter();
 
   useEffect(() => {

@@ -2,32 +2,29 @@
 
 import React, { useEffect } from "react";
 
-import { User } from "../../../helpers/types";
 import axios from "../../../helpers/axios";
-import { accountTypes } from "../../../helpers/types";
-import LoadingModal from "./LoadingModal";
+import { accountTypes, User } from "../../../helpers/types";
+import { useAppDispatch } from "../../context-provider";
 import Modal from "./Modal";
 
 export default function Users() {
   const [users, setUsers] = React.useState<User[]>([]);
-  const [loading, setLoading] = React.useState<boolean>(true);
-  const [addUserLoading, setAddUserLoading] = React.useState<boolean>(false);
   const [addUserModalOpen, setAddUserModalOpen] = React.useState<boolean>(false);
   const [addUserErrors, setAddUserErrors] = React.useState<string[]>([]);
   const searchButtonRef = React.useRef<HTMLButtonElement>(null);
+  const dispatch = useAppDispatch();
 
   useEffect(() => {
     (async function getUsers() {
       const res = await axios.get("/users");
       setUsers(res.data.users);
-      setLoading(false);
     })();
   }, []);
 
   const searchUsers = async (e: React.FormEvent) => {
     try {
       e.preventDefault();
-      setLoading(true);
+      dispatch("LOADING");
       setUsers([]);
 
       const accountType = e.target[0].value;
@@ -36,7 +33,7 @@ export default function Users() {
     } catch (error) {
       console.log(error);
     } finally {
-      setLoading(false);
+      dispatch("STOP_LOADING");
     }
   };
 
@@ -44,7 +41,7 @@ export default function Users() {
     try {
       e.preventDefault();
       const { username, account_name, password, account_type, address } = e.target as HTMLFormElement;
-      setAddUserLoading(true);
+      dispatch("LOADING");
       const res = await axios.post("/users", {
         username: username.value,
         name: account_name.value,
@@ -64,7 +61,7 @@ export default function Users() {
       }
       console.log(error);
     } finally {
-      setAddUserLoading(false);
+      dispatch("STOP_LOADING");
     }
   };
 
@@ -91,7 +88,7 @@ export default function Users() {
           </button>
         </div>
 
-        {!loading && (
+        {users.length > 0 && (
           <table className="table w-full border border-collapse">
             <thead>
               <tr>
@@ -113,7 +110,6 @@ export default function Users() {
         )}
       </div>
 
-      <LoadingModal open={loading || addUserLoading} />
       <Modal open={addUserModalOpen} setOpen={setAddUserModalOpen}>
         <div className="p-4 bg-white">
           <form className="flex flex-col min-w-[350px] text-md" onSubmit={addUserHandler} autoComplete="false">

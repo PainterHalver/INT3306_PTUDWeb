@@ -4,14 +4,14 @@ import React, { FormEvent, useEffect, useRef, useState } from "react";
 
 import axios from "../helpers/axios";
 import { User } from "../helpers/types";
-import { useAuthContext, useAuthDispatch } from "./auth-provider";
+import { useAuthContext, useAppDispatch } from "./context-provider";
 
 export default function LoginForm() {
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<boolean>(false);
   const formRef = useRef<HTMLFormElement>(null);
 
-  const dispatch = useAuthDispatch();
+  const dispatch = useAppDispatch();
   const { authenticated, loading: loginLoading } = useAuthContext();
   const router = useRouter();
 

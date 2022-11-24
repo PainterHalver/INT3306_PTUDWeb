@@ -3,6 +3,7 @@ import { createContext, useContext, useEffect, useReducer } from "react";
 
 import axios from "../helpers/axios";
 import { User } from "../helpers/types";
+import LoadingModal from "./LoadingModal";
 
 interface State {
   authenticated: boolean;
@@ -34,13 +35,17 @@ const reducer = (state: State, { type, payload }: Action) => {
       };
     case "LOGOUT":
       return { ...state, authenticated: false, user: null, loading: false };
+    case "LOADING":
+      return { ...state, loading: true };
+    case "STOP_LOADING":
+      return { ...state, loading: false };
     default:
       throw new Error(`Unknown action type: ${type}`);
   }
 };
 
 // Component for the context
-const AuthProvider = ({ children }: { children: React.ReactNode }) => {
+const ContextProvider = ({ children }: { children: React.ReactNode }) => {
   const [state, defaultDispatch] = useReducer(reducer, {
     user: null,
     authenticated: false,
@@ -71,6 +76,7 @@ const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     // All children have access to dispatch method and the state of the app (authenticated or not,...)
     <DispatchContext.Provider value={dispatch}>
       <StateContext.Provider value={state}>{children}</StateContext.Provider>
+      <LoadingModal open={state.loading}></LoadingModal>
     </DispatchContext.Provider>
   );
 };
@@ -78,6 +84,6 @@ const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 // Export custom hooks for each state so that we can use those context variable in children.
 // Not returning the context but return the function to get the context.
 export const useAuthContext = () => useContext(StateContext);
-export const useAuthDispatch = () => useContext(DispatchContext);
+export const useAppDispatch = () => useContext(DispatchContext);
 
-export default AuthProvider;
+export default ContextProvider;
