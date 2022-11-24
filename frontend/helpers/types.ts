@@ -1,4 +1,5 @@
 export type User = {
+  id: number;
   name: string;
   username: string;
   account_type: AccountType;

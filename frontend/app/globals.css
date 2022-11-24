@@ -61,6 +61,18 @@
   .button-classic:active {
     @apply bg-slate-500;
   }
+
+  .button-classic-red {
+    @apply px-1 bg-red-500 border border-red-600;
+  }
+
+  .button-classic-red:hover {
+    @apply bg-red-600;
+  }
+
+  .button-classic-red:active {
+    @apply bg-red-700;
+  }
 }
 
 body {
