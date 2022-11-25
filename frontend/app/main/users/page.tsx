@@ -1,10 +1,11 @@
 "use client";
 
+import { redirect } from "next/navigation";
 import React, { useEffect, useRef, useState } from "react";
 
 import axios from "../../../helpers/axios";
 import { accountTypes, User } from "../../../helpers/types";
-import { useAppDispatch } from "../../context-provider";
+import { useAppDispatch, useAuthContext } from "../../context-provider";
 import Modal from "../../Modal";
 
 export default function Users() {
@@ -14,9 +15,15 @@ export default function Users() {
   const [addUserErrors, setAddUserErrors] = useState<string[]>([]);
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
   const searchButtonRef = useRef<HTMLButtonElement>(null);
+
   const dispatch = useAppDispatch();
+  const { user } = useAuthContext();
 
   useEffect(() => {
+    if (!["admin"].includes(user?.account_type)) {
+      redirect("/main");
+    }
+
     (async function getUsers() {
       try {
         dispatch("LOADING");
@@ -133,13 +140,13 @@ export default function Users() {
           <hr className="my-1 border-t-slate-700" />
           <form className="flex flex-col min-w-[350px] text-md" onSubmit={addUserHandler} autoComplete="false">
             <label htmlFor="username">Tên tài khoản:</label>
-            <input type="text" name="username" id="username" className="form-input" />
+            <input type="text" name="username" className="form-input" />
             <label htmlFor="name">Tên cơ sở:</label>
-            <input type="text" name="account_name" id="account_name" className="form-input" />
+            <input type="text" name="account_name" className="form-input" />
             <label htmlFor="password">Mật khẩu:</label>
-            <input type="password" name="password" id="password" className="form-input" autoComplete="new-password" />
+            <input type="password" name="password" className="form-input" autoComplete="new-password" />
             <label htmlFor="account_type">Loại tài khoản:</label>
-            <select name="account_type" id="account_type" className="form-input">
+            <select name="account_type" className="form-input">
               {accountTypes.map((accountType) => (
                 <option value={accountType} key={accountType}>
                   {accountType}
@@ -147,7 +154,7 @@ export default function Users() {
               ))}
             </select>
             <label htmlFor="address">Địa chỉ:</label>
-            <input type="text" name="address" id="address" className="form-input" />
+            <input type="text" name="address" className="form-input" />
             <div className="flex items-center justify-end">
               <div className="text-red-500">
                 {addUserErrors.map((error) => (
