@@ -165,8 +165,8 @@ const deleteUser = async (req: Request, res: Response) => {
 
 const router = Router();
 
+router.get("/", protectRoute, restrictTo("admin", "san_xuat", "dai_ly", "bao_hanh"), getUsers);
 router.post("/", protectRoute, restrictTo("admin"), createUser);
-router.get("/", protectRoute, restrictTo("admin"), getUsers);
 
 // Các route có params
 router.put("/:id", protectRoute, restrictTo("admin"), updateUser);

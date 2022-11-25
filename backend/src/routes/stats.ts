@@ -23,6 +23,29 @@ const getStats = async (req: Request, res: Response) => {
     // const to = req.query.to || Infinity;
     const status = req.query.status || "";
     const user = res.locals.user as User;
+    let sanxuat_id: number;
+    let daily_id: number;
+    let baohanh_id: number;
+
+    // Validate 3 id input
+    if (req.query.sanxuat_id) {
+      sanxuat_id = parseInt(req.query.sanxuat_id as string);
+      if (isNaN(sanxuat_id)) {
+        return res.status(400).json({ errors: { sanxuat_id: "ID sản xuất không hợp lệ" } });
+      }
+    }
+    if (req.query.daily_id) {
+      daily_id = parseInt(req.query.daily_id as string);
+      if (isNaN(daily_id)) {
+        return res.status(400).json({ errors: { daily_id: "ID đại lý không hợp lệ" } });
+      }
+    }
+    if (req.query.baohanh_id) {
+      baohanh_id = parseInt(req.query.baohanh_id as string);
+      if (isNaN(baohanh_id)) {
+        return res.status(400).json({ errors: { baohanh_id: "ID bảo hành không hợp lệ" } });
+      }
+    }
 
     // Nếu muốn chỉ lấy của User hiện tại
     const of_current_user = req.query.of_current_user ?? null;
@@ -59,6 +82,10 @@ const getStats = async (req: Request, res: Response) => {
             qb.orWhere("products.sanxuat_id = :id", { id: user.id });
             qb.orWhere("products.daily_id = :id", { id: user.id });
             qb.orWhere("products.baohanh_id = :id", { id: user.id });
+          } else {
+            if (sanxuat_id) qb.andWhere("products.sanxuat_id = :sanxuat_id", { sanxuat_id });
+            if (daily_id) qb.andWhere("products.daily_id = :daily_id", { daily_id });
+            if (baohanh_id) qb.andWhere("products.baohanh_id = :baohanh_id", { baohanh_id });
           }
           return "9001 = 9001";
         })
