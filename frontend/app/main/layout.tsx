@@ -3,7 +3,7 @@ import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 import { AccountType } from "../../helpers/types";
 import { useAuthContext, useAppDispatch } from "../context-provider";
-import NavLink from "./NavLink";
+import NavLink from "../../components/NavLink";
 
 type NavLinks = {
   label: string;
@@ -101,7 +101,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           ))}
       </nav>
       <div className="flex justify-center pt-5 ">
-        <div className="w-[80%] flex flex-col ">{authenticated ? children : "Đang lấy thông tin người dùng..."}</div>
+        <div className="w-[80%] flex flex-col mb-5">{authenticated ? children : "Đang lấy thông tin người dùng..."}</div>
       </div>
     </>
   );

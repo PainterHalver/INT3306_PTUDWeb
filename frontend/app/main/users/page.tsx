@@ -6,7 +6,7 @@ import React, { useEffect, useRef, useState } from "react";
 import axios from "../../../helpers/axios";
 import { accountTypes, User } from "../../../helpers/types";
 import { useAppDispatch, useAuthContext } from "../../context-provider";
-import Modal from "../../Modal";
+import Modal from "../../../components/Modal";
 
 export default function Users() {
   const [users, setUsers] = useState<User[]>([]);

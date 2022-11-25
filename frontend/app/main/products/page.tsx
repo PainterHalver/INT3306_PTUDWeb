@@ -1,17 +1,18 @@
 "use client";
 import { FormEvent, useEffect, useState } from "react";
-
+import ProductsTable from "../../../components/ProductsTable";
 import axios from "../../../helpers/axios";
-import { Productline, productStatuses, User } from "../../../helpers/types";
+import { Productline, User, Product, productStatuses } from "../../../helpers/types";
 import { useAppDispatch } from "../../context-provider";
 
-export default function Stats() {
-  const [result, setResult] = useState<Productline[]>([]);
-  const [total, setTotal] = useState(0);
+export default function Products() {
+  const [products, setProducts] = useState<Product[]>([]);
+  const [productLines, setProductLines] = useState<Productline[]>([]);
   const [sanxuatUsers, setSanxuatUsers] = useState<User[]>([]);
   const [baohanhUsers, setBaohanhUsers] = useState<User[]>([]);
   const [dailyUsers, setDailyUsers] = useState<User[]>([]);
   const [selectedStatus, setSelectedStatus] = useState("");
+  const [selectedProductlineId, setSelectedProductlineId] = useState("");
   const [selectedSanxuatUserId, setSelectedSanxuatUserId] = useState("");
   const [selectedBaohanhUserId, setSelectedBaohanhUserId] = useState("");
   const [selectedDailyUserId, setSelectedDailyUserId] = useState("");
@@ -21,9 +22,11 @@ export default function Stats() {
   useEffect(() => {
     (async () => {
       try {
-        dispatch("LOADING");
+        dispatch("LOADING", "Tải dữ liệu...");
         const res = await axios.get("/users?limit=1000");
+        const productlineRes = await axios.get("/productlines?limit=1000");
         const allUsers: User[] = res.data.users;
+        setProductLines(productlineRes.data.product_lines);
         setSanxuatUsers(allUsers.filter((u) => u.account_type === "san_xuat"));
         setBaohanhUsers(allUsers.filter((u) => u.account_type === "bao_hanh"));
         setDailyUsers(allUsers.filter((u) => u.account_type === "dai_ly"));
@@ -35,45 +38,60 @@ export default function Stats() {
     })();
   }, []);
 
-  const getStats = async (e: FormEvent<HTMLFormElement>) => {
+  const getProducts = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     try {
-      dispatch("LOADING");
-      const res = await axios.get("/stats", {
+      dispatch("LOADING", "Lấy sản phẩm...");
+      // TODO: Pagination
+      const res = await axios.get("/products?limit=1000", {
         params: {
           status: selectedStatus,
           sanxuat_id: selectedSanxuatUserId,
           baohanh_id: selectedBaohanhUserId,
           daily_id: selectedDailyUserId,
+          productline_id: selectedProductlineId,
         },
       });
 
-      setResult(res.data.result);
-      setTotal(res.data.total);
+      setProducts(res.data.products);
     } catch (error) {
       console.log(error);
     } finally {
       dispatch("STOP_LOADING");
     }
   };
-
   return (
     <>
       <div className="flex justify-start mb-4 ">
-        <form className="flex flex-col w-full" onSubmit={getStats}>
-          <div>
-            <label htmlFor="status_select" className="block">
-              Trạng thái:
-            </label>
-            <select name="status" id="status_select" className="w-full border border-slate-900" onChange={(e) => setSelectedStatus(e.target.value)}>
-              <option value="">Tất cả</option>
-              {productStatuses.map((status) => (
-                <option value={status} key={status}>
-                  {status}
-                </option>
-              ))}
-            </select>
+        <form className="flex flex-col w-full" onSubmit={getProducts}>
+          <div className="lg:flex ">
+            <div className="lg:grow">
+              <label htmlFor="status_select" className="block">
+                Trạng thái:
+              </label>
+              <select name="status" id="status_select" className="w-full border border-slate-900" onChange={(e) => setSelectedStatus(e.target.value)}>
+                <option value="">Tất cả</option>
+                {productStatuses.map((status) => (
+                  <option value={status} key={status}>
+                    {status}
+                  </option>
+                ))}
+              </select>
+            </div>
+            <div className="lg:grow lg:ml-2">
+              <label htmlFor="productline_select" className="block">
+                Dòng sản phẩm:
+              </label>
+              <select name="productline_id" id="productline_select" className="w-full border border-slate-900" onChange={(e) => setSelectedProductlineId(e.target.value)}>
+                <option value="">Tất cả</option>
+                {productLines.map((productline) => (
+                  <option value={productline.id} key={productline.id}>
+                    {productline.model}
+                  </option>
+                ))}
+              </select>
+            </div>
           </div>
           <div className="lg:flex lg:mt-2 lg:mb-3">
             <div className="lg:grow">
@@ -120,35 +138,7 @@ export default function Stats() {
         </form>
       </div>
 
-      {result.length > 0 && (
-        <>
-          <p className="mb-2 font-bold text-md">Tổng cộng: {total} sản phẩm</p>
-          <table className="table">
-            <thead>
-              <tr>
-                <th>ID</th>
-                <th>Tên</th>
-                <th>Model</th>
-                <th>Mô tả</th>
-                <th>Bảo hành</th>
-                <th>Tổng sản phẩm</th>
-              </tr>
-            </thead>
-            <tbody>
-              {result.map((productlineStat) => (
-                <tr key={productlineStat.id} className="cursor-pointer hover:bg-slate-300">
-                  <td>{productlineStat.id}</td>
-                  <td>{productlineStat.name}</td>
-                  <td>{productlineStat.model}</td>
-                  <td>{productlineStat.description}</td>
-                  <td>{productlineStat.warranty_months} tháng</td>
-                  <td>{productlineStat.product_count}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </>
-      )}
+      {products.length > 0 && <ProductsTable products={products} />}
     </>
   );
 }

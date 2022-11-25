@@ -4,7 +4,7 @@ import React, { FormEvent, useEffect, useRef, useState } from "react";
 
 import axios from "../helpers/axios";
 import { User } from "../helpers/types";
-import { useAuthContext, useAppDispatch } from "./context-provider";
+import { useAuthContext, useAppDispatch } from "../app/context-provider";
 
 export default function LoginForm() {
   const [loading, setLoading] = useState<boolean>(false);

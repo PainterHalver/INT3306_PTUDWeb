@@ -173,7 +173,7 @@ const deleteProductLine = async (req: Request, res: Response) => {
 
 const router = Router();
 
-router.get("/", protectRoute, restrictTo("admin"), getProductLines);
+router.get("/", protectRoute, restrictTo("admin", "bao_hanh", "dai_ly", "san_xuat"), getProductLines);
 router.post("/", protectRoute, restrictTo("admin"), createProductLine);
 
 // Các route có params

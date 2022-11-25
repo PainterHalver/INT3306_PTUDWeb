@@ -3,12 +3,13 @@ import { createContext, useContext, useEffect, useReducer } from "react";
 
 import axios from "../helpers/axios";
 import { User } from "../helpers/types";
-import LoadingModal from "./LoadingModal";
+import LoadingModal from "../components/LoadingModal";
 
 interface State {
   authenticated: boolean;
   user: User | undefined;
   loading: boolean;
+  message?: string;
 }
 
 interface Action {
@@ -36,9 +37,9 @@ const reducer = (state: State, { type, payload }: Action) => {
     case "LOGOUT":
       return { ...state, authenticated: false, user: null, loading: false };
     case "LOADING":
-      return { ...state, loading: true };
+      return { ...state, loading: true, message: payload };
     case "STOP_LOADING":
-      return { ...state, loading: false };
+      return { ...state, loading: false, message: null };
     default:
       throw new Error(`Unknown action type: ${type}`);
   }
@@ -76,7 +77,7 @@ const ContextProvider = ({ children }: { children: React.ReactNode }) => {
     // All children have access to dispatch method and the state of the app (authenticated or not,...)
     <DispatchContext.Provider value={dispatch}>
       <StateContext.Provider value={state}>{children}</StateContext.Provider>
-      <LoadingModal open={state.loading}></LoadingModal>
+      <LoadingModal open={state.loading} message={state.message} />
     </DispatchContext.Provider>
   );
 };

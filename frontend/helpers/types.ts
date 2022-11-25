@@ -7,13 +7,34 @@ export type User = {
   token: string | undefined;
 };
 
-export type ProductlineStats = {
+export type Productline = {
   id: number;
   name: string;
   model: string;
   description: string;
   warranty_months: number;
   product_count: number;
+};
+
+export type Product = {
+  id: number;
+  status: ProductStatus;
+  product_line: Productline;
+  sold_to_customer_date: string | null;
+  exported_to_daily_date: string | null;
+  baohanh_count: number;
+  customer: Customer | null;
+  sanxuat: User | null;
+  daily: User | null;
+  baohanh: User | null;
+  possesser: User | Customer;
+};
+
+export type Customer = {
+  id: number;
+  name: string;
+  address: string;
+  phone: string;
 };
 
 /**
