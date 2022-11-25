@@ -4,6 +4,7 @@ import { AppDataSource } from "../data-source";
 import { ProductLine } from "../entities/ProductLine";
 import { protectRoute, restrictTo } from "../middlewares/auth";
 import { errorHandler } from "../helpers/errorHandler";
+import { Like } from "typeorm";
 
 /**
  * Lấy danh sách các dòng sản phẩm.
@@ -14,6 +15,7 @@ const getProductLines = async (req: Request, res: Response) => {
 
     const page = parseInt(req.query.page as string) || 1;
     const limit = parseInt(req.query.limit as string) || 20;
+    const query = (req.query.query as string) || "";
     const offset = (page - 1) * limit;
 
     // Lấy danh sách ProductLine
@@ -25,6 +27,7 @@ const getProductLines = async (req: Request, res: Response) => {
         id: "ASC",
       },
       relations: ["products"],
+      where: [{ name: Like(`%${query}%`) }, { model: Like(`%${query}%`) }, { description: Like(`%${query}%`) }],
     });
     const totalPages = Math.ceil(count / limit);
 
