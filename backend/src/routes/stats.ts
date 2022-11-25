@@ -51,7 +51,7 @@ const getStats = async (req: Request, res: Response) => {
     const of_current_user = req.query.of_current_user ?? null;
 
     // Kiểm tra input
-    if (!status || typeof status !== "string") {
+    if (typeof status !== "string") {
       return res.status(400).json({ errors: { message: "Chưa nhập status hoặc status không hợp lệ" } });
     }
 
@@ -75,9 +75,11 @@ const getStats = async (req: Request, res: Response) => {
     const product_lines = await productLineRepo
       .createQueryBuilder("product_line")
       .leftJoinAndSelect("product_line.products", "products")
-      .where("products.status = :status", { status })
-      .andWhere(
+      .where(
         new Brackets((qb) => {
+          if (status) {
+            qb.andWhere("products.status = :status", { status });
+          }
           if (of_current_user) {
             qb.orWhere("products.sanxuat_id = :id", { id: user.id });
             qb.orWhere("products.daily_id = :id", { id: user.id });
