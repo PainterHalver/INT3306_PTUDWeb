@@ -7,6 +7,15 @@ export type User = {
   token: string | undefined;
 };
 
+export type ProductlineStats = {
+  id: number;
+  name: string;
+  model: string;
+  description: string;
+  warranty_months: number;
+  product_count: number;
+};
+
 /**
  * Các loại tài khoản
  */

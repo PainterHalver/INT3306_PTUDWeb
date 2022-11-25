@@ -45,6 +45,10 @@
     @apply bg-green-primary;
   }
 
+  .table {
+    @apply w-full border border-collapse table-fixed bg-slate-100;
+  }
+
   .table th,
   .table td {
     @apply p-2 border border-slate-600;

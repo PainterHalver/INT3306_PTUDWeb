@@ -100,7 +100,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             </NavLink>
           ))}
       </nav>
-      {children}
+      <div className="flex justify-center pt-5 ">
+        <div className="w-[80%] flex flex-col ">{children}</div>
+      </div>
     </>
   );
 }

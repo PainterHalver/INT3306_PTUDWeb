@@ -76,59 +76,56 @@ export default function Users() {
   };
 
   return (
-    <div className="flex justify-center pt-5 ">
-      <div className="w-[80%] flex flex-col">
-        <div className="flex justify-start mb-4">
-          <form onSubmit={searchUsers} className="flex">
-            <label htmlFor="account_type_select">Loại tài khoản:</label>
-            <select name="account_type" id="account_type_select" className="ml-2 border border-slate-900">
-              <option value="all">Tất cả</option>
-              {accountTypes.map((accountType) => (
-                <option value={accountType} key={accountType}>
-                  {accountType}
-                </option>
-              ))}
-            </select>
-            <button className="ml-2 button-classic" ref={searchButtonRef}>
-              Tìm kiếm
-            </button>
-          </form>
-          <button className="ml-auto button-classic" onClick={() => setAddUserModalOpen(true)}>
-            Thêm tài khoản
+    <>
+      <div className="flex justify-start mb-4">
+        <form onSubmit={searchUsers} className="flex">
+          <label htmlFor="account_type_select">Loại tài khoản:</label>
+          <select name="account_type" id="account_type_select" className="ml-2 border border-slate-900">
+            <option value="all">Tất cả</option>
+            {accountTypes.map((accountType) => (
+              <option value={accountType} key={accountType}>
+                {accountType}
+              </option>
+            ))}
+          </select>
+          <button className="ml-2 button-classic" ref={searchButtonRef}>
+            Tìm kiếm
           </button>
-        </div>
-
-        {users.length > 0 && (
-          <table className="table w-full border border-collapse table-fixed bg-slate-100">
-            <thead>
-              <tr>
-                <th>Tên người dùng</th>
-                <th>Tên cơ sở</th>
-                <th>Loại tài khoản</th>
-                <th>Địa chỉ</th>
-              </tr>
-            </thead>
-            <tbody>
-              {users.map((user) => (
-                <tr
-                  key={user.username}
-                  className="cursor-pointer hover:bg-slate-300"
-                  onClick={() => {
-                    setSelectedUser(user);
-                    setUpdateUserModalOpen(true);
-                  }}
-                >
-                  <td>{user.username}</td>
-                  <td>{user.name}</td>
-                  <td>{user.account_type}</td>
-                  <td>{user.address}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        )}
+        </form>
+        <button className="ml-auto button-classic" onClick={() => setAddUserModalOpen(true)}>
+          Thêm tài khoản
+        </button>
       </div>
 
+      {users.length > 0 && (
+        <table className="table">
+          <thead>
+            <tr>
+              <th>Tên người dùng</th>
+              <th>Tên cơ sở</th>
+              <th>Loại tài khoản</th>
+              <th>Địa chỉ</th>
+            </tr>
+          </thead>
+          <tbody>
+            {users.map((user) => (
+              <tr
+                key={user.username}
+                className="cursor-pointer hover:bg-slate-300"
+                onClick={() => {
+                  setSelectedUser(user);
+                  setUpdateUserModalOpen(true);
+                }}
+              >
+                <td>{user.username}</td>
+                <td>{user.name}</td>
+                <td>{user.account_type}</td>
+                <td>{user.address}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      )}
       <UserUpdateModal user={selectedUser} open={updateUserModalOpen} setOpen={setUpdateUserModalOpen} searchButtonRef={searchButtonRef} />
       <Modal open={addUserModalOpen} setOpen={setAddUserModalOpen}>
         <div className="p-4 bg-white">
@@ -164,7 +161,7 @@ export default function Users() {
           </form>
         </div>
       </Modal>
-    </div>
+    </>
   );
 }
 
