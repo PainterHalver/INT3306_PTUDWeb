@@ -3,7 +3,7 @@ import { FormEvent, useEffect, useState } from "react";
 import ProductsTable from "../../../components/ProductsTable";
 import axios from "../../../helpers/axios";
 import { Productline, User, Product, productStatuses } from "../../../helpers/types";
-import { useAppDispatch } from "../../context-provider";
+import { useAppDispatch } from "../../../contexts/appContext";
 
 export default function Products() {
   const [products, setProducts] = useState<Product[]>([]);

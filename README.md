@@ -50,7 +50,7 @@
 
 **Cơ sở sản xuất**
 
-! Nhập các lô sản phẩm mới vừa sản xuất vào kho.
++ Nhập các lô sản phẩm mới vừa sản xuất vào kho.
 ! Xuất sản phẩm cho đại lý.
 ! Nhận các sản phẩm lỗi về từ các trung tâm bảo hành.
 ! Thống kê và báo cáo số liệu sản phẩm theo từng loại (trạng thái), theo tháng, quý, năm.

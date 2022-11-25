@@ -1,9 +1,10 @@
 "use client";
 import { FormEvent, useEffect, useState } from "react";
+import ProductlinesTable from "../../../components/ProductlinesTable";
 
 import axios from "../../../helpers/axios";
 import { Productline, productStatuses, User } from "../../../helpers/types";
-import { useAppDispatch } from "../../context-provider";
+import { useAppDispatch } from "../../../contexts/appContext";
 
 export default function Stats() {
   const [result, setResult] = useState<Productline[]>([]);
@@ -27,6 +28,7 @@ export default function Stats() {
         setSanxuatUsers(allUsers.filter((u) => u.account_type === "san_xuat"));
         setBaohanhUsers(allUsers.filter((u) => u.account_type === "bao_hanh"));
         setDailyUsers(allUsers.filter((u) => u.account_type === "dai_ly"));
+        await getStats();
       } catch (error) {
         console.log(error);
       } finally {
@@ -35,9 +37,7 @@ export default function Stats() {
     })();
   }, []);
 
-  const getStats = async (e: FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-
+  const getStats = async () => {
     try {
       dispatch("LOADING");
       const res = await axios.get("/stats", {
@@ -58,10 +58,15 @@ export default function Stats() {
     }
   };
 
+  const statsFormHandler = async (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    await getStats();
+  };
+
   return (
     <>
       <div className="flex justify-start mb-4 ">
-        <form className="flex flex-col w-full" onSubmit={getStats}>
+        <form className="flex flex-col w-full" onSubmit={statsFormHandler}>
           <div>
             <label htmlFor="status_select" className="block">
               Trạng thái:
@@ -123,30 +128,7 @@ export default function Stats() {
       {result.length > 0 && (
         <>
           <p className="mb-2 font-bold text-md">Tổng cộng: {total} sản phẩm</p>
-          <table className="table">
-            <thead>
-              <tr>
-                <th>ID</th>
-                <th>Tên</th>
-                <th>Model</th>
-                <th>Mô tả</th>
-                <th>Bảo hành</th>
-                <th>Tổng sản phẩm</th>
-              </tr>
-            </thead>
-            <tbody>
-              {result.map((productlineStat) => (
-                <tr key={productlineStat.id} className="cursor-pointer hover:bg-slate-300">
-                  <td>{productlineStat.id}</td>
-                  <td>{productlineStat.name}</td>
-                  <td>{productlineStat.model}</td>
-                  <td>{productlineStat.description}</td>
-                  <td>{productlineStat.warranty_months} tháng</td>
-                  <td>{productlineStat.product_count}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+          <ProductlinesTable productlines={result} />
         </>
       )}
     </>

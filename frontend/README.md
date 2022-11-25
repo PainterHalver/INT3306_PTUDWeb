@@ -6,7 +6,7 @@
 /productlines -> admin
 /customers -> all
 /products -> all
-/products.create -> sanxuat
+/products/create -> sanxuat
 /products/send -> bh, dl, sx
 /products/receive -> bh, dl, sx
 /stats -> all

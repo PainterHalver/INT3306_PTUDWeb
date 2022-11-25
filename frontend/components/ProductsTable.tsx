@@ -19,7 +19,7 @@ export default function ProductsTable({ products }: Props) {
         {products.map((product) => (
           <tr key={product.id} className="cursor-pointer hover:bg-slate-300">
             <td>{product.id}</td>
-            <td>{product.product_line.name}</td>
+            <td>{product.product_line.model}</td>
             <td>{product.status}</td>
             <td>{product.possesser.address}</td>
             <td>{product.baohanh_count} lần</td>

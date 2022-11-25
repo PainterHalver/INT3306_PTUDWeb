@@ -90,7 +90,7 @@ const getProduct = async (req: Request, res: Response) => {
 const createProducts = async (req: Request, res: Response) => {
   try {
     const user = res.locals.user as User;
-    const product_line_id = req.body.product_line_id || 0;
+    const productline_id = req.body.productline_id || 0;
     const amount = +req.body.amount || 0;
 
     // Kiểm tra User có phải là cơ sở sản xuất hay không cho chắc
@@ -100,12 +100,12 @@ const createProducts = async (req: Request, res: Response) => {
 
     // Validate input
     let errors: any = {};
-    if (!product_line_id) errors.product_line_id = "Không được để trống!";
+    if (!productline_id) errors.productline_id = "Không được để trống!";
     if (!amount) errors.amount = "Không được để trống!";
     if (Object.keys(errors).length > 0) return res.status(400).json({ errors });
 
     // Lấy dòng sản phẩm
-    const productLine = await productLineRepo.findOneBy({ id: product_line_id });
+    const productLine = await productLineRepo.findOneBy({ id: productline_id });
     if (!productLine) return res.status(400).json({ errors: { message: "Dòng sản phẩm không tồn tại!" } });
 
     // Thêm `amount` sản phẩm mới vào cơ sở sản xuất

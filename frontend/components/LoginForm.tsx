@@ -4,12 +4,14 @@ import React, { FormEvent, useEffect, useRef, useState } from "react";
 
 import axios from "../helpers/axios";
 import { User } from "../helpers/types";
-import { useAuthContext, useAppDispatch } from "../app/context-provider";
+import { useAuthContext, useAppDispatch } from "../contexts/appContext";
+import { useToast } from "../contexts/toastContext";
 
 export default function LoginForm() {
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<boolean>(false);
   const formRef = useRef<HTMLFormElement>(null);
+  const toast = useToast();
 
   const dispatch = useAppDispatch();
   const { authenticated, loading: loginLoading } = useAuthContext();
@@ -38,6 +40,9 @@ export default function LoginForm() {
 
       // Lưu user vào context
       dispatch("LOGIN", res.data);
+
+      // Hiển thị thông báo thành công
+      toast.success("Đăng nhập thành công!");
 
       // Chuyển hướng đến trang chủ
       router.push("/main");

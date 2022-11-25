@@ -14,7 +14,7 @@
   }
 
   .form-input {
-    @apply px-1 mb-2 border border-slate-900;
+    @apply px-1 mb-2 border border-slate-900 focus:outline-none;
   }
 
   .button {

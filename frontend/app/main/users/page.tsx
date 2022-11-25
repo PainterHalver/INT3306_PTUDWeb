@@ -5,8 +5,9 @@ import React, { useEffect, useRef, useState } from "react";
 
 import axios from "../../../helpers/axios";
 import { accountTypes, User } from "../../../helpers/types";
-import { useAppDispatch, useAuthContext } from "../../context-provider";
+import { useAppDispatch, useAuthContext } from "../../../contexts/appContext";
 import Modal from "../../../components/Modal";
+import { useToast } from "../../../contexts/toastContext";
 
 export default function Users() {
   const [users, setUsers] = useState<User[]>([]);
@@ -18,6 +19,7 @@ export default function Users() {
 
   const dispatch = useAppDispatch();
   const { user } = useAuthContext();
+  const toast = useToast();
 
   useEffect(() => {
     if (!["admin"].includes(user?.account_type)) {
@@ -69,12 +71,17 @@ export default function Users() {
       // Tắt modal sau khi thêm thành công
       setAddUserModalOpen(false);
 
+      // Hiển thị toast
+      toast.success("Thêm người dùng thành công");
+
       // Load lại danh sách user
       searchButtonRef.current?.click();
     } catch (error) {
       if (axios.isAxiosError(error)) {
         setAddUserErrors(Object.values(error.response?.data.errors));
       }
+
+      toast.error("Thêm người dùng thất bại");
 
       // Ở đây chứ không phải trong finally vì searchButtonRef click đã có rồi
       dispatch("STOP_LOADING");
@@ -183,6 +190,7 @@ function UserUpdateModal({ user, open, setOpen, searchButtonRef }: UserUpdateMod
   const [errors, setErrors] = useState<string[]>([]);
   const [shouldDelete, setShouldDelete] = useState<boolean>(false);
   const dispatch = useAppDispatch();
+  const toast = useToast();
 
   const updateUserHandler = async (e: React.FormEvent) => {
     try {
@@ -200,6 +208,9 @@ function UserUpdateModal({ user, open, setOpen, searchButtonRef }: UserUpdateMod
       // Tắt modal sau khi thêm thành công
       setOpen(false);
 
+      // Hiện toast
+      toast.success("Cập nhật tài khoản thành công!");
+
       // Load lại danh sách user
       searchButtonRef.current?.click();
     } catch (error) {
@@ -207,6 +218,7 @@ function UserUpdateModal({ user, open, setOpen, searchButtonRef }: UserUpdateMod
         setErrors(Object.values(error.response?.data.errors));
       }
       dispatch("STOP_LOADING");
+      toast.error("Cập nhật tài khoản thất bại!");
       console.log(error);
     }
   };
@@ -227,8 +239,12 @@ function UserUpdateModal({ user, open, setOpen, searchButtonRef }: UserUpdateMod
       await axios.delete(`/users/${user.id}`);
       setOpen(false);
       searchButtonRef.current?.click();
+
+      // Hiện toast
+      toast.success("Xóa tài khoản thành công!");
     } catch (error) {
       dispatch("STOP_LOADING");
+      toast.error("Xóa tài khoản thất bại!");
       console.log(error);
     }
   };

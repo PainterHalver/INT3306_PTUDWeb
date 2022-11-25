@@ -2,7 +2,7 @@
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 import { AccountType } from "../../helpers/types";
-import { useAuthContext, useAppDispatch } from "../context-provider";
+import { useAuthContext, useAppDispatch } from "../../contexts/appContext";
 import NavLink from "../../components/NavLink";
 
 type NavLinks = {
@@ -31,6 +31,11 @@ const navlinks: NavLinks = [
     href: "/main/products",
     label: "Sản phẩm",
     restrictTo: ["admin", "san_xuat", "bao_hanh", "dai_ly"],
+  },
+  {
+    href: "/main/products/create",
+    label: "Nhập kho",
+    restrictTo: ["san_xuat"],
   },
   {
     href: "/main/products/send",

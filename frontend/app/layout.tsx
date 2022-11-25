@@ -1,6 +1,6 @@
-import AuthProvider from "./context-provider";
-
 import "./globals.css";
+import AuthProvider from "../contexts/appContext";
+import { ToastProvider } from "../contexts/toastContext";
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
@@ -11,7 +11,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       */}
       <head />
       <body>
-        <AuthProvider>{children}</AuthProvider>
+        <AuthProvider>
+          <ToastProvider>{children}</ToastProvider>
+        </AuthProvider>
       </body>
     </html>
   );
