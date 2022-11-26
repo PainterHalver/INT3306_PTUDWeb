@@ -89,7 +89,7 @@ const createProductLine = async (req: Request, res: Response) => {
     const productLineRepo = AppDataSource.getRepository(ProductLine);
     const productLine = await productLineRepo.findOneBy({ model });
     if (productLine) {
-      return res.status(400).json({ model: "Tên dòng sản phẩm đã tồn tại" });
+      return res.status(400).json({ errors: { model: "Tên Model đã tồn tại" } });
     }
 
     // Tạo ProductLine mới
