@@ -38,6 +38,7 @@
 - Sản phẩm đang thuộc các trạng thái ở chỗ khách hàng và được triệu hồi. ➡️`lỗi cần triệu hồi`
 - Sản phẩm đang ở chỗ khách hàng và hết bảo hành. ➡️`hết thời gian bảo hành`
 - Đại lý trả lại sản phẩm cho nơi sản xuất vì lâu không bán được. ➡️`trả lại cơ sở sản xuất`
+- 4 trạng thái đang trên đường vận chuyển và chuyển thành trạng thái chính thức khi nhận được: `đưa về đại lý (đang trên đường)`, `đang sửa chữa bảo hành (đang trên đường)`, `đã bảo hành xong (đang trên đường)`, `lỗi đã đưa về cơ sở sản xuất (đang trên đường)`
 
 ## Các chức năng đã cài đặt
 
