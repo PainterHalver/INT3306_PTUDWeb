@@ -74,21 +74,22 @@ const getProductLine = async (req: Request, res: Response) => {
  */
 const createProductLine = async (req: Request, res: Response) => {
   try {
-    const { name, model, description } = req.body;
+    const { name, model, description, warranty_months } = req.body;
 
     // Validate dữ liệu
     let errors: any = {};
     if (!name) errors.name = "Tên dòng sản phẩm không được để trống";
     if (!model) errors.model = "Tên sản phẩm (model) không được để trống";
+    if (!warranty_months) errors.warranty_months = "Thời gian bảo hành không được để trống";
     if (Object.keys(errors).length > 0) {
       return res.status(400).json({ errors });
     }
 
     // Check xem name đã tồn tại chưa
     const productLineRepo = AppDataSource.getRepository(ProductLine);
-    const productLine = await productLineRepo.findOneBy({ name });
+    const productLine = await productLineRepo.findOneBy({ model });
     if (productLine) {
-      return res.status(400).json({ name: "Tên dòng sản phẩm đã tồn tại" });
+      return res.status(400).json({ model: "Tên dòng sản phẩm đã tồn tại" });
     }
 
     // Tạo ProductLine mới
@@ -96,6 +97,7 @@ const createProductLine = async (req: Request, res: Response) => {
       name,
       model,
       description,
+      warranty_months,
     });
     const savedProductLine = await productLineRepo.save(newProductLine);
 
@@ -111,7 +113,7 @@ const createProductLine = async (req: Request, res: Response) => {
  */
 const updateProductLine = async (req: Request, res: Response) => {
   try {
-    const { name, model, description } = req.body;
+    const { name, model, description, warranty_months } = req.body;
     const { id } = req.params;
 
     // Validate dữ liệu
@@ -134,6 +136,7 @@ const updateProductLine = async (req: Request, res: Response) => {
     productLine.name = name;
     productLine.model = model;
     productLine.description = description;
+    productLine.warranty_months = warranty_months;
     const updatedProductLine = await productLineRepo.save(productLine);
     const product_count = await updatedProductLine.getProductCount();
 

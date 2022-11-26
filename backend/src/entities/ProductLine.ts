@@ -1,5 +1,6 @@
 import { Exclude, Expose } from "class-transformer";
-import { Column, Entity, OneToMany } from "typeorm";
+import { IsNumber, validateOrReject } from "class-validator";
+import { BeforeInsert, BeforeUpdate, Column, Entity, OneToMany } from "typeorm";
 
 import { AppDataSource } from "../data-source";
 import BaseEntity from "./Entity";
@@ -16,7 +17,8 @@ export class ProductLine extends BaseEntity {
   @Column({ nullable: true })
   description: string;
 
-  @Column({ nullable: false })
+  @Column({ nullable: false, type: "int" })
+  @IsNumber({ allowNaN: false }, { message: "Thời hạn bảo hành phải là số" })
   warranty_months: number;
 
   @Exclude()
@@ -39,5 +41,11 @@ export class ProductLine extends BaseEntity {
       .where("product_line_id = :id", { id: this.id })
       .getCount();
     return count;
+  }
+
+  @BeforeInsert()
+  @BeforeUpdate()
+  async validate() {
+    await validateOrReject(this);
   }
 }
