@@ -115,10 +115,10 @@ export default function Users() {
         <table className="table">
           <thead>
             <tr>
-              <th>Tên người dùng</th>
-              <th>Tên cơ sở</th>
-              <th>Loại tài khoản</th>
-              <th>Địa chỉ</th>
+              <th className="w-[10%]">Tên người dùng</th>
+              <th className="w-[35%]">Tên cơ sở</th>
+              <th className="w-[10%]">Loại tài khoản</th>
+              <th className="w-[45%]">Địa chỉ</th>
             </tr>
           </thead>
           <tbody>

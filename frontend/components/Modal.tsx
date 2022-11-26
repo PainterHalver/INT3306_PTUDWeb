@@ -22,7 +22,7 @@ export default function Modal({ children, open, setOpen }: Props) {
           flex: open,
           hidden: !open,
         })}
-        onClick={closeThis}
+        onMouseDown={closeThis}
       >
         <div className="fixed top-0 left-0 items-center justify-center w-screen h-screen pointer-events-none opacity-60 bg-slate-900"></div>
         <div className="z-50">{children}</div>

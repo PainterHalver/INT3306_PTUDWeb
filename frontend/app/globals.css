@@ -67,7 +67,7 @@
   }
 
   .button-classic-red {
-    @apply px-1 bg-red-500 border border-red-600;
+    @apply px-1 bg-red-500 border border-red-800;
   }
 
   .button-classic-red:hover {

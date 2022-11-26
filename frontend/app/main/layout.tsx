@@ -106,7 +106,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           ))}
       </nav>
       <div className="flex justify-center pt-5 ">
-        <div className="w-[80%] flex flex-col mb-5">{authenticated ? children : "Đang lấy thông tin người dùng..."}</div>
+        <div className="w-[95%] lg:w-[80%] flex flex-col mb-5">{authenticated ? children : "Đang lấy thông tin người dùng..."}</div>
       </div>
     </>
   );

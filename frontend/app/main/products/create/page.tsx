@@ -66,6 +66,10 @@ export default function CreateProducts() {
   const createFormHandler = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     await createProducts();
+
+    // Clear form
+    setAddAmount(0);
+
     setAddModalOpen(false);
   };
 
@@ -73,7 +77,7 @@ export default function CreateProducts() {
     <>
       <div className="flex justify-start mb-4 ">
         <form className="flex w-full" onSubmit={searchFormHandler}>
-          <input placeholder="Tên, model hoặc mô tả" className="w-full px-2 py-1 border border-slate-900 focus:outline-non" onChange={(e) => setSearchQuery(e.target.value)} />
+          <input placeholder="Tên, model hoặc mô tả" className="w-full px-2 py-1 border border-slate-900 focus:outline-none" onChange={(e) => setSearchQuery(e.target.value)} />
           <button className="ml-2 button-classic whitespace-nowrap">Tìm kiếm</button>
         </form>
       </div>
@@ -122,7 +126,7 @@ export default function CreateProducts() {
                 <label htmlFor="amount" className="mr-2">
                   Số lượng:
                 </label>
-                <input type="number" className="form-input" name="amount" min="1" onChange={(e) => setAddAmount(parseInt(e.target.value))} />
+                <input type="number" className="form-input" name="amount" min="1" onChange={(e) => setAddAmount(parseInt(e.target.value))} value={addAmount} />
               </div>
 
               <button className="mt-3 ml-auto button-classic" type="submit">
