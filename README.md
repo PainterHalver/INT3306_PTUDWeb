@@ -8,8 +8,8 @@
 
 ## Stack sử dụng
 
-- Stack Frontend: ...
-- Stack Backend: ...
+- Stack Backend: Typescript, TypeORM (sqlite), NodeJS, ExpressJS
+- Stack Frontend: Typescript, Next.js, TailwindCSS
 - Stack Overflow
 
 ## Vòng đời của sản phẩm
@@ -40,6 +40,11 @@
 - Đại lý trả lại sản phẩm cho nơi sản xuất vì lâu không bán được. ➡️`trả lại cơ sở sản xuất`
 
 ## Các chức năng đã cài đặt
+
+```diff
+! Cam: Đã cài đặt ở backend
++ Xanh: Đã cài đặt ở backend + frontend
+```
 
 ```diff
 **Ban điều hành BigCorp**
