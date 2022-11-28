@@ -1,4 +1,4 @@
-import { Product } from "../helpers/types";
+import { Product, readableProductStatuses } from "../helpers/types";
 
 type Props = {
   products: Product[];
@@ -20,7 +20,7 @@ export default function ProductsTable({ products }: Props) {
           <tr key={product.id} className="cursor-pointer hover:bg-slate-300">
             <td>{product.id}</td>
             <td>{product.product_line.model}</td>
-            <td>{product.status}</td>
+            <td>{readableProductStatuses[product.status]}</td>
             <td>{product.possesser.address}</td>
             <td>{product.baohanh_count} lần</td>
           </tr>

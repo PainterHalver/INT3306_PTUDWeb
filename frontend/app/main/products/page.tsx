@@ -2,7 +2,7 @@
 import { FormEvent, useEffect, useState } from "react";
 import ProductsTable from "../../../components/ProductsTable";
 import axios from "../../../helpers/axios";
-import { Productline, User, Product, productStatuses } from "../../../helpers/types";
+import { Productline, User, Product, productStatuses, readableProductStatuses } from "../../../helpers/types";
 import { useAppDispatch } from "../../../contexts/appContext";
 
 export default function Products() {
@@ -74,7 +74,7 @@ export default function Products() {
                 <option value="">Tất cả</option>
                 {productStatuses.map((status) => (
                   <option value={status} key={status}>
-                    {status}
+                    {readableProductStatuses[status]}
                   </option>
                 ))}
               </select>
