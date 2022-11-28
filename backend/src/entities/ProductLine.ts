@@ -25,6 +25,24 @@ export class ProductLine extends BaseEntity {
   @OneToMany(() => Product, (product) => product.product_line)
   products: Product[];
 
+  @Column({ nullable: true })
+  os: string;
+
+  @Column({ nullable: true })
+  camera: string;
+
+  @Column({ nullable: true })
+  chip: string;
+
+  @Column({ nullable: true })
+  ram: string;
+
+  @Column({ nullable: true })
+  storage: string;
+
+  @Column({ nullable: true })
+  battery: string;
+
   /**
    * Hiển thị số lượng sản phẩm của dòng sản phẩm
    * Khi dùng @Expose() thì phải có toJSON() để trả về response

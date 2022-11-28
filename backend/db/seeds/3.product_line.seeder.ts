@@ -23,7 +23,19 @@ export default class ProductLineSeeder implements Seeder {
           model: "iRobot Roomba i7 Plus",
           description: "Robot hút bụi thông minh",
           warranty_months: 24,
-        },
+        }, {
+          name: "",
+          model: "",
+          description: "",
+          warranty_months: 12,
+          os: "ios 16",
+          camera: "",
+          cpu: "",
+          ram: "",
+          storage: "",
+          battery: ""
+
+        }
       ]);
     } catch (error) {
       console.log(error);
