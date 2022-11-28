@@ -24,16 +24,17 @@ export default class ProductLineSeeder implements Seeder {
           description: "Robot hút bụi thông minh",
           warranty_months: 24,
         }, {
-          name: "",
-          model: "",
+          name: "iPhone",
+          model: "iPhone XXXXXS ULTRA MAX PRO 10TB",
           description: "",
-          warranty_months: 12,
-          os: "ios 16",
-          camera: "",
-          cpu: "",
-          ram: "",
-          storage: "",
-          battery: ""
+          warranty_months: 120,
+          os: "ios 19",
+          camera: "128MP",
+          cpu: "itel i9",
+          ram: "28GB + 4GB",
+          storage: "10TB",
+          battery: "22000mAh",
+          price: "150000"
         }
       ]);
     } catch (error) {

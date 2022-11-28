@@ -43,6 +43,9 @@ export class ProductLine extends BaseEntity {
   @Column({ nullable: true })
   battery: string;
 
+  @Column({ nullable: true })
+  price: string;
+
   /**
    * Hiển thị số lượng sản phẩm của dòng sản phẩm
    * Khi dùng @Expose() thì phải có toJSON() để trả về response
