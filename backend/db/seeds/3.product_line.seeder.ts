@@ -34,7 +34,6 @@ export default class ProductLineSeeder implements Seeder {
           ram: "",
           storage: "",
           battery: ""
-
         }
       ]);
     } catch (error) {

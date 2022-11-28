@@ -32,7 +32,7 @@ export class ProductLine extends BaseEntity {
   camera: string;
 
   @Column({ nullable: true })
-  chip: string;
+  cpu: string;
 
   @Column({ nullable: true })
   ram: string;
