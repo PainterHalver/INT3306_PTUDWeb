@@ -73,3 +73,100 @@ export type ProductStatus = typeof productStatuses[number];
 export function isProductStatus(value: any): value is ProductStatus {
   return productStatuses.includes(value);
 }
+
+/**
+ * Các trạng thái mà từng loại người dùng có thể gửi và nhận
+ */
+type updateableStatuses = {
+  [keys in AccountType]: {
+    send: {
+      from: ProductStatus[];
+      to: ProductStatus;
+    }[];
+    receive: {
+      from: ProductStatus[];
+      to: ProductStatus;
+    }[];
+  };
+};
+
+export const updateableStatuses: updateableStatuses = {
+  admin: {
+    send: [],
+    receive: [],
+  },
+  san_xuat: {
+    send: [
+      {
+        from: ["moi_san_xuat"],
+        to: "dua_ve_dai_ly_ON_THE_WAY",
+      },
+    ],
+    receive: [
+      {
+        from: ["loi_da_dua_ve_co_so_san_xuat_ON_THE_WAY"],
+        to: "loi_da_dua_ve_co_so_san_xuat",
+      },
+      {
+        from: ["dua_ve_dai_ly"],
+        to: "tra_lai_co_so_san_xuat",
+      },
+    ],
+  },
+  dai_ly: {
+    send: [
+      {
+        from: ["dua_ve_dai_ly"],
+        to: "da_ban",
+      },
+      {
+        from: ["loi_can_bao_hanh"],
+        to: "dang_sua_chua_bao_hanh_ON_THE_WAY",
+      },
+      {
+        from: ["da_bao_hanh_xong"],
+        to: "da_tra_lai_bao_hanh_cho_khach_hang",
+      },
+      {
+        from: ["loi_can_tra_ve_nha_may"],
+        to: "loi_da_dua_ve_co_so_san_xuat_ON_THE_WAY",
+      },
+      {
+        from: ["da_ban", "da_tra_lai_bao_hanh_cho_khach_hang"],
+        to: "loi_can_trieu_hoi",
+      },
+    ],
+    receive: [
+      {
+        from: ["dua_ve_dai_ly_ON_THE_WAY"],
+        to: "dua_ve_dai_ly",
+      },
+      {
+        from: ["da_ban", "loi_can_trieu_hoi", "da_tra_lai_bao_hanh_cho_khach_hang"],
+        to: "loi_can_bao_hanh",
+      },
+      {
+        from: ["da_bao_hanh_xong_ON_THE_WAY"],
+        to: "da_bao_hanh_xong",
+      },
+    ],
+  },
+  bao_hanh: {
+    send: [
+      {
+        from: ["dang_sua_chua_bao_hanh"],
+        to: "da_bao_hanh_xong_ON_THE_WAY",
+      },
+      {
+        from: ["dang_sua_chua_bao_hanh"],
+        to: "loi_can_tra_ve_nha_may",
+      },
+    ],
+    receive: [
+      {
+        from: ["dang_sua_chua_bao_hanh_ON_THE_WAY"],
+        to: "dang_sua_chua_bao_hanh",
+      },
+    ],
+  },
+};
