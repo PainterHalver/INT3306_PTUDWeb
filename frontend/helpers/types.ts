@@ -213,3 +213,12 @@ export const updateableStatuses: updateableStatuses = {
     ],
   },
 };
+
+/**
+ * Type cho payload của route gửi và nhận
+ */
+export type SendPayload = {
+  status: ProductStatus;
+  product_ids: number[];
+  daily_id?: number;
+};

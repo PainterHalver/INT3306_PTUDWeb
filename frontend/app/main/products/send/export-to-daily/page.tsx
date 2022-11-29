@@ -1,81 +1,108 @@
 "use client";
 
-import { usePathname } from "next/navigation";
+import { AxiosResponse } from "axios";
+import { usePathname, useRouter } from "next/navigation";
+import { FormEvent, useEffect, useState } from "react";
+
+import ProductByStatusTable from "../../../../../components/ProductByStatusTable";
 import { useAppDispatch, useAuthContext } from "../../../../../contexts/appContext";
-import { Product, ProductStatus, readableProductStatuses, updateableStatuses } from "../../../../../helpers/types";
+import { useToast } from "../../../../../contexts/toastContext";
 import axios from "../../../../../helpers/axios";
-import { useEffect, useState } from "react";
-import ProductsTable from "../../../../../components/ProductsTable";
+import { SendPayload, updateableStatuses, User } from "../../../../../helpers/types";
 
 export default function ExportProductsToDaily() {
   const { user } = useAuthContext();
   const pathname = usePathname();
   const sendStatuses = updateableStatuses[user.account_type].send;
   const routeStatus = sendStatuses.find((status) => status.href === pathname);
+  const [selectedIds, setSelectedIds] = useState<number[]>([]);
+  const [dailyUsers, setDailyUsers] = useState<User[]>([]);
+  const [selectedDailyUserId, setSelectedDailyUserId] = useState<number | null>(null);
 
-  return (
-    <div>
-      <p className="text-2xl">{routeStatus.label}</p>
-      {routeStatus.from.map((status) => (
-        <ProductByStatusTable key={status} status={status} />
-      ))}
-    </div>
-  );
-}
+  // Dùng để trigger rerender các table
+  const [keys, setKeys] = useState(sendStatuses.map((status, index) => index));
 
-function ProductByStatusTable({ status }: { status: ProductStatus }) {
   const dispatch = useAppDispatch();
-  const [products, setProducts] = useState<Product[]>([]);
+  const toast = useToast();
 
-  const getCurrentUserProductsByStatus = async (status: ProductStatus) => {
+  const refreshTable = () => {
+    setKeys((keys) => keys.map((key) => key + 1));
+  };
+
+  useEffect(() => {
+    (async () => {
+      try {
+        dispatch("LOADING");
+        const res = await axios.get("/users", {
+          params: {
+            account_type: "dai_ly",
+            limit: 10000,
+          },
+        });
+        const allUsers: User[] = res.data.users;
+        setDailyUsers(allUsers.filter((u) => u.account_type === "dai_ly"));
+      } catch (error) {
+        console.log(error);
+      } finally {
+        dispatch("STOP_LOADING");
+      }
+    })();
+  }, []);
+
+  const exportToDaily = async (product_ids: number[], daily_id: number) => {
     try {
-      dispatch("LOADING");
-      const res = await axios.get(`/products`, {
-        params: {
-          status,
-          of_current_user: true,
-          limit: 10000,
-        },
+      dispatch("LOADING", "Đang cập nhật trạng thái...");
+      const res = await axios.post<any, AxiosResponse<any, any>, SendPayload>("/products/send", {
+        status: "dua_ve_dai_ly_ON_THE_WAY",
+        daily_id,
+        product_ids,
       });
-      setProducts(res.data.products);
+
+      toast.success("Cập nhật trạng thái thành công");
     } catch (error) {
+      toast.error("Cập nhật trạng thái sản phẩm thất bại!");
       console.log(error);
     } finally {
       dispatch("STOP_LOADING");
     }
   };
 
-  useEffect(() => {
-    getCurrentUserProductsByStatus(status);
-  }, []);
+  const exportToDailyHandler = async (e: FormEvent) => {
+    try {
+      e.preventDefault();
+      await exportToDaily(selectedIds, selectedDailyUserId ?? dailyUsers[0].id);
+
+      // Bỏ chọn tất cả sản phẩm
+      setSelectedIds([]);
+
+      // Rerender table
+      refreshTable();
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   return (
-    <div className="mt-3">
-      <p>
-        Các sản phẩm ở trạng thái <strong>{readableProductStatuses[status]}:</strong>
-      </p>
-      <table className="table mt-1">
-        <thead>
-          <tr>
-            <th className="w-[8%]">ID</th>
-            <th className="w-[30%]">Dòng sản phẩm</th>
-            <th className="w-[12%]">Trạng thái</th>
-            <th className="w-[40%]">Địa điểm hiện tại</th>
-            <th className="w-[10%]">Số lần bảo hành</th>
-          </tr>
-        </thead>
-        <tbody>
-          {products.map((product, index) => (
-            <tr key={product.id} className="cursor-pointer hover:bg-slate-300">
-              <td>{product.id}</td>
-              <td>{product.product_line.model}</td>
-              <td>{readableProductStatuses[product.status]}</td>
-              <td>{product.possesser.address}</td>
-              <td>{product.baohanh_count} lần</td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
+    <div>
+      <p className="text-2xl">{routeStatus.label}</p>
+      <hr className="border-t-slate-300" />
+      <form className="flex items-center my-3" onSubmit={exportToDailyHandler}>
+        <div className="mr-2">
+          <label htmlFor="daily_select">Đại lý: </label>
+          <select name="daily_id" id="daily_select" className="border border-slate-900 focus:outline-none" onChange={(e) => setSelectedDailyUserId(parseInt(e.target.value))}>
+            {dailyUsers.map((daily) => (
+              <option value={daily.id} key={daily.id}>
+                {daily.name}
+              </option>
+            ))}
+          </select>
+        </div>
+        <button className="px-4 button-classic">Gửi</button>
+      </form>
+      <hr className="border-t-slate-300" />
+      {routeStatus.from.map((status, index) => (
+        <ProductByStatusTable key={keys[index]} status={status} selectedIds={selectedIds} setSelectedIds={setSelectedIds} />
+      ))}
     </div>
   );
 }
