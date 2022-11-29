@@ -1,5 +1,5 @@
 import { Request, Response, Router } from "express";
-import { In } from "typeorm";
+import { Brackets, In } from "typeorm";
 
 import { errorHandler } from "../helpers/errorHandler";
 import { isProductStatus, ProductStatus, productStatuses } from "../helpers/types";
@@ -27,6 +27,10 @@ const getProducts = async (req: Request, res: Response) => {
     const customer_id = req.query.customer_id || 0;
     const productline_id = req.query.productline_id || 0;
 
+    // Nếu muốn chỉ lấy của User hiện tại
+    const user = res.locals.user as User;
+    const of_current_user = req.query.of_current_user ?? null;
+
     const page = parseInt(req.query.page as string) || 1;
     const limit = parseInt(req.query.limit as string) || 20;
     const offset = (page - 1) * limit;
@@ -42,10 +46,20 @@ const getProducts = async (req: Request, res: Response) => {
       .where((qb) => {
         qb.where(`product.status LIKE :status`, { status: `%${status}%` });
         if (productline_id) qb = qb.andWhere(`product_line.id = :productline_id`, { productline_id });
-        if (daily_id) qb = qb.andWhere(`daily.id = :daily_id`, { daily_id });
-        if (sanxuat_id) qb = qb.andWhere(`sanxuat.id = :sanxuat_id`, { sanxuat_id });
-        if (baohanh_id) qb = qb.andWhere(`baohanh.id = :baohanh_id`, { baohanh_id });
-        if (customer_id) qb = qb.andWhere(`customer.id = :customer_id`, { customer_id });
+        if (of_current_user) {
+          qb.andWhere(
+            new Brackets((qb) => {
+              qb.orWhere("product.sanxuat_id = :id", { id: user.id });
+              qb.orWhere("product.daily_id = :id", { id: user.id });
+              qb.orWhere("product.baohanh_id = :id", { id: user.id });
+            })
+          );
+        } else {
+          if (daily_id) qb = qb.andWhere(`product.daily_id = :daily_id`, { daily_id });
+          if (sanxuat_id) qb = qb.andWhere(`product.sanxuat_id = :sanxuat_id`, { sanxuat_id });
+          if (baohanh_id) qb = qb.andWhere(`product.baohanh_id = :baohanh_id`, { baohanh_id });
+          if (customer_id) qb = qb.andWhere(`product.customer_id = :customer_id`, { customer_id });
+        }
       })
       .skip(offset)
       .take(limit)

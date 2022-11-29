@@ -101,6 +101,7 @@ type updateableStatuses = {
       from: ProductStatus[];
       to: ProductStatus;
       label: string;
+      href: string;
     }[];
     receive: {
       from: ProductStatus[];
@@ -120,7 +121,8 @@ export const updateableStatuses: updateableStatuses = {
       {
         from: ["moi_san_xuat"],
         to: "dua_ve_dai_ly_ON_THE_WAY",
-        label: "Gửi tới đại lý",
+        label: "Xuất sản phẩm tới đại lý",
+        href: "/main/products/send/export-to-daily",
       },
     ],
     receive: [
@@ -142,26 +144,31 @@ export const updateableStatuses: updateableStatuses = {
         from: ["dua_ve_dai_ly"],
         to: "da_ban",
         label: "Bán cho khách hàng",
+        href: "/main/products/send/sell-to-customer",
       },
       {
         from: ["loi_can_bao_hanh"],
         to: "dang_sua_chua_bao_hanh_ON_THE_WAY",
         label: "Gửi tới bảo hành",
+        href: "/main/products/send/to-warranty",
       },
       {
         from: ["da_bao_hanh_xong"],
         to: "da_tra_lai_bao_hanh_cho_khach_hang",
         label: "Trả lại sản phẩm bảo hành cho khách hàng",
+        href: "/main/products/send/return-warranty-to-customer",
       },
       {
         from: ["loi_can_tra_ve_nha_may"],
         to: "loi_da_dua_ve_co_so_san_xuat_ON_THE_WAY",
         label: "Gửi sản phẩm bảo hành lỗi về nhà máy",
+        href: "/main/products/send/return-warranty-to-factory",
       },
       {
         from: ["da_ban", "da_tra_lai_bao_hanh_cho_khach_hang"],
         to: "loi_can_trieu_hoi",
         label: "Triệu hồi sản phẩm lỗi",
+        href: "/main/products/send/recall",
       },
     ],
     receive: [
@@ -188,11 +195,13 @@ export const updateableStatuses: updateableStatuses = {
         from: ["dang_sua_chua_bao_hanh"],
         to: "da_bao_hanh_xong_ON_THE_WAY",
         label: "Gửi sản phẩm đã sửa chữa về đại lý",
+        href: "/main/products/send/warranty-back-to-daily",
       },
       {
         from: ["dang_sua_chua_bao_hanh"],
         to: "loi_can_tra_ve_nha_may",
         label: "Đánh dấu sản phẩm lỗi cần trả về nhà máy",
+        href: "/main/products/send/error-back-to-factory",
       },
     ],
     receive: [
