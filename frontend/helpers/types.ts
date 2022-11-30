@@ -107,6 +107,7 @@ type updateableStatuses = {
       from: ProductStatus[];
       to: ProductStatus;
       label: string;
+      href: string;
     }[];
   };
 };
@@ -130,11 +131,13 @@ export const updateableStatuses: updateableStatuses = {
         from: ["loi_da_dua_ve_co_so_san_xuat_ON_THE_WAY"],
         to: "loi_da_dua_ve_co_so_san_xuat",
         label: "Nhận lại sản phẩm lỗi",
+        href: "/main/products/receive/faulty-product-from-baohanh",
       },
       {
         from: ["dua_ve_dai_ly"],
         to: "tra_lai_co_so_san_xuat",
         label: "Nhận sản phẩm không bán được",
+        href: "/main/products/receive/unsold-product",
       },
     ],
   },
@@ -176,16 +179,19 @@ export const updateableStatuses: updateableStatuses = {
         from: ["dua_ve_dai_ly_ON_THE_WAY"],
         to: "dua_ve_dai_ly",
         label: "Nhận sản phẩm mới từ nhà máy",
+        href: "/main/products/receive/new-products",
       },
       {
         from: ["da_ban", "loi_can_trieu_hoi", "da_tra_lai_bao_hanh_cho_khach_hang"],
         to: "loi_can_bao_hanh",
         label: "Nhận sản phẩm lỗi từ khách hàng",
+        href: "/main/products/receive/faulty-products-from-customer",
       },
       {
         from: ["da_bao_hanh_xong_ON_THE_WAY"],
         to: "da_bao_hanh_xong",
         label: "Nhận sản phẩm đã sửa chữa từ trung tâm bảo hành",
+        href: "/main/products/receive/warranty-product",
       },
     ],
   },
@@ -209,6 +215,7 @@ export const updateableStatuses: updateableStatuses = {
         from: ["dang_sua_chua_bao_hanh_ON_THE_WAY"],
         to: "dang_sua_chua_bao_hanh",
         label: "Nhận sản phẩm lỗi từ đại lý",
+        href: "/main/products/receive/faulty-products-from-daily",
       },
     ],
   },
@@ -221,4 +228,9 @@ export type SendPayload = {
   status: ProductStatus;
   product_ids: number[];
   daily_id?: number;
+};
+
+export type ReceivePayload = {
+  status: ProductStatus;
+  product_ids: number[];
 };

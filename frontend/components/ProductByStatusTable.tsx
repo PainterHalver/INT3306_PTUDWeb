@@ -89,7 +89,7 @@ export default function ProductByStatusTable({ status, selectedIds, setSelectedI
               <td>{product.id}</td>
               <td>{product.product_line.model}</td>
               <td>{readableProductStatuses[product.status]}</td>
-              <td>{product.possesser.address}</td>
+              <td>{product.possesser ? product.possesser.address : "Đang vận chuyển"}</td>
               <td>{product.baohanh_count} lần</td>
             </tr>
           ))}

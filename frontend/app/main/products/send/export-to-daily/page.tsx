@@ -99,7 +99,7 @@ export default function ExportProductsToDaily() {
     <div>
       <p className="text-2xl">{routeStatus.label}</p>
       <hr className="border-t-slate-300" />
-      <form className="flex items-center my-3" onSubmit={exportToDailyHandler}>
+      <form className="flex items-center my-4" onSubmit={exportToDailyHandler}>
         <div className="mr-2">
           <label htmlFor="daily_select">Đại lý: </label>
           <select name="daily_id" id="daily_select" className="border border-slate-900 focus:outline-none" onChange={(e) => setSelectedDailyUserId(parseInt(e.target.value))}>
@@ -123,7 +123,7 @@ export default function ExportProductsToDaily() {
 
 const ConfirmModalMessage = ({ product_ids }) => {
   return (
-    <div className="flex flex-col items-center">
+    <div className="flex flex-col items-center max-w-md">
       <p className="text-xl">Xác nhận gửi?</p>
       <p className="text-sm text-gray-500">ID: {JSON.stringify(product_ids)}</p>
     </div>
