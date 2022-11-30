@@ -1,8 +1,9 @@
 "use client";
 
 import { AxiosResponse } from "axios";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname } from "next/navigation";
 import { FormEvent, useEffect, useState } from "react";
+import ConfirmModal from "../../../../../components/ConfirmModal";
 
 import ProductByStatusTable from "../../../../../components/ProductByStatusTable";
 import { useAppDispatch, useAuthContext } from "../../../../../contexts/appContext";
@@ -18,6 +19,7 @@ export default function ExportProductsToDaily() {
   const [selectedIds, setSelectedIds] = useState<number[]>([]);
   const [dailyUsers, setDailyUsers] = useState<User[]>([]);
   const [selectedDailyUserId, setSelectedDailyUserId] = useState<number | null>(null);
+  const [confirmModalOpen, setConfirmModalOpen] = useState<boolean>(false);
 
   // Dùng để trigger rerender các table
   const [keys, setKeys] = useState(sendStatuses.map((status, index) => index));
@@ -26,7 +28,7 @@ export default function ExportProductsToDaily() {
   const toast = useToast();
 
   const refreshTable = () => {
-    setKeys((keys) => keys.map((key) => key + 1));
+    setKeys((keys) => keys.map((key) => key + keys.length));
   };
 
   useEffect(() => {
@@ -68,8 +70,19 @@ export default function ExportProductsToDaily() {
   };
 
   const exportToDailyHandler = async (e: FormEvent) => {
+    e.preventDefault();
+
+    // Báo lỗi nếu chưa có sản phẩm nào được chọn
+    if (selectedIds.length === 0) {
+      return toast.error("Chưa có sản phẩm nào được chọn!");
+    }
+
+    // Mở modal xác nhận
+    setConfirmModalOpen(true);
+  };
+
+  const exportToDailyConfirmHandler = async () => {
     try {
-      e.preventDefault();
       await exportToDaily(selectedIds, selectedDailyUserId ?? dailyUsers[0].id);
 
       // Bỏ chọn tất cả sản phẩm
@@ -103,6 +116,16 @@ export default function ExportProductsToDaily() {
       {routeStatus.from.map((status, index) => (
         <ProductByStatusTable key={keys[index]} status={status} selectedIds={selectedIds} setSelectedIds={setSelectedIds} />
       ))}
+      <ConfirmModal open={confirmModalOpen} setOpen={setConfirmModalOpen} message={<ConfirmModalMessage product_ids={selectedIds} />} onConfirm={exportToDailyConfirmHandler} />
     </div>
   );
 }
+
+const ConfirmModalMessage = ({ product_ids }) => {
+  return (
+    <div className="flex flex-col items-center">
+      <p className="text-xl">Xác nhận gửi?</p>
+      <p className="text-sm text-gray-500">ID: {JSON.stringify(product_ids)}</p>
+    </div>
+  );
+};

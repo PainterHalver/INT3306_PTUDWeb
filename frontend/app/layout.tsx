@@ -14,6 +14,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <AuthProvider>
           <ToastProvider>{children}</ToastProvider>
         </AuthProvider>
+
+        {/* Background div */}
+        <div className="fixed inset-0 z-[-20] " />
       </body>
     </html>
   );
