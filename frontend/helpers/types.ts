@@ -228,6 +228,7 @@ export type SendPayload = {
   status: ProductStatus;
   product_ids: number[];
   daily_id?: number;
+  customer_id?: number;
 };
 
 export type ReceivePayload = {

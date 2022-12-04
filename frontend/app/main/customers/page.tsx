@@ -1,14 +1,14 @@
 "use client";
 import { FormEvent, useEffect, useState } from "react";
+
 import ConfirmDeleteModal from "../../../components/ConfirmDeleteModal";
 import Modal from "../../../components/Modal";
-
 import { useAppDispatch, useAuthContext } from "../../../contexts/appContext";
 import { useToast } from "../../../contexts/toastContext";
 import axios from "../../../helpers/axios";
-import { Customer, Productline } from "../../../helpers/types";
+import { Customer } from "../../../helpers/types";
 
-export default function ProductLines() {
+export default function Customers() {
   const [customers, setCustomers] = useState<Customer[]>([]);
   const [nameQuery, setNameQuery] = useState<string>("");
   const [phoneQuery, setPhoneQuery] = useState<string>("");
@@ -179,23 +179,23 @@ export default function ProductLines() {
             </tr>
           </thead>
           <tbody>
-            {customers.map((productline) => (
+            {customers.map((customer) => (
               <tr
-                key={productline.id}
+                key={customer.id}
                 className="cursor-pointer hover:bg-slate-300"
                 onClick={() => {
                   // Chỉ cho phép đại lý sửa xóa khách hàng
                   if (user.account_type !== "dai_ly") {
                     return;
                   }
-                  setSelectedCustomer(productline);
+                  setSelectedCustomer(customer);
                   setUpdateModalOpen(true);
                 }}
               >
-                <td>{productline.id}</td>
-                <td>{productline.name}</td>
-                <td>{productline.phone}</td>
-                <td>{productline.address}</td>
+                <td>{customer.id}</td>
+                <td>{customer.name}</td>
+                <td>{customer.phone}</td>
+                <td>{customer.address}</td>
               </tr>
             ))}
           </tbody>
