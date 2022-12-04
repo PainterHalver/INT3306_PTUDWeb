@@ -146,7 +146,7 @@ const deleteUser = async (req: Request, res: Response) => {
       return res.status(400).json({ errors });
     }
 
-    // Check xem username đã tồn tại chưa
+    // Check xem user có tồn tại không
     const userRepo = AppDataSource.getRepository(User);
     const usernameUser = await userRepo.findOneBy({ id: parseInt(id) });
     if (!usernameUser) {
