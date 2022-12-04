@@ -71,7 +71,7 @@ export default function ExportProductsToDaily() {
       <div className="flex mb-2">
         <p className="text-2xl">{routeStatus.label}</p>
         <button className="px-4 ml-auto button-classic" onClick={showConfirmModal}>
-          Xác nhận đã nhận
+          Nhận
         </button>
       </div>
       <hr className="border-t-slate-300" />

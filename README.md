@@ -18,11 +18,11 @@
 2. 😉
 3. Responsive GUI.
 4. Hiệu năng:
-   - Dùng React và fetch để tại lại bộ phận trang web, cập nhật DOM.
+   - Dùng React, axios và Next.js layout để tại lại bộ phận trang web, cập nhật DOM.
    - Backend API gửi JSON giao tiếp với frontend.
 5. 👏
 6. Xử lý nhập liệu:
-   - Validate các input ở cả frontend và backend.
+   - Validate các input.
    - ...
    - ...
 7. Xử lý phiên, xác thực, an ninh:
