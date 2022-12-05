@@ -8,7 +8,7 @@
 
 ## Stack sử dụng
 
-- Stack Backend: Typescript, TypeORM (sqlite), NodeJS, ExpressJS
+- Stack Backend: Typescript, TypeORM, NodeJS, ExpressJS
 - Stack Frontend: Typescript, Next.js, TailwindCSS
 - Stack Overflow
 
@@ -72,7 +72,7 @@
 **Trung tâm bảo hành**
 
 + Nhận các sản phẩm bảo hành hoặc triệu hồi từ đại lý.
-! Trả sản phẩm đã sửa chữa xong cho đại lý.
++ Trả sản phẩm đã sửa chữa xong cho đại lý.
 ! Chuyển sản phẩm bảo hành lỗi không thể sửa chữa về cơ sở sản xuất.
 ! Thống kê và báo cáo số liệu sản phẩm theo từng loại (trạng thái), theo tháng, quý, năm.
 ```
