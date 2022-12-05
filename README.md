@@ -22,14 +22,14 @@
    - Backend API gửi JSON giao tiếp với frontend.
 5. 👏
 6. Xử lý nhập liệu:
-   - Validate các input.
+   - Validate các input frontend + backend.
    - ...
    - ...
 7. Xử lý phiên, xác thực, an ninh:
    - Dùng jwt để xác thực người dùng.
-   - API có phân quyền.
    - Password được hash trước khi lưu vào database.
    - Không dùng raw SQL. Input được escape/sanitize bởi TypeORM.
+   - API phân quyền: Người dùng admin có thể tạo và sửa loại người dùng. Mỗi route API quy định được loại người dùng nào có thể truy cập.
 8. Định tuyến URL:
    - Frontend: Dùng React Router để định tuyến URL.
    - Backend: REST API.
@@ -65,7 +65,8 @@
 + Nhập sản phẩm mới về từ cơ sở sản xuất. Sản phẩm nhập về được lưu tại kho (riêng, nội bộ) của đại lý.
 + Bán sản phẩm cho khách hàng.
 + Nhận lại sản phẩm cần bảo hành và chuyển đến trung tâm bảo hành.
-! Nhận lại sản phẩm từ trung tâm bảo hành để trả cho khách hàng.
+! Nhận lại sản phẩm từ trung tâm bảo hành.
+! Trả lại sản phẩm đã bảo hành cho khách hàng.
 ! Thống kê và báo cáo số liệu sản phẩm theo từng loại (trạng thái liên), theo tháng, quý, năm.
 ! Thống kê và phân tích số lượng sản phẩm bán ra hàng tháng, quý, năm.
 
