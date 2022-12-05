@@ -71,7 +71,7 @@
 
 **Trung tâm bảo hành**
 
-! Nhận các sản phẩm bảo hành hoặc triệu hồi từ đại lý.
++ Nhận các sản phẩm bảo hành hoặc triệu hồi từ đại lý.
 ! Trả sản phẩm đã sửa chữa xong cho đại lý.
 ! Chuyển sản phẩm bảo hành lỗi không thể sửa chữa về cơ sở sản xuất.
 ! Thống kê và báo cáo số liệu sản phẩm theo từng loại (trạng thái), theo tháng, quý, năm.

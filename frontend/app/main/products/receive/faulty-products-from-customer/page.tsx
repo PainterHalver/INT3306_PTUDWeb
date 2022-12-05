@@ -11,7 +11,7 @@ import { useToast } from "../../../../../contexts/toastContext";
 import { ReceivePayload, updateableStatuses } from "../../../../../helpers/types";
 import { AxiosResponse } from "axios";
 
-export default function ExportProductsToDaily() {
+export default function FaultyProductsFromCustomer() {
   const { user } = useAuthContext();
   const pathname = usePathname();
   const receiveStatuses = updateableStatuses[user.account_type].receive;

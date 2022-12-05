@@ -11,7 +11,7 @@ import { useToast } from "../../../../../contexts/toastContext";
 import { ReceivePayload, updateableStatuses } from "../../../../../helpers/types";
 import { AxiosResponse } from "axios";
 
-export default function NewProductsFromSanxuat() {
+export default function FaultyProductsFromDaily() {
   const { user } = useAuthContext();
   const pathname = usePathname();
   const receiveStatuses = updateableStatuses[user.account_type].receive;
@@ -29,11 +29,11 @@ export default function NewProductsFromSanxuat() {
     setKeys((keys) => keys.map((key) => key + keys.length));
   };
 
-  const receiveProductsFromSanxuat = async (product_ids: number[]) => {
+  const receiveFaultyProductsFromDaily = async (product_ids: number[]) => {
     try {
       dispatch("LOADING", "Đang cập nhật trạng thái...");
       const res = await axios.post<any, AxiosResponse<any, any>, ReceivePayload>("/products/receive", {
-        status: "dua_ve_dai_ly",
+        status: "dang_sua_chua_bao_hanh",
         product_ids,
       });
       toast.success("Cập nhật trạng thái thành công!");
@@ -54,7 +54,7 @@ export default function NewProductsFromSanxuat() {
 
   const confirmReceive = async () => {
     try {
-      await receiveProductsFromSanxuat(selectedIds);
+      await receiveFaultyProductsFromDaily(selectedIds);
 
       // Sau khi nhận thành công thì reset selectedIds
       setSelectedIds([]);
