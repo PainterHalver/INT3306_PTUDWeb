@@ -152,7 +152,7 @@ export const updateableStatuses: updateableStatuses = {
       {
         from: ["loi_can_bao_hanh"],
         to: "dang_sua_chua_bao_hanh_ON_THE_WAY",
-        label: "Gửi tới bảo hành",
+        label: "Gửi tới trung tâm bảo hành",
         href: "/main/products/send/to-warranty",
       },
       {
@@ -229,6 +229,7 @@ export type SendPayload = {
   product_ids: number[];
   daily_id?: number;
   customer_id?: number;
+  baohanh_id?: number;
 };
 
 export type ReceivePayload = {

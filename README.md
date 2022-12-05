@@ -64,7 +64,7 @@
 
 + Nhập sản phẩm mới về từ cơ sở sản xuất. Sản phẩm nhập về được lưu tại kho (riêng, nội bộ) của đại lý.
 + Bán sản phẩm cho khách hàng.
-! Nhận lại sản phẩm cần bảo hành và chuyển đến trung tâm bảo hành.
++ Nhận lại sản phẩm cần bảo hành và chuyển đến trung tâm bảo hành.
 ! Nhận lại sản phẩm từ trung tâm bảo hành để trả cho khách hàng.
 ! Thống kê và báo cáo số liệu sản phẩm theo từng loại (trạng thái liên), theo tháng, quý, năm.
 ! Thống kê và phân tích số lượng sản phẩm bán ra hàng tháng, quý, năm.
