@@ -54,7 +54,7 @@ export class Product extends BaseEntity {
    * Trả về User hiện tại mà sản phẩm này đang ở
    */
   @Expose()
-  get possesser(): User | Customer {
+  get possesser(): User | Customer | undefined {
     const customerStatuses: ProductStatus[] = [
       "da_ban",
       "da_tra_lai_bao_hanh_cho_khach_hang",
@@ -71,8 +71,12 @@ export class Product extends BaseEntity {
       return this.sanxuat;
     } else if (dailyStatuses.includes(this.status)) {
       return this.daily;
+    } else if (baohanhStatuses.includes(this.status)) {
+      return this.baohanh;
     }
-    return this.baohanh;
+
+    // Sản phẩm đang được vận chuyển
+    return undefined;
   }
 
   @BeforeInsert()
