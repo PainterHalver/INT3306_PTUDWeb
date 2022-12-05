@@ -44,7 +44,7 @@ const getProducts = async (req: Request, res: Response) => {
       .leftJoinAndSelect("product.baohanh", "baohanh")
       .leftJoinAndSelect("product.customer", "customer")
       .where((qb) => {
-        qb.where(`product.status LIKE :status`, { status: `%${status}%` });
+        qb.where(`product.status LIKE :status`, { status: `%${status}` });
         if (productline_id) qb = qb.andWhere(`product_line.id = :productline_id`, { productline_id });
         if (of_current_user) {
           qb.andWhere(
