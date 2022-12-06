@@ -320,7 +320,7 @@ const sendProducts = async (req: Request, res: Response) => {
           product_ids: `Không có sản phẩm nào được cập nhật! Các sản phẩm phải đang ở trạng thái '${requiredStatuses!}'! ID: [${invalidProducts.map(
             (product) => product.id
           )}]`,
-          invalid_products: invalidProducts,
+          // invalid_products: invalidProducts,
         },
       });
     }
@@ -456,7 +456,7 @@ const receiveProducts = async (req: Request, res: Response) => {
           product_ids: `Không có sản phẩm nào được cập nhật! Các sản phẩm phải đang ở trạng thái '${requiredStatuses!}'! ID: [${invalidProducts.map(
             (product) => product.id
           )}]`,
-          invalid_products: invalidProducts,
+          // invalid_products: invalidProducts,
         },
       });
     }

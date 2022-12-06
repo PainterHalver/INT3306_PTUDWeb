@@ -21,7 +21,7 @@ export default class ProductSeeder implements Seeder {
       const sanxuatUser = (await userRepo.findOneBy({ account_type: "san_xuat" })) as User;
       const dailyUser = (await userRepo.findOneBy({ account_type: "dai_ly" })) as User;
       const baohanhUser = (await userRepo.findOneBy({ account_type: "bao_hanh" })) as User;
-      const productLines = (await productLineRepo.findBy({ name: "Roomba" })) as ProductLine[];
+      const productLines = (await productLineRepo.find()) as ProductLine[];
       const customers = await customerRepo.find();
 
       // 1. Tạo dữ liệu mẫu
