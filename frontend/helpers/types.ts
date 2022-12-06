@@ -191,7 +191,7 @@ export const updateableStatuses: updateableStatuses = {
         from: ["da_bao_hanh_xong_ON_THE_WAY"],
         to: "da_bao_hanh_xong",
         label: "Nhận sản phẩm đã sửa chữa từ trung tâm bảo hành",
-        href: "/main/products/receive/warranty-product",
+        href: "/main/products/receive/warranty-products",
       },
     ],
   },

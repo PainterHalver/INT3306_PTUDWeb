@@ -56,6 +56,11 @@ export default function SellToCustomer() {
         product_ids,
       });
 
+      if (!res.data || res.data.length === 0) {
+        setErrors(["Không có sản phẩm nào được cập nhật! Kiểm tra các id đã nhập có tồn tại không!"]);
+        setErrorModalOpen(true);
+        return;
+      }
       toast.success("Cập nhật trạng thái thành công!");
     } catch (error) {
       if (axios.isAxiosError(error)) {
@@ -78,6 +83,7 @@ export default function SellToCustomer() {
   const addSelectedId = () => {
     if (idInputValue && !selectedIds.includes(idInputValue)) {
       setSelectedIds([...selectedIds, idInputValue]);
+      setIdInputValue(0);
     }
   };
 
@@ -162,9 +168,9 @@ export default function SellToCustomer() {
       <ConfirmModal open={confirmModalOpen} setOpen={setConfirmModalOpen} message={"Bạn có chắc chắn muốn bán sản phẩm?"} onConfirm={sellProductsConfirmHandler} />
 
       <Modal open={errorModalOpen} setOpen={setErrorModalOpen}>
-        <div className="bg-white">
+        <div className="p-2 bg-white">
           {errors.map((error) => {
-            return <p className="text-red-500">{error}</p>;
+            return <p className="text-red-500">{JSON.stringify(error)}</p>;
           })}
         </div>
       </Modal>
