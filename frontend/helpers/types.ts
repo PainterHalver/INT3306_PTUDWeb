@@ -133,12 +133,12 @@ export const updateableStatuses: updateableStatuses = {
         label: "Nhận lại sản phẩm lỗi",
         href: "/main/products/receive/faulty-product-from-baohanh",
       },
-      {
-        from: ["dua_ve_dai_ly"],
-        to: "tra_lai_co_so_san_xuat",
-        label: "Nhận sản phẩm không bán được",
-        href: "/main/products/receive/unsold-product",
-      },
+      // {
+      //   from: ["dua_ve_dai_ly"],
+      //   to: "tra_lai_co_so_san_xuat",
+      //   label: "Nhận sản phẩm không bán được",
+      //   href: "/main/products/receive/unsold-product",
+      // },
     ],
   },
   dai_ly: {

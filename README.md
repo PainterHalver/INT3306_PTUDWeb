@@ -55,7 +55,7 @@
 
 + Nhập các lô sản phẩm mới vừa sản xuất vào kho.
 + Xuất sản phẩm cho đại lý.
-! Nhận các sản phẩm lỗi về từ các trung tâm bảo hành.
++ Nhận các sản phẩm lỗi về từ các trung tâm bảo hành.
 ! Thống kê và báo cáo số liệu sản phẩm theo từng loại (trạng thái), theo tháng, quý, năm.
 ! Thống kê và phân tích số lượng sản phẩm bán ra hàng tháng, quý, năm.
 ! Thống kê tỉ lệ sản phẩm bị lỗi theo dòng sản phẩm, cơ sở sản xuất, đại lý phân phối.
@@ -74,7 +74,7 @@
 
 + Nhận các sản phẩm bảo hành hoặc triệu hồi từ đại lý.
 + Trả sản phẩm đã sửa chữa xong cho đại lý.
-! Chuyển sản phẩm bảo hành lỗi không thể sửa chữa về cơ sở sản xuất.
++ Chuyển sản phẩm bảo hành lỗi không thể sửa chữa về cơ sở sản xuất.
 ! Thống kê và báo cáo số liệu sản phẩm theo từng loại (trạng thái), theo tháng, quý, năm.
 ```
 
