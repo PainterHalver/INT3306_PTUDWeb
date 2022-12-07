@@ -53,12 +53,12 @@ const navlinks: NavLinks = [
     restrictTo: ["admin", "san_xuat", "bao_hanh", "dai_ly"],
   },
   {
-    href: "/main/stats/exportToDaily",
+    href: "/main/stats/export-to-daily",
     label: "Thống kê hàng xuất cho đại lý",
     restrictTo: ["san_xuat"],
   },
   {
-    href: "/main/stats/soldToCustomer",
+    href: "/main/stats/sold-to-customer",
     label: "Thống kê hàng đã bán",
     restrictTo: ["dai_ly"],
   },

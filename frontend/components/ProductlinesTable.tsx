@@ -8,17 +8,17 @@ export default function ProductlinesTable({ productlines }: Props) {
     <table className="table">
       <thead>
         <tr>
-          <th>ID</th>
-          <th>Tên</th>
-          <th>Model</th>
-          <th>Mô tả</th>
-          <th>Bảo hành</th>
-          <th>Tổng sản phẩm</th>
+          <th className="w-[8%]">ID</th>
+          <th className="w-[16%]">Tên</th>
+          <th className="w-[30%]">Model</th>
+          <th className="w-[40%]">Mô tả</th>
+          <th className="w-[14%]">Bảo hành</th>
+          <th className="w-[13%]">Tổng sản phẩm</th>
         </tr>
       </thead>
       <tbody>
         {productlines.map((productline) => (
-          <tr key={productline.id} className="cursor-pointer hover:bg-slate-300">
+          <tr key={productline.id} className="text-center cursor-pointer hover:bg-slate-300">
             <td>{productline.id}</td>
             <td>{productline.name}</td>
             <td>{productline.model}</td>

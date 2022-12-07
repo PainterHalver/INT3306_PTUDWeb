@@ -5,6 +5,7 @@ import ProductlinesTable from "../../../components/ProductlinesTable";
 import axios from "../../../helpers/axios";
 import { Productline, productStatuses, readableProductStatuses, User } from "../../../helpers/types";
 import { useAppDispatch } from "../../../contexts/appContext";
+import { useToast } from "../../../contexts/toastContext";
 
 export default function Stats() {
   const [result, setResult] = useState<Productline[]>([]);
@@ -18,6 +19,7 @@ export default function Stats() {
   const [selectedDailyUserId, setSelectedDailyUserId] = useState("");
 
   const dispatch = useAppDispatch();
+  const toast = useToast();
 
   useEffect(() => {
     (async () => {
@@ -30,6 +32,7 @@ export default function Stats() {
         setDailyUsers(allUsers.filter((u) => u.account_type === "dai_ly"));
         await getStats();
       } catch (error) {
+        toast.error("Lỗi khi tải dữ liệu");
         console.log(error);
       } finally {
         dispatch("STOP_LOADING");
@@ -52,6 +55,7 @@ export default function Stats() {
       setResult(res.data.result);
       setTotal(res.data.total);
     } catch (error) {
+      toast.error("Lỗi khi tải dữ liệu");
       console.log(error);
     } finally {
       dispatch("STOP_LOADING");
@@ -127,7 +131,7 @@ export default function Stats() {
 
       {result.length > 0 && (
         <>
-          <p className="mb-2 font-bold text-md">Tổng cộng: {total} sản phẩm</p>
+          <p className="mb-2 font-bold text-md">Tổng cộng: {total} loại sản phẩm</p>
           <ProductlinesTable productlines={result} />
         </>
       )}

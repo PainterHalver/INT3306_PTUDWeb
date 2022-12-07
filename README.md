@@ -12,6 +12,8 @@
 - Stack Frontend: Typescript, Next.js, TailwindCSS
 - Stack Overflow
 
+## Chạy App
+
 ## Tiêu chí chấm điểm
 
 1. Các chức năng đã cài đặt: [Xem ở dưới](#các-chức-năng-đã-cài-đặt)
@@ -56,8 +58,8 @@
 + Nhập các lô sản phẩm mới vừa sản xuất vào kho.
 + Xuất sản phẩm cho đại lý.
 + Nhận các sản phẩm lỗi về từ các trung tâm bảo hành.
-! Thống kê và báo cáo số liệu sản phẩm theo từng loại (trạng thái), theo tháng, quý, năm.
-! Thống kê và phân tích số lượng sản phẩm bán ra hàng tháng, quý, năm.
++ Thống kê và báo cáo số liệu sản phẩm theo từng loại (trạng thái).
++ Thống kê và phân tích số lượng sản phẩm bán ra trong một khoảng thời gian.
 ! Thống kê tỉ lệ sản phẩm bị lỗi theo dòng sản phẩm, cơ sở sản xuất, đại lý phân phối.
 
 **Đại lý phân phối**
@@ -67,15 +69,15 @@
 + Nhận lại sản phẩm cần bảo hành và chuyển đến trung tâm bảo hành.
 + Nhận lại sản phẩm từ trung tâm bảo hành.
 + Trả lại sản phẩm đã bảo hành cho khách hàng.
-! Thống kê và báo cáo số liệu sản phẩm theo từng loại (trạng thái liên), theo tháng, quý, năm.
-! Thống kê và phân tích số lượng sản phẩm bán ra hàng tháng, quý, năm.
++ Thống kê và báo cáo số liệu sản phẩm theo từng loại (trạng thái).
+! Thống kê và phân tích số lượng sản phẩm bán ra trong một khoảng thời gian.
 
 **Trung tâm bảo hành**
 
 + Nhận các sản phẩm bảo hành hoặc triệu hồi từ đại lý.
 + Trả sản phẩm đã sửa chữa xong cho đại lý.
 + Chuyển sản phẩm bảo hành lỗi không thể sửa chữa về cơ sở sản xuất.
-! Thống kê và báo cáo số liệu sản phẩm theo từng loại (trạng thái), theo tháng, quý, năm.
++ Thống kê và báo cáo số liệu sản phẩm theo từng loại (trạng thái).
 ```
 
 ## Vòng đời của sản phẩm
