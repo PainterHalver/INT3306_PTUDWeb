@@ -14,6 +14,20 @@
 
 ## Chạy App
 
+```bash
+# Chạy backend
+cd backend
+npm install
+npm run seed
+npm run dev
+
+# Chạy frontend
+cd frontend
+npm install
+npm run build
+npm start
+```
+
 ## Tiêu chí chấm điểm
 
 1. Các chức năng đã cài đặt: [Xem ở dưới](#các-chức-năng-đã-cài-đặt)
