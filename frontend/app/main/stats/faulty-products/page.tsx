@@ -1,7 +1,6 @@
 "use client";
 import { FormEvent, useEffect, useState } from "react";
 
-import ProductlinesTable from "../../../../components/ProductlinesTable";
 import { useAppDispatch } from "../../../../contexts/appContext";
 import { useToast } from "../../../../contexts/toastContext";
 import axios from "../../../../helpers/axios";

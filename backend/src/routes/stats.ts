@@ -262,7 +262,10 @@ const getErrorStats = async (req: Request, res: Response) => {
     const product_line_ids_without_error = product_line_ids.filter(
       (id) => !product_lines.some((product_line) => product_line.id === id)
     );
-    const product_lines_without_error = await productLineRepo.findBy({ id: In(product_line_ids_without_error) });
+    const product_lines_without_error = await productLineRepo.find({
+      where: { id: In(product_line_ids_without_error) },
+      relations: ["products"],
+    });
     const ps = product_lines_without_error.map((p) => {
       let { product_count, ...rest } = p;
       return {
