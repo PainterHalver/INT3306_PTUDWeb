@@ -6,6 +6,7 @@ import axios from "../../../helpers/axios";
 import { Productline, productStatuses, readableProductStatuses, User } from "../../../helpers/types";
 import { useAppDispatch } from "../../../contexts/appContext";
 import { useToast } from "../../../contexts/toastContext";
+import { Bar } from "react-chartjs-2";
 
 export default function Stats() {
   const [result, setResult] = useState<Productline[]>([]);
@@ -131,6 +132,41 @@ export default function Stats() {
 
       {result.length > 0 && (
         <>
+          <Bar
+            options={{
+              responsive: true,
+              plugins: {
+                // legend: {
+                //   position: "top" as const,
+                // },
+                title: {
+                  display: true,
+                  text: "Thống kê số lượng sản phẩm",
+                },
+                tooltip: {
+                  callbacks: {
+                    label: (context) => {
+                      return context.dataset?.data?.[context.dataIndex] + " sản phẩm";
+                    },
+                    beforeBody: (context) => {
+                      return result[context[0].dataIndex].model;
+                    },
+                    title: (context) => `ID: ${context[0].label}`,
+                  },
+                },
+              },
+            }}
+            data={{
+              labels: result.map((productline) => productline.id),
+              datasets: [
+                {
+                  label: "Số lượng sản phẩm",
+                  data: result.map((productline) => productline.product_count),
+                  backgroundColor: "rgba(53, 162, 235, 0.5)",
+                },
+              ],
+            }}
+          />
           <p className="mb-2 font-bold text-md">Tổng cộng: {total} loại sản phẩm</p>
           <ProductlinesTable productlines={result} />
         </>

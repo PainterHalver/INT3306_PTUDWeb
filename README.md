@@ -20,7 +20,9 @@ cd backend
 npm install
 npm run seed
 npm run dev
+```
 
+```bash
 # Chạy frontend
 cd frontend
 npm install
@@ -84,7 +86,7 @@ npm start
 + Nhận lại sản phẩm từ trung tâm bảo hành.
 + Trả lại sản phẩm đã bảo hành cho khách hàng.
 + Thống kê và báo cáo số liệu sản phẩm theo từng loại (trạng thái).
-! Thống kê và phân tích số lượng sản phẩm bán ra trong một khoảng thời gian.
++ Thống kê và phân tích số lượng sản phẩm bán ra trong một khoảng thời gian.
 
 **Trung tâm bảo hành**
 

@@ -9,7 +9,7 @@ import { Productline } from "../../../../helpers/types";
 
 import { Bar } from "react-chartjs-2";
 
-export default function ExportToDailyStats() {
+export default function SoldToCustomerStats() {
   const [result, setResult] = useState<Productline[]>([]);
   const [total, setTotal] = useState(0);
   const [fromTime, setFromTime] = useState<number | undefined>(undefined);
@@ -19,16 +19,17 @@ export default function ExportToDailyStats() {
   const toast = useToast();
 
   useEffect(() => {
-    getExportStats();
+    getSaleStats();
   }, []);
 
-  const getExportStats = async () => {
+  const getSaleStats = async () => {
     try {
       dispatch("LOADING", "Lấy dữ liệu thống kê...");
-      const res = await axios.get("/stats/exportToDailyStats", {
+      const res = await axios.get("/stats/soldToCustomerStats", {
         params: {
           from: fromTime ?? -9999999999999,
           to: toTime ?? 9999999999999,
+          of_current_user: true,
         },
       });
 
@@ -44,7 +45,7 @@ export default function ExportToDailyStats() {
 
   const statsFormHandler = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    await getExportStats();
+    await getSaleStats();
   };
 
   return (

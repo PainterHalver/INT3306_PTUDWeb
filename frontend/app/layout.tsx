@@ -1,6 +1,11 @@
+"use client";
+import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend } from "chart.js";
+
 import "./globals.css";
 import AuthProvider from "../contexts/appContext";
 import { ToastProvider } from "../contexts/toastContext";
+
+ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
