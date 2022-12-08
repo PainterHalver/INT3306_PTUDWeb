@@ -14,6 +14,7 @@ export type Productline = {
   description: string;
   warranty_months: number;
   product_count: number;
+  total_product_count?: number;
 };
 
 export type Product = {

@@ -63,7 +63,7 @@ const navlinks: NavLinks = [
     restrictTo: ["dai_ly"],
   },
   {
-    href: "/main/stats/error",
+    href: "/main/stats/faulty-products",
     label: "Thống kê hàng lỗi",
     restrictTo: ["san_xuat"],
   },

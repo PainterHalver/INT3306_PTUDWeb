@@ -76,7 +76,7 @@ npm start
 + Nhận các sản phẩm lỗi về từ các trung tâm bảo hành.
 + Thống kê và báo cáo số liệu sản phẩm theo từng loại (trạng thái).
 + Thống kê và phân tích số lượng sản phẩm bán ra trong một khoảng thời gian.
-! Thống kê tỉ lệ sản phẩm bị lỗi theo dòng sản phẩm, cơ sở sản xuất, đại lý phân phối.
++ Thống kê tỉ lệ sản phẩm bị lỗi theo dòng sản phẩm, cơ sở sản xuất, đại lý phân phối.
 
 **Đại lý phân phối**
 
