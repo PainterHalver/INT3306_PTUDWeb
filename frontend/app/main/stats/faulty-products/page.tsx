@@ -144,7 +144,30 @@ export default function FaultyProductStats() {
             }}
           />
           <p className="mb-2 font-bold text-md">Tổng cộng: {total} loại sản phẩm</p>
-          <ProductlinesTable productlines={result} />
+          <table className="table">
+            <thead>
+              <tr>
+                <th className="w-[8%]">ID</th>
+                <th className="w-[16%]">Tên</th>
+                <th className="w-[30%]">Model</th>
+                <th className="w-[14%]">Số sản phẩm lỗi</th>
+                <th className="w-[14%]">Tổng sản phẩm</th>
+                <th className="w-[15%]">Tỷ lệ lỗi</th>
+              </tr>
+            </thead>
+            <tbody>
+              {result.map((productline) => (
+                <tr key={productline.id} className="text-center cursor-pointer hover:bg-slate-300">
+                  <td>{productline.id}</td>
+                  <td>{productline.name}</td>
+                  <td>{productline.model}</td>
+                  <td>{productline.product_count}</td>
+                  <td>{productline.total_product_count}</td>
+                  <td>{((productline.ratio || 0) * 100).toFixed(2)}%</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
         </>
       )}
 

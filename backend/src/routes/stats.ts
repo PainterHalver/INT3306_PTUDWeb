@@ -1,5 +1,5 @@
 import { Request, Response, Router } from "express";
-import { Brackets } from "typeorm";
+import { Brackets, In } from "typeorm";
 
 import { errorHandler } from "../helpers/errorHandler";
 import { AppDataSource } from "../data-source";
@@ -98,7 +98,7 @@ const getStats = async (req: Request, res: Response) => {
       // })
       .getMany();
 
-    const total = product_lines.reduce((acc, cur) => acc + cur.product_count, 0);
+    const total = product_lines.length;
 
     return res.json({ total, result: product_lines });
   } catch (error) {
@@ -204,7 +204,7 @@ const soldToCustomerStats = async (req: Request, res: Response) => {
       })
       .getMany();
 
-    const total = product_lines.reduce((acc, cur) => acc + cur.product_count, 0);
+    const total = product_lines.length;
 
     return res.json({ total, result: product_lines });
   } catch (error) {
@@ -258,7 +258,21 @@ const getErrorStats = async (req: Request, res: Response) => {
       )
       .getMany();
 
-    console.log(product_lines);
+    // Danh sách các dòng sản phẩm không có sản phẩm bị lỗi
+    const product_line_ids_without_error = product_line_ids.filter(
+      (id) => !product_lines.some((product_line) => product_line.id === id)
+    );
+    const product_lines_without_error = await productLineRepo.findBy({ id: In(product_line_ids_without_error) });
+    const ps = product_lines_without_error.map((p) => {
+      let { product_count, ...rest } = p;
+      return {
+        ...rest,
+        total_product_count: product_count,
+        product_count: 0,
+        ratio: 0,
+      };
+    });
+
     const new_product_lines = await Promise.all(
       product_lines.map(async (product_line) => {
         const total_product_count = await product_line.getProductCount();
@@ -272,7 +286,9 @@ const getErrorStats = async (req: Request, res: Response) => {
       })
     );
 
-    const total = product_lines.reduce((acc, cur) => acc + cur.product_count, 0);
+    new_product_lines.push(...ps);
+
+    const total = new_product_lines.length;
     return res.json({ total, result: new_product_lines });
   } catch (error) {
     errorHandler(error, req, res);

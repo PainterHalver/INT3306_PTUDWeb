@@ -15,6 +15,7 @@ export type Productline = {
   warranty_months: number;
   product_count: number;
   total_product_count?: number;
+  ratio?: number;
 };
 
 export type Product = {
