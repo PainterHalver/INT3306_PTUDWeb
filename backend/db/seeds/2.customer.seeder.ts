@@ -32,7 +32,7 @@ export default class CustomerSeeder implements Seeder {
 
     // Tạo dữ liệu ngẫu nhiên
     const customers = [];
-    for (let i = 0; i < 3; i++) {
+    for (let i = 0; i < 10; i++) {
       const phone = "098765" + (1000 + i);
 
       customers.push({
