@@ -12,6 +12,6 @@ jobs:
       - name: Wait for backend
         run: sleep 10
       - name: Check Backend
-        run: curl -s --retry 10 http://localhost:5000/
+        run: curl -s --retry 10 http://localhost:5000/api
       - name: Check frontend
         run: curl -s --retry 10 http://localhost:3000/
