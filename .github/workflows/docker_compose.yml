@@ -3,9 +3,13 @@ name: Docker Compose Actions Workflow
 on: push
 
 jobs:
-  test:
+  docker-compose:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
       - name: Build the stack
         run: docker-compose up -d
+      - name: Check backend
+        run: curl http://localhost:5000/api/
+      - name: Check frontend
+        run: curl http://localhost:3000/
