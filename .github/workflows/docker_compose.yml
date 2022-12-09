@@ -9,6 +9,8 @@ jobs:
       - uses: actions/checkout@v2
       - name: Build the stack
         run: docker-compose up -d
+      - name: Wait for backend
+        run: docker-compose exec app bash -c "while ! nc -z localhost 5000; do sleep 1; done"
       - name: Check backend
         run: curl http://localhost:5000/api/
       - name: Check frontend
