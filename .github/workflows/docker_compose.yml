@@ -10,6 +10,6 @@ jobs:
       - name: Build the stack
         run: docker-compose up -d
       - name: Check Backend
-        run: docker run --network container:app appropriate/curl -s --retry 10 --retry-connrefused http://localhost:5000/
+        run: docker run --network container:app curlimages/curl -s --retry 10 --retry-connrefused http://localhost:5000/
       - name: Check frontend
-        run: docker run --network container:app appropriate/curl -s --retry 10 --retry-connrefused http://localhost:3000/
+        run: docker run --network container:app curlimages/curl -s --retry 10 --retry-connrefused http://localhost:3000/
