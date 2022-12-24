@@ -23,6 +23,13 @@ export default function ProductLines() {
   const [addModel, setAddModel] = useState<string>("");
   const [addDescription, setAddDescription] = useState<string>("");
   const [addWarrantyMonths, setAddWarrantyMonths] = useState<number>(0);
+  const [addOs, setAddOs] = useState<string>("");
+  const [addCamera, setAddCamera] = useState<string>("");
+  const [addCpu, setAddCpu] = useState<string>("");
+  const [addRam, setAddRam] = useState<string>("");
+  const [addStorage, setAddStorage] = useState<string>("");
+  const [addBattery, setAddBattery] = useState<string>("");
+  const [addPrice, setAddPrice] = useState<string>("");
 
   const dispatch = useAppDispatch();
   const toast = useToast();
@@ -57,6 +64,13 @@ export default function ProductLines() {
         model: addModel,
         description: addDescription,
         warranty_months: addWarrantyMonths,
+        os: addOs,
+        cpu: addCpu,
+        ram: addRam,
+        storage: addStorage,
+        camera: addCamera,
+        battery: addBattery,
+        price: addPrice,
       });
 
       // Tắt modal sau khi thêm thành công
@@ -206,8 +220,23 @@ export default function ProductLines() {
             <input type="text" name="name" className="form-input" onChange={(e) => setAddName(e.target.value)} value={addName} />
             <label htmlFor="model">Tên Model:</label>
             <input type="text" name="model" className="form-input" onChange={(e) => setAddModel(e.target.value)} value={addModel} />
+            <label htmlFor="os">OS:</label>
+            <input type="text" name="os" className="form-input" onChange={(e) => setAddOs(e.target.value)} value={addOs} />
+            <label htmlFor="cpu">CPU:</label>
+            <input type="text" name="cpu" className="form-input" onChange={(e) => setAddCpu(e.target.value)} value={addCpu} />
+            <label htmlFor="ram">RAM:</label>
+            <input type="text" name="ram" className="form-input" onChange={(e) => setAddRam(e.target.value)} value={addRam} />
+            <label htmlFor="storage">Storage:</label>
+            <input type="text" name="storage" className="form-input" onChange={(e) => setAddStorage(e.target.value)} value={addStorage} />
+            <label htmlFor="battery">Pin:</label>
+            <input type="text" name="battery" className="form-input" onChange={(e) => setAddBattery(e.target.value)} value={addBattery} />
+            <label htmlFor="camera">Camera:</label>
+            <input type="text" name="camera" className="form-input" onChange={(e) => setAddCamera(e.target.value)} value={addCamera} />
+            <label htmlFor="price">Giá:</label>
+            <input type="text" name="price" className="form-input" onChange={(e) => setAddPrice(e.target.value)} value={addPrice} />
             <label htmlFor="description">Mô tả:</label>
             <input type="text" name="description" className="form-input" onChange={(e) => setAddDescription(e.target.value)} value={addDescription} />
+
             <label htmlFor="warranty_months">Thời hạn bảo hành (số tháng):</label>
             <input type="number" name="warranty_months" className="form-input" onChange={(e) => setAddWarrantyMonths(parseInt(e.target.value))} value={addWarrantyMonths} />
             <div className="flex items-center justify-end">
@@ -234,6 +263,32 @@ export default function ProductLines() {
               <input type="text" name="name" className="form-input" onChange={(e) => setSelectedProductline({ ...selectedProductline, name: e.target.value })} value={selectedProductline.name} />
               <label htmlFor="model">Tên Model:</label>
               <input type="text" name="model" className="form-input" onChange={(e) => setSelectedProductline({ ...selectedProductline, model: e.target.value })} value={selectedProductline.model} />
+              <label htmlFor="os">OS:</label>
+              <input type="text" name="os" className="form-input" onChange={(e) => setSelectedProductline({ ...selectedProductline, os: e.target.value })} value={selectedProductline.os} />
+              <label htmlFor="cpu">CPU:</label>
+              <input type="text" name="cpu" className="form-input" onChange={(e) => setSelectedProductline({ ...selectedProductline, cpu: e.target.value })} value={selectedProductline.cpu} />
+              <label htmlFor="ram">RAM:</label>
+              <input type="text" name="ram" className="form-input" onChange={(e) => setSelectedProductline({ ...selectedProductline, ram: e.target.value })} value={selectedProductline.ram} />
+              <label htmlFor="storage">Storage:</label>
+              <input
+                type="text"
+                name="storage"
+                className="form-input"
+                onChange={(e) => setSelectedProductline({ ...selectedProductline, storage: e.target.value })}
+                value={selectedProductline.storage}
+              />
+              <label htmlFor="battery">Pin:</label>
+              <input
+                type="text"
+                name="battery"
+                className="form-input"
+                onChange={(e) => setSelectedProductline({ ...selectedProductline, battery: e.target.value })}
+                value={selectedProductline.battery}
+              />
+              <label htmlFor="camera">Camera:</label>
+              <input type="text" name="camera" className="form-input" onChange={(e) => setSelectedProductline({ ...selectedProductline, camera: e.target.value })} value={selectedProductline.camera} />
+              <label htmlFor="price">Giá:</label>
+              <input type="text" name="price" className="form-input" onChange={(e) => setSelectedProductline({ ...selectedProductline, price: e.target.value })} value={selectedProductline.price} />
               <label htmlFor="description">Mô tả:</label>
               <input
                 type="text"

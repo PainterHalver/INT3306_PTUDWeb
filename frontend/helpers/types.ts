@@ -16,6 +16,13 @@ export type Productline = {
   product_count: number;
   total_product_count?: number;
   ratio?: number;
+  os: string;
+  camera: string;
+  cpu: string;
+  ram: string;
+  storage: string;
+  battery: string;
+  price: string;
 };
 
 export type Product = {
