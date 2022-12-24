@@ -13,6 +13,11 @@ type NavLinks = {
 
 const navlinks: NavLinks = [
   {
+    href: "/main",
+    label: "Trang chủ",
+    restrictTo: ["admin", "san_xuat", "bao_hanh", "dai_ly"],
+  },
+  {
     href: "/main/users",
     label: "Quản lý người dùng",
     restrictTo: ["admin"],
