@@ -1,10 +1,11 @@
 import { Request, Response, Router } from "express";
+import { Like } from "typeorm";
+import { z } from "zod";
 
 import { AppDataSource } from "../data-source";
 import { ProductLine } from "../entities/ProductLine";
 import { protectRoute, restrictTo } from "../middlewares/auth";
 import { errorHandler } from "../helpers/errorHandler";
-import { Like } from "typeorm";
 
 /**
  * Lấy danh sách các dòng sản phẩm.
@@ -69,21 +70,27 @@ const getProductLine = async (req: Request, res: Response) => {
   }
 };
 
+const productlineRequestSchema = z.object({
+  name: z.string().min(1, "Tên dòng sản phẩm không được để trống").max(255),
+  model: z.string().min(1, "Tên sản phẩm (model) không được để trống").max(255),
+  description: z.string().optional(),
+  warranty_months: z.number().min(1, "Thời gian bảo hành không được để trống"),
+  os: z.string().optional(),
+  cpu: z.string().optional(),
+  ram: z.string().optional(),
+  storage: z.string().optional(),
+  camera: z.string().optional(),
+  battery: z.string().optional(),
+  price: z.coerce.string().regex(/^\d+$/, "Giá sản phẩm phải là số (nhập dạng string hoặc number đều được)").optional(),
+});
+
 /**
  * Tạo một dòng sản phẩm mới.
  */
 const createProductLine = async (req: Request, res: Response) => {
   try {
-    const { name, model, description, warranty_months } = req.body;
-
-    // Validate dữ liệu
-    let errors: any = {};
-    if (!name) errors.name = "Tên dòng sản phẩm không được để trống";
-    if (!model) errors.model = "Tên sản phẩm (model) không được để trống";
-    if (!warranty_months) errors.warranty_months = "Thời gian bảo hành không được để trống";
-    if (Object.keys(errors).length > 0) {
-      return res.status(400).json({ errors });
-    }
+    const { name, model, description, warranty_months, os, cpu, ram, storage, camera, battery, price } =
+      productlineRequestSchema.parse(req.body);
 
     // Check xem name đã tồn tại chưa
     const productLineRepo = AppDataSource.getRepository(ProductLine);
@@ -98,6 +105,13 @@ const createProductLine = async (req: Request, res: Response) => {
       model,
       description,
       warranty_months,
+      os,
+      cpu,
+      ram,
+      storage,
+      camera,
+      battery,
+      price,
     });
     const savedProductLine = await productLineRepo.save(newProductLine);
 
@@ -113,14 +127,13 @@ const createProductLine = async (req: Request, res: Response) => {
  */
 const updateProductLine = async (req: Request, res: Response) => {
   try {
-    const { name, model, description, warranty_months } = req.body;
+    const { name, model, description, warranty_months, os, cpu, ram, storage, camera, battery, price } =
+      productlineRequestSchema.parse(req.body);
     const { id } = req.params;
 
     // Validate dữ liệu
     let errors: any = {};
-    if (!name) errors.name = "Tên dòng sản phẩm không được để trống";
     if (!id || isNaN(parseInt(id))) errors.id = "ID không hợp lệ";
-    if (!model) errors.model = "Tên sản phẩm (model) không được để trống";
     if (Object.keys(errors).length > 0) {
       return res.status(400).json({ errors });
     }
@@ -135,8 +148,15 @@ const updateProductLine = async (req: Request, res: Response) => {
     // Cập nhật ProductLine
     productLine.name = name;
     productLine.model = model;
-    productLine.description = description;
+    productLine.description = description || productLine.description;
     productLine.warranty_months = warranty_months;
+    productLine.os = os || productLine.os;
+    productLine.cpu = cpu || productLine.cpu;
+    productLine.ram = ram || productLine.ram;
+    productLine.storage = storage || productLine.storage;
+    productLine.camera = camera || productLine.camera;
+    productLine.battery = battery || productLine.battery;
+    productLine.price = price || productLine.price;
     const updatedProductLine = await productLineRepo.save(productLine);
     const product_count = await updatedProductLine.getProductCount();
 
